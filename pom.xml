@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>au.com.addstar</groupId>
+  <artifactId>RemoteConsole</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>RemoteConsole</name>
+  <packaging>pom</packaging>
+
+  <properties>
+  	<pluginversion>${project.version}-${env.BUILD_NUMBER}</pluginversion>
+  </properties>
+  
+  <modules>
+    <module>Client</module>
+    <module>Bukkit</module>
+    <module>Bungee</module>
+    <module>Core</module>
+    <module>ServerCore</module>
+  </modules>
+  
+  <repositories>
+    <repository>
+      <id>maven-central</id>
+      <url>http://repo1.maven.org/maven2/</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId> <!-- Use 'netty-all' for 4.0 or above -->
+      <version>4.0.19.Final</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.3.2</version>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
