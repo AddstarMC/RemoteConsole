@@ -1,5 +1,6 @@
 package au.com.addstar.rcon.network.packets;
 
+import au.com.addstar.rcon.network.NetworkHandler;
 import io.netty.buffer.ByteBuf;
 
 public class PacketOutMessage extends RconPacket
@@ -25,6 +26,12 @@ public class PacketOutMessage extends RconPacket
 	public void write( ByteBuf packet )
 	{
 		writeString(message, packet);
+	}
+	
+	@Override
+	public void handlePacket( NetworkHandler handler )
+	{
+		handler.handleMessage(this);
 	}
 
 }

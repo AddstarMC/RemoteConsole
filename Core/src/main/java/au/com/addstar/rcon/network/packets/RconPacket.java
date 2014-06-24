@@ -2,6 +2,8 @@ package au.com.addstar.rcon.network.packets;
 
 import java.util.HashMap;
 
+import au.com.addstar.rcon.network.NetworkHandler;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.util.CharsetUtil;
 
@@ -9,6 +11,11 @@ public abstract class RconPacket
 {
 	public abstract void read(ByteBuf packet);
 	public abstract void write(ByteBuf packet);
+	
+	public void handlePacket(NetworkHandler handler)
+	{
+		throw new UnsupportedOperationException();
+	}
 	
 	public static void writeString(String string, ByteBuf buffer)
 	{
