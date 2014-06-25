@@ -5,6 +5,7 @@ import java.util.Random;
 
 import javax.crypto.SecretKey;
 
+import au.com.addstar.rcon.network.ConnectionState;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.AbstractNetworkHandler;
 import au.com.addstar.rcon.network.handlers.INetworkLoginHandlerServer;
@@ -67,13 +68,11 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		
 		SecretKey key = CryptHelper.decodeSecretKey(CryptHelper.decrypt(RconServer.getServerKey().getPrivate(), packet.secretKey));
 		
-		getManager().setSecretKey(key);
-		
 		mCurrentState = State.Login;
 		
-		getManager().enableEncryption();
+		getManager().enableEncryption(key);
 		
-		getManager().sendPacket(new PacketOutLoginReady());
+		getManager().sendPacket(new PacketOutLoginReady(1));
 	}
 	
 	@Override
@@ -85,7 +84,18 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 			return;
 		}
 		
+		boolean auth = true;
 		// TODO: Authentication
 		System.out.println("YAY It worked");
+		
+		if(!auth)
+		{
+			disconnect("Authentication failed");
+			return;
+		}
+		else
+			getManager().sendPacket(new PacketOutLoginReady(2));
+		
+		getManager().transitionState(ConnectionState.Main);
 	}
 }

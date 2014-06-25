@@ -12,9 +12,11 @@ public class PacketDecoder extends ByteToMessageDecoder
 	@Override
 	protected void decode( ChannelHandlerContext context, ByteBuf bytebuf, List<Object> out ) throws Exception
 	{
+		NetworkManager manager = context.attr(NetworkManager.NETWORK_MANAGER).get();
+		
 		byte id = bytebuf.readByte();
 		
-		Class<? extends RconPacket> packetType = RconPacket.getPacket(id);
+		Class<? extends RconPacket> packetType = manager.getConnectionState().getPacket(id);
 		if(packetType == null)
 			throw new NullPointerException("Tried to load invalid packet id " + id);
 		

@@ -11,7 +11,9 @@ public class PacketEncoder extends MessageToByteEncoder<RconPacket>
 	@Override
 	protected void encode( ChannelHandlerContext context, RconPacket packet, ByteBuf bytebuf ) throws Exception
 	{
-		Byte id = RconPacket.getPacketId(packet);
+		NetworkManager manager = context.attr(NetworkManager.NETWORK_MANAGER).get();
+		
+		Byte id = manager.getConnectionState().getPacketId(packet);
 		
 		if(id == null)
 			throw new IOException("Cannot serialize unregistered packet");

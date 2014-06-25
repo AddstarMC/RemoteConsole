@@ -1,13 +1,16 @@
 package au.com.addstar.rcon.network.packets;
 
-import java.util.HashMap;
-
+import au.com.addstar.rcon.network.ConnectionState;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
 import au.com.addstar.rcon.network.packets.login.PacketInEncryptGo;
 import au.com.addstar.rcon.network.packets.login.PacketInLogin;
 import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
 import au.com.addstar.rcon.network.packets.login.PacketOutEncryptStart;
 import au.com.addstar.rcon.network.packets.login.PacketOutLoginReady;
+import au.com.addstar.rcon.network.packets.main.PacketInCommand;
+import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
+import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
+import au.com.addstar.rcon.network.packets.main.PacketOutTabComplete;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.util.CharsetUtil;
@@ -52,39 +55,20 @@ public abstract class RconPacket
 	}
 	
 	
-	private static HashMap<Byte, Class<? extends RconPacket>> mRegistrations;
-	private static HashMap<Class<? extends RconPacket>, Byte> mReverseRegistrations;
-	
-	public static void addPacketType(int id, Class<? extends RconPacket> packetClass)
-	{
-		mRegistrations.put((byte)id, packetClass);
-		mReverseRegistrations.put(packetClass, (byte)id);
-	}
-	
-	public static Class<? extends RconPacket> getPacket(int id)
-	{
-		return mRegistrations.get((byte)id);
-	}
-	
-	public static Byte getPacketId(RconPacket packet)
-	{
-		return mReverseRegistrations.get(packet.getClass());
-	}
-	
 	static
 	{
-		mRegistrations = new HashMap<Byte, Class<? extends RconPacket>>();
-		mReverseRegistrations = new HashMap<Class<? extends RconPacket>, Byte>();
-
-		addPacketType(0, PacketInLoginBegin.class);
-		addPacketType(1, PacketOutEncryptStart.class);
-		addPacketType(2, PacketInEncryptGo.class);
-		addPacketType(3, PacketOutLoginReady.class);
-		addPacketType(4, PacketInLogin.class);
+		ConnectionState.Login.addPacketType(0, PacketInLoginBegin.class);
+		ConnectionState.Login.addPacketType(1, PacketOutEncryptStart.class);
+		ConnectionState.Login.addPacketType(2, PacketInEncryptGo.class);
+		ConnectionState.Login.addPacketType(3, PacketOutLoginReady.class);
+		ConnectionState.Login.addPacketType(4, PacketInLogin.class);
 		
-		addPacketType(10, PacketInCommand.class);
-		addPacketType(11, PacketOutMessage.class);
+		ConnectionState.Main.addPacketType(10, PacketInCommand.class);
+		ConnectionState.Main.addPacketType(11, PacketOutMessage.class);
+		ConnectionState.Main.addPacketType(12, PacketInTabComplete.class);
+		ConnectionState.Main.addPacketType(13, PacketOutTabComplete.class);
 		
-		addPacketType(255, PacketOutDisconnect.class);
+		ConnectionState.Login.addPacketType(255, PacketOutDisconnect.class);
+		ConnectionState.Main.addPacketType(255, PacketOutDisconnect.class);
 	}
 }

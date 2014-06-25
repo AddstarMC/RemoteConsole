@@ -4,39 +4,72 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
+import au.com.addstar.rcon.network.packets.PacketOutDisconnect;
 import au.com.addstar.rcon.network.packets.RconPacket;
 import au.com.addstar.rcon.util.CryptHelper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.AttributeKey;
 
 public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 {
+	public static final AttributeKey<NetworkManager> NETWORK_MANAGER = AttributeKey.valueOf("NETMANAGER");
+	
 	private INetworkHandler mHandler;
+	private HandlerCreator mCreator;
 	private Channel mChannel;
-	private SecretKey mSecretKey;
+	
+	private ConnectionState mState;
 	
 	private String mDCReason;
+	
+	public NetworkManager(HandlerCreator creator)
+	{
+		mCreator = creator;
+		mState = ConnectionState.Login;
+	}
 	
 	public void setNetHandler(INetworkHandler handler)
 	{
 		mHandler = handler;
 	}
 	
-	public void setSecretKey(SecretKey key)
+	public HandlerCreator getHandlerCreator()
 	{
-		mSecretKey = key;
+		return mCreator;
 	}
 	
-	public SecretKey getSecretKey()
+	public ConnectionState getConnectionState()
 	{
-		return mSecretKey;
+		return mState;
 	}
+	
+	public void transitionState(ConnectionState newState)
+	{
+		switch(newState)
+		{
+		case Main:
+			setNetHandler(mCreator.newHandlerMain(this));
+			break;
+		case Login:
+			setNetHandler(mCreator.newHandlerLogin(this));
+			break;
+		}
+		
+		mState = newState;
+	}
+	
 	
 	@Override
 	protected void channelRead0( ChannelHandlerContext ctx, RconPacket msg ) throws Exception
 	{
+		if(msg instanceof PacketOutDisconnect)
+		{
+			close(((PacketOutDisconnect)msg).reason);
+			return;
+		}
 		msg.handlePacket(mHandler);
 	}
 	
@@ -45,6 +78,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	{
 		super.channelActive(ctx);
 		mChannel = ctx.channel();
+		mChannel.attr(NETWORK_MANAGER).set(this);
 	}
 	
 	@Override
@@ -73,9 +107,9 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 		return mChannel.writeAndFlush(packet);
 	}
 	
-	public void enableEncryption()
+	public void enableEncryption(SecretKey key)
 	{
-		mChannel.pipeline().addBefore("collector", "decrypter", new StreamDecrypter(CryptHelper.createContinuousCipher(Cipher.DECRYPT_MODE, mSecretKey)));
-		mChannel.pipeline().addBefore("prepender", "encrypter", new StreamEncrypter(CryptHelper.createContinuousCipher(Cipher.ENCRYPT_MODE, mSecretKey)));
+		mChannel.pipeline().addBefore("collector", "decrypter", new StreamDecrypter(CryptHelper.createContinuousCipher(Cipher.DECRYPT_MODE, key)));
+		mChannel.pipeline().addBefore("prepender", "encrypter", new StreamEncrypter(CryptHelper.createContinuousCipher(Cipher.ENCRYPT_MODE, key)));
 	}
 }

@@ -1,6 +1,7 @@
-package au.com.addstar.rcon.network.packets;
+package au.com.addstar.rcon.network.packets.main;
 
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
+import au.com.addstar.rcon.network.packets.RconPacket;
 import io.netty.buffer.ByteBuf;
 
 public class PacketInCommand extends RconPacket

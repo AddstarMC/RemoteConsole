@@ -6,7 +6,6 @@ import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
-import au.com.addstar.rcon.network.packets.PacketInCommand;
 import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
 
 public class ClientMain

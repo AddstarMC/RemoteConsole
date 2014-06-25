@@ -5,6 +5,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 
 import javax.crypto.SecretKey;
 
+import au.com.addstar.rcon.network.ConnectionState;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.AbstractNetworkHandler;
 import au.com.addstar.rcon.network.handlers.INetworkLoginHandlerClient;
@@ -19,7 +20,8 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 	private enum State
 	{
 		Encrypt,
-		Login
+		Login,
+		Accept
 	}
 	
 	private State mState = State.Encrypt;
@@ -33,20 +35,20 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 	public void handleEncryptStart( PacketOutEncryptStart packet )
 	{
 		if(mState != State.Encrypt)
+		{
 			getManager().close("Packet received out of sequence");
+			return;
+		}
 		
-		System.out.println("encrypt start");
-		SecretKey key = CryptHelper.generateSharedKey();
+		final SecretKey key = CryptHelper.generateSharedKey();
 		
-		getManager().setSecretKey(key);
 		mState = State.Login;
 		getManager().sendPacket(new PacketInEncryptGo(key, packet.key, packet.randomBlob)).addListener(new GenericFutureListener<Future<? super Void>>()
 		{
 			@Override
 			public void operationComplete( Future<? super Void> future ) throws Exception
 			{
-				System.out.println("enabling encryption");
-				getManager().enableEncryption();
+				getManager().enableEncryption(key);
 			}
 		});
 	}
@@ -54,11 +56,36 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 	@Override
 	public void handleLoginReady( PacketOutLoginReady packet )
 	{
-		if(mState != State.Login)
+		if(packet.state == 1)
+			handleLoginReady0();
+		else if(packet.state == 2)
+			handleLoginSuccess();
+		else
 			getManager().close("Packet received out of sequence");
+
 		
-		System.out.println("login ready");
+	}
+	
+	private void handleLoginReady0()
+	{
+		if(mState != State.Login)
+		{
+			getManager().close("Packet received out of sequence");
+			return;
+		}
+		
 		getManager().sendPacket(new PacketInLogin("TestUser", "1234"));
+	}
+	
+	private void handleLoginSuccess()
+	{
+		if(mState != State.Accept)
+		{
+			getManager().close("Packet received out of sequence");
+			return;
+		}
+		
+		getManager().transitionState(ConnectionState.Main);
 	}
 
 }

@@ -7,14 +7,24 @@ import io.netty.buffer.ByteBuf;
 
 public class PacketOutLoginReady extends RconPacket
 {
+	public int state;
+	
+	public PacketOutLoginReady() {}
+	public PacketOutLoginReady(int state)
+	{
+		this.state = state;
+	}
+	
 	@Override
 	public void read( ByteBuf packet )
 	{
+		state = packet.readUnsignedByte();
 	}
 
 	@Override
 	public void write( ByteBuf packet )
 	{
+		packet.writeByte(state);
 	}
 	
 	@Override

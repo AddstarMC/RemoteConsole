@@ -27,7 +27,7 @@ public class NetworkInitializer extends ChannelInitializer<SocketChannel>
 	{
 		channel.pipeline().addLast("collector", new PacketCollector()).addLast("decoder", new PacketDecoder()).addLast("prepender", new PacketPrepender()).addLast("encoder", new PacketEncoder());
 
-		NetworkManager manager = new NetworkManager();
+		NetworkManager manager = new NetworkManager(mCreator);
 		
 		if(mManagers != null)
 			mManagers.add(manager);
