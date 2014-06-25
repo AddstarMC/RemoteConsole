@@ -1,10 +1,12 @@
 package au.com.addstar.rcon.server;
 
+import java.security.KeyPair;
 import java.util.ArrayList;
 
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkInitializer;
 import au.com.addstar.rcon.network.NetworkManager;
+import au.com.addstar.rcon.util.CryptHelper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -17,12 +19,16 @@ public class RconServer
 	private EventLoopGroup mBoss;
 	private EventLoopGroup mWorker;
 	
+	private static KeyPair mServerKey;
+	
 	private ArrayList<NetworkManager> mManagers;
 	
 	public RconServer(int port)
 	{
 		mPort = port;
 		mManagers = new ArrayList<NetworkManager>();
+		
+		mServerKey = CryptHelper.generateKey();
 	}
 	
 	public void start(final HandlerCreator handlerCreator)
@@ -44,5 +50,10 @@ public class RconServer
 	{
 		mBoss.shutdownGracefully().syncUninterruptibly();
 		mWorker.shutdownGracefully().syncUninterruptibly();
+	}
+	
+	public static KeyPair getServerKey()
+	{
+		return mServerKey;
 	}
 }

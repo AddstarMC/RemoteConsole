@@ -15,7 +15,10 @@ public class PacketCollector extends ByteToMessageDecoder
 	protected void decode( ChannelHandlerContext context, ByteBuf buffer, List<Object> out ) throws Exception
 	{
 		if(buffer.readableBytes() < 2)
+		{
+			System.out.println("collecting- not enough");
 			return;
+		}
 		
 		buffer.markReaderIndex();
 		
@@ -24,6 +27,7 @@ public class PacketCollector extends ByteToMessageDecoder
 		if(!buffer.isReadable(size))
 		{
 			buffer.resetReaderIndex();
+			System.out.println("collecting- packet not big enough. need " + size + " has " + buffer.readableBytes());
 			return;
 		}
 		

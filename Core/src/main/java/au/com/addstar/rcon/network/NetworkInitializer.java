@@ -33,6 +33,6 @@ public class NetworkInitializer extends ChannelInitializer<SocketChannel>
 			mManagers.add(manager);
 		
 		channel.pipeline().addLast("handler", manager);
-		manager.setNetHandler(mCreator.newHandler(manager));
+		manager.setNetHandler(mCreator.newHandlerLogin(manager));
 	}
 }

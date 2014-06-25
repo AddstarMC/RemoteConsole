@@ -2,19 +2,12 @@
 package au.com.addstar.rcon;
 
 import au.com.addstar.rcon.network.NetworkManager;
-import au.com.addstar.rcon.network.packets.PacketInCommand;
-import au.com.addstar.rcon.server.AbstractServerHandler;
+import au.com.addstar.rcon.network.handlers.AbstractNetworkHandler;
 
-public class NetHandler extends AbstractServerHandler
+public class NetHandler extends AbstractNetworkHandler
 {
 	public NetHandler(NetworkManager manager)
 	{
 		super(manager);
-	}
-	
-	@Override
-	public void handleCommand( PacketInCommand command )
-	{
-		System.out.println("Command: " + command);
 	}
 }
