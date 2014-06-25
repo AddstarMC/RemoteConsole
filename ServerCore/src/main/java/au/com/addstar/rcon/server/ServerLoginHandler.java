@@ -86,7 +86,6 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		
 		boolean auth = true;
 		// TODO: Authentication
-		System.out.println("YAY It worked");
 		
 		if(!auth)
 		{
@@ -94,7 +93,10 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 			return;
 		}
 		else
+		{
+			System.out.println("[RCON] " + packet.username + " logged in on " + getManager().getAddress());
 			getManager().sendPacket(new PacketOutLoginReady(2));
+		}
 		
 		getManager().transitionState(ConnectionState.Main);
 	}

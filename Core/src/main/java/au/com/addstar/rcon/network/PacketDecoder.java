@@ -12,7 +12,7 @@ public class PacketDecoder extends ByteToMessageDecoder
 	@Override
 	protected void decode( ChannelHandlerContext context, ByteBuf bytebuf, List<Object> out ) throws Exception
 	{
-		NetworkManager manager = context.attr(NetworkManager.NETWORK_MANAGER).get();
+		NetworkManager manager = context.channel().attr(NetworkManager.NETWORK_MANAGER).get();
 		
 		byte id = bytebuf.readByte();
 		

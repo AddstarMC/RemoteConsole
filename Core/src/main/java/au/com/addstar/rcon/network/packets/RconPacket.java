@@ -55,7 +55,7 @@ public abstract class RconPacket
 	}
 	
 	
-	static
+	public static void initialize()
 	{
 		ConnectionState.Login.addPacketType(0, PacketInLoginBegin.class);
 		ConnectionState.Login.addPacketType(1, PacketOutEncryptStart.class);

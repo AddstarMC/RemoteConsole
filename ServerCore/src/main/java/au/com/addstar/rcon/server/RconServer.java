@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkInitializer;
 import au.com.addstar.rcon.network.NetworkManager;
+import au.com.addstar.rcon.network.packets.RconPacket;
 import au.com.addstar.rcon.util.CryptHelper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
@@ -29,6 +30,7 @@ public class RconServer
 		mManagers = new ArrayList<NetworkManager>();
 		
 		mServerKey = CryptHelper.generateKey();
+		RconPacket.initialize();
 	}
 	
 	public void start(final HandlerCreator handlerCreator)

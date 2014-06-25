@@ -11,7 +11,7 @@ public class PacketEncoder extends MessageToByteEncoder<RconPacket>
 	@Override
 	protected void encode( ChannelHandlerContext context, RconPacket packet, ByteBuf bytebuf ) throws Exception
 	{
-		NetworkManager manager = context.attr(NetworkManager.NETWORK_MANAGER).get();
+		NetworkManager manager = context.channel().attr(NetworkManager.NETWORK_MANAGER).get();
 		
 		Byte id = manager.getConnectionState().getPacketId(packet);
 		

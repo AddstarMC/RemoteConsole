@@ -26,9 +26,18 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 	
 	private State mState = State.Encrypt;
 	
+	private String mUsername;
+	private String mPassword;
+	
 	public ClientLoginHandler(NetworkManager manager)
 	{
 		super(manager);
+	}
+	
+	public void setLoginInfo(String username, String password)
+	{
+		mUsername = username;
+		mPassword = password;
 	}
 	
 	@Override
@@ -74,7 +83,9 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 			return;
 		}
 		
-		getManager().sendPacket(new PacketInLogin("TestUser", "1234"));
+		getManager().sendPacket(new PacketInLogin(mUsername, mPassword));
+		
+		mState = State.Accept;
 	}
 	
 	private void handleLoginSuccess()
@@ -84,6 +95,8 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 			getManager().close("Packet received out of sequence");
 			return;
 		}
+		
+		System.err.println("Successfully logged in");
 		
 		getManager().transitionState(ConnectionState.Main);
 	}

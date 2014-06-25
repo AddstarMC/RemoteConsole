@@ -1,5 +1,8 @@
 package au.com.addstar.rcon.network;
 
+import java.net.SocketAddress;
+import java.util.concurrent.CountDownLatch;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
@@ -22,6 +25,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	private Channel mChannel;
 	
 	private ConnectionState mState;
+	private CountDownLatch mActiveWaiter = new CountDownLatch(1);
 	
 	private String mDCReason;
 	
@@ -34,6 +38,11 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	public void setNetHandler(INetworkHandler handler)
 	{
 		mHandler = handler;
+	}
+	
+	public INetworkHandler getNetHandler()
+	{
+		return mHandler;
 	}
 	
 	public HandlerCreator getHandlerCreator()
@@ -79,6 +88,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 		super.channelActive(ctx);
 		mChannel = ctx.channel();
 		mChannel.attr(NETWORK_MANAGER).set(this);
+		mActiveWaiter.countDown();
 	}
 	
 	@Override
@@ -111,5 +121,15 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	{
 		mChannel.pipeline().addBefore("collector", "decrypter", new StreamDecrypter(CryptHelper.createContinuousCipher(Cipher.DECRYPT_MODE, key)));
 		mChannel.pipeline().addBefore("prepender", "encrypter", new StreamEncrypter(CryptHelper.createContinuousCipher(Cipher.ENCRYPT_MODE, key)));
+	}
+	
+	public void waitForActive() throws InterruptedException
+	{
+		mActiveWaiter.await();
+	}
+	
+	public SocketAddress getAddress()
+	{
+		return mChannel.localAddress();
 	}
 }
