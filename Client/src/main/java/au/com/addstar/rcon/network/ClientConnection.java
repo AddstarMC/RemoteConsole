@@ -41,7 +41,7 @@ public class ClientConnection
 		builder.group(mWorker)
 			.channel(NioSocketChannel.class)
 			.option(ChannelOption.SO_KEEPALIVE, true)
-			.handler(new NetworkInitializer(handlerCreator, mManagers));
+			.handler(new NetworkInitializer<NetworkManager>(handlerCreator, NetworkManager.class, mManagers));
 		
 		mChannel = builder.connect(mHost, mPort).syncUninterruptibly().channel();
 	}

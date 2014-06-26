@@ -1,15 +1,15 @@
 package au.com.addstar.rcon.server;
 
 import au.com.addstar.rcon.network.NetworkManager;
+import au.com.addstar.rcon.server.auth.StoredPassword;
 
-public class User
+public abstract class User
 {
 	private NetworkManager mManager;
 	private String mName;
 	
-	public User(NetworkManager manager, String name)
+	public User(String name)
 	{
-		mManager = manager;
 		mName = name;
 	}
 	
@@ -23,4 +23,10 @@ public class User
 		return mManager;
 	}
 	
+	public void setManager(NetworkManager manager)
+	{
+		mManager = manager;
+	}
+	
+	public abstract StoredPassword getPassword();
 }

@@ -187,8 +187,12 @@ public class ClientMain implements GenericFutureListener<Future<? super Void>>
 	{
 		String message = mConnection.getManager().getDisconnectReason();
 		
+		System.err.print("Disconnected: ");
+		
 		if(message != null)
-			mConsole.printString(message);
+			System.err.println(message);
+		else
+			System.err.println("Connection lost");
 		
 		mRunning = false;
 	}

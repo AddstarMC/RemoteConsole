@@ -1,6 +1,9 @@
 package au.com.addstar.rcon.network.handlers;
 
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import au.com.addstar.rcon.network.NetworkManager;
+import au.com.addstar.rcon.network.packets.PacketOutDisconnect;
 
 
 public abstract class AbstractNetworkHandler implements INetworkHandler
@@ -17,8 +20,15 @@ public abstract class AbstractNetworkHandler implements INetworkHandler
 		return mManager;
 	}
 	
-	protected void disconnect(String reason)
+	protected void disconnect(final String reason)
 	{
-		throw new UnsupportedOperationException("Not yet implemented");
+		getManager().sendPacket(new PacketOutDisconnect(reason)).addListener(new GenericFutureListener<Future<? super Void>>()
+		{
+			@Override
+			public void operationComplete( Future<? super Void> future ) throws Exception
+			{
+				getManager().close(reason);
+			}
+		});
 	}
 }

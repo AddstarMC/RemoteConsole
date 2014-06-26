@@ -102,8 +102,8 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	{
 		if(mChannel.isOpen())
 		{
-			mChannel.close();
 			mDCReason = reason;
+			mChannel.close();
 		}
 	}
 	

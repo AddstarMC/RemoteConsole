@@ -1,33 +1,56 @@
 package au.com.addstar.rcon.network;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
-public class NetworkInitializer extends ChannelInitializer<SocketChannel>
+public class NetworkInitializer<T extends NetworkManager> extends ChannelInitializer<SocketChannel>
 {
 	private HandlerCreator mCreator;
 	
-	private List<NetworkManager> mManagers;
+	private List<T> mManagers;
+	private Constructor<T> mManagerClass;
 	
-	public NetworkInitializer(HandlerCreator handlerCreator)
+	public NetworkInitializer(HandlerCreator handlerCreator, Class<T> managerClass)
 	{
-		mCreator = handlerCreator;
+		this(handlerCreator, managerClass, null);
 	}
 	
-	public NetworkInitializer(HandlerCreator handlerCreator, List<NetworkManager> managerList)
+	public NetworkInitializer(HandlerCreator handlerCreator, Class<T> managerClass, List<T> managerList)
 	{
 		mCreator = handlerCreator;
 		mManagers = managerList;
+		
+		try
+		{
+			mManagerClass = managerClass.getConstructor(HandlerCreator.class);
+		}
+		catch(Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private T newManager()
+	{
+		try
+		{
+			return mManagerClass.newInstance(mCreator);
+		}
+		catch(Exception e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 	
 	@Override
 	protected void initChannel( SocketChannel channel ) throws Exception
 	{
 		channel.pipeline().addLast("collector", new PacketCollector()).addLast("decoder", new PacketDecoder()).addLast("prepender", new PacketPrepender()).addLast("encoder", new PacketEncoder());
-
-		NetworkManager manager = new NetworkManager(mCreator);
+		
+		T manager = newManager();
 		
 		if(mManagers != null)
 			mManagers.add(manager);

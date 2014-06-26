@@ -45,7 +45,7 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		}
 		
 		mRand.nextBytes(mBlob);
-		getManager().sendPacket(new PacketOutEncryptStart(RconServer.getServerKey().getPublic(), mBlob));
+		getManager().sendPacket(new PacketOutEncryptStart(RconServer.instance.getServerKey().getPublic(), mBlob));
 		mCurrentState = State.Encrypt;
 	}
 	
@@ -58,7 +58,7 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 			return;
 		}
 		
-		byte[] blob = CryptHelper.decrypt(RconServer.getServerKey().getPrivate(), packet.randomBlob);
+		byte[] blob = CryptHelper.decrypt(RconServer.instance.getServerKey().getPrivate(), packet.randomBlob);
 		
 		if(!Arrays.equals(mBlob, blob))
 		{
@@ -66,7 +66,7 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 			return;
 		}
 		
-		SecretKey key = CryptHelper.decodeSecretKey(CryptHelper.decrypt(RconServer.getServerKey().getPrivate(), packet.secretKey));
+		SecretKey key = CryptHelper.decodeSecretKey(CryptHelper.decrypt(RconServer.instance.getServerKey().getPrivate(), packet.secretKey));
 		
 		mCurrentState = State.Login;
 		
@@ -84,19 +84,29 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 			return;
 		}
 		
-		boolean auth = true;
-		// TODO: Authentication
-		
-		if(!auth)
+		User user = RconServer.instance.getUser(packet.username);
+		if(user == null)
 		{
 			disconnect("Authentication failed");
 			return;
 		}
-		else
+		
+		if(!user.getPassword().matches(packet.password))
 		{
-			System.out.println("[RCON] " + packet.username + " logged in on " + getManager().getAddress());
-			getManager().sendPacket(new PacketOutLoginReady(2));
+			disconnect("Authentication failed");
+			return;
 		}
+		
+		if(user.getManager() != null)
+		{
+			disconnect("Already logged in");
+			return;
+		}
+		
+		user.setManager(getManager());
+		
+		System.out.println("[RCON] " + packet.username + " logged in on " + getManager().getAddress());
+		getManager().sendPacket(new PacketOutLoginReady(2));
 		
 		getManager().transitionState(ConnectionState.Main);
 	}
