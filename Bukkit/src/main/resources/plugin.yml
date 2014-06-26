@@ -4,3 +4,17 @@ description: An advanced remote console
 version: ${pluginversion}
 
 main: au.com.addstar.rcon.RemoteConsolePlugin
+
+commands:
+  rcon:
+    permisison: rcon.account.manage
+    
+permissions:
+  rcon.account.manage:
+    default: op
+  rcon.account.manage.add:
+    default: op
+  rcon.account.manage.password:
+    default: op
+  rcon.account.manage.remove:
+    default: op

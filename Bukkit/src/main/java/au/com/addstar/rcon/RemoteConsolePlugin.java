@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import au.com.addstar.rcon.commands.RconCommand;
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
@@ -53,6 +54,8 @@ public class RemoteConsolePlugin extends JavaPlugin
 				return new NetHandler(manager);
 			}
 		});
+		
+		new RconCommand().registerAs(getCommand("rcon"));
 	}
 	
 	@Override

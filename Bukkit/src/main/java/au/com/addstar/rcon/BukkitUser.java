@@ -46,6 +46,11 @@ public class BukkitUser extends User implements ConsoleCommandSender
 		
 		return new StoredPassword(parts[0], parts[1]);
 	}
+	
+	public void setPassword(StoredPassword password)
+	{
+		mSection.set("password", String.format("%s:%s", password.getHash(), password.getSalt()));
+	}
 
 	@Override
 	public Server getServer()

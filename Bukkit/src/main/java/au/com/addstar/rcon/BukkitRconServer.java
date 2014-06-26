@@ -34,7 +34,7 @@ public class BukkitRconServer extends RconServer
 	@Override
 	public User getUser( String name )
 	{
-		return null;
+		return mUsers.get(name);
 	}
 
 	@Override
@@ -42,10 +42,8 @@ public class BukkitRconServer extends RconServer
 	{
 		try
 		{
-			if(!mStorageFile.exists())
-				return;
-			
-			mConfig.load(mStorageFile);
+			if(mStorageFile.exists())
+				mConfig.load(mStorageFile);
 			
 			mUsers.clear();
 			
@@ -88,6 +86,19 @@ public class BukkitRconServer extends RconServer
 	public void save() throws IOException
 	{
 		mConfig.save(mStorageFile);
+	}
+
+	public BukkitUser createUser( String name )
+	{
+		BukkitUser user = new BukkitUser(name, mConfig.getConfigurationSection("users").createSection(name));
+		mUsers.put(name, user);
+		return user;
+	}
+
+	public void removeUser( BukkitUser user )
+	{
+		mConfig.getConfigurationSection("users").set(user.getName(), null);
+		mUsers.remove(user.getName());
 	}
 
 }

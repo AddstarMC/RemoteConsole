@@ -20,7 +20,8 @@ public abstract class AbstractNetworkHandler implements INetworkHandler
 		return mManager;
 	}
 	
-	protected void disconnect(final String reason)
+	@Override
+	public final void disconnect(final String reason)
 	{
 		getManager().sendPacket(new PacketOutDisconnect(reason)).addListener(new GenericFutureListener<Future<? super Void>>()
 		{
