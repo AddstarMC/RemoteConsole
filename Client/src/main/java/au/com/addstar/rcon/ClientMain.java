@@ -123,7 +123,7 @@ public class ClientMain implements GenericFutureListener<Future<? super Void>>
 			@Override
 			public INetworkHandler newHandlerMain( NetworkManager manager )
 			{
-				return null;
+				return new NetHandler(manager);
 			}
 		};
 		

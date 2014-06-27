@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.netty.buffer.ByteBuf;
+import au.com.addstar.rcon.network.handlers.INetworkHandler;
+import au.com.addstar.rcon.network.handlers.INetworkMainHandlerClient;
 import au.com.addstar.rcon.network.packets.RconPacket;
 
 public class PacketOutTabComplete extends RconPacket
@@ -42,6 +44,12 @@ public class PacketOutTabComplete extends RconPacket
 			for(String result : results)
 				writeString(result, packet);
 		}
+	}
+	
+	@Override
+	public void handlePacket( INetworkHandler handler )
+	{
+		((INetworkMainHandlerClient)handler).handleTabComplete(this);
 	}
 
 }

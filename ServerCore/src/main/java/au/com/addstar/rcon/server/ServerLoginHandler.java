@@ -104,6 +104,7 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		}
 		
 		user.setManager(getManager());
+		((ServerNetworkManager)getManager()).setUser(user);
 		
 		System.out.println("[RCON] " + packet.username + " logged in on " + getManager().getAddress());
 		getManager().sendPacket(new PacketOutLoginReady(2));

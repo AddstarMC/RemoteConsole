@@ -1,6 +1,8 @@
 package au.com.addstar.rcon.network.packets.main;
 
 import io.netty.buffer.ByteBuf;
+import au.com.addstar.rcon.network.handlers.INetworkHandler;
+import au.com.addstar.rcon.network.handlers.INetworkMainHandlerServer;
 import au.com.addstar.rcon.network.packets.RconPacket;
 
 public class PacketInTabComplete extends RconPacket
@@ -23,6 +25,12 @@ public class PacketInTabComplete extends RconPacket
 	public void write( ByteBuf packet )
 	{
 		writeString(message, packet);
+	}
+	
+	@Override
+	public void handlePacket( INetworkHandler handler )
+	{
+		((INetworkMainHandlerServer)handler).handleTabComplete(this);
 	}
 
 }

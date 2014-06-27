@@ -1,6 +1,7 @@
 package au.com.addstar.rcon.network.packets.main;
 
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
+import au.com.addstar.rcon.network.handlers.INetworkMainHandlerClient;
 import au.com.addstar.rcon.network.packets.RconPacket;
 import io.netty.buffer.ByteBuf;
 
@@ -32,7 +33,7 @@ public class PacketOutMessage extends RconPacket
 	@Override
 	public void handlePacket( INetworkHandler handler )
 	{
-		//handler.handleMessage(this);
+		((INetworkMainHandlerClient)handler).handleMessage(this);
 	}
 
 }
