@@ -65,4 +65,9 @@ public class ClientConnection
 	{
 		mChannel.closeFuture().addListener(listener);
 	}
+
+	public void waitForShutdown() throws InterruptedException
+	{
+		mChannel.closeFuture().sync();
+	}
 }

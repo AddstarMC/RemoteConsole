@@ -11,7 +11,6 @@ import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
 import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
-import au.com.addstar.rcon.network.packets.main.PacketInCommand;
 
 public class ClientMain implements GenericFutureListener<Future<? super Void>>
 {
@@ -143,28 +142,15 @@ public class ClientMain implements GenericFutureListener<Future<? super Void>>
 			
 			mConnection.sendPacket(new PacketInLoginBegin());
 			
-			while(mRunning)
-			{
-				if(manager.getConnectionState() != ConnectionState.Main)
-				{
-					Thread.sleep(100);
-					continue;
-				}
-				
-				String command = mConsole.readLine();
-				
-				if(command != null) // Handle commands
-				{
-					if(command.equals("exit"))
-					{
-						manager.close("Quitting");
-						break;
-					}
-					
-					mConnection.sendPacket(new PacketInCommand(command));
-				}
-			}
+			while(mRunning && manager.getConnectionState() != ConnectionState.Main)
+				Thread.sleep(100);
 			
+			if(!mRunning)
+				return;
+			
+			mConsole.start();
+			
+			mConnection.waitForShutdown();
 			mConnection.shutdown();
 		}
 		catch(InterruptedException e)

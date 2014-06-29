@@ -11,8 +11,9 @@ import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.Ansi.Attribute;
 
 import au.com.addstar.rcon.network.NetworkManager;
+import au.com.addstar.rcon.network.packets.main.PacketInCommand;
 
-public class ConsoleScreen
+public class ConsoleScreen extends Thread
 {
 	private static final Map<Character, String> mColors = new HashMap<Character, String>();
 	private static String mColorChar = "\u00A7";
@@ -44,9 +45,13 @@ public class ConsoleScreen
 	}
 	
 	private ConsoleReader mConsole;
+	private NetworkManager mManager;
 	
 	public ConsoleScreen()
 	{
+		super("ConsoleReader");
+		setDaemon(true);
+		
 		try
 		{
 			mConsole = new ConsoleReader();
@@ -73,24 +78,40 @@ public class ConsoleScreen
 		}
 		catch(IOException e)
 		{
+			e.printStackTrace();
 		}
 	}
 	
 	public void setNetworkHandler(NetworkManager manager)
 	{
+		mManager = manager;
 		mConsole.addCompleter(new TabCompleter(manager));
 	}
 	
-	public String readLine()
+	@Override
+	public void run()
 	{
 		try
 		{
-			return mConsole.readLine(">");
+			while(true)
+			{
+				String command = mConsole.readLine(">");
+				
+				if(command != null) // Handle commands
+				{
+					if(command.equals("exit"))
+					{
+						mManager.close("Quitting");
+						break;
+					}
+					
+					mManager.sendPacket(new PacketInCommand(command));
+				}
+			}
 		}
-		catch ( IOException e )
+		catch(IOException e)
 		{
 			e.printStackTrace();
-			return null;
 		}
 	}
 }
