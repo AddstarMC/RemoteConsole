@@ -1,6 +1,6 @@
 package au.com.addstar.rcon.config;
 
-import net.cubespace.Yamler.Config.Comment;
+import net.cubespace.Yamler.Config.Comments;
 import net.cubespace.Yamler.Config.Config;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.cubespace.Yamler.Config.Path;
@@ -9,7 +9,7 @@ public class MainConfig extends Config
 {
 	public int port = 22050;
 	
-	@Comment("The storage mode (where the account data will be stored)\nValid values are:\nfile, mysql")
+	@Comments({"The storage mode (where the account data will be stored)","Valid values are:","file, mysql"})
 	public String store = "file";
 	
 	@Path("database.host")

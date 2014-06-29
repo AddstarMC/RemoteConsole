@@ -26,6 +26,7 @@ public class YamlUserStore implements IUserStore
 	{
 		try
 		{
+			mConfig = new UserStorageConfig();
 			mConfig.init(mStorageFile);
 		}
 		catch ( InvalidConfigurationException e )

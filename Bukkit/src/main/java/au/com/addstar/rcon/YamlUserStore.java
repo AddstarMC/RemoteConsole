@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import au.com.addstar.rcon.server.User;
 import au.com.addstar.rcon.server.auth.IUserStore;
@@ -27,6 +28,8 @@ public class YamlUserStore implements IUserStore
 	{
 		try
 		{
+			mConfig = new YamlConfiguration();
+			
 			if(mStorageFile.exists())
 				mConfig.load(mStorageFile);
 			

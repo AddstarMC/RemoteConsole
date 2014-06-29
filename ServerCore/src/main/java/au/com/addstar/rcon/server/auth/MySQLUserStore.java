@@ -45,9 +45,9 @@ public class MySQLUserStore implements IUserStore
 			
 			// Prepare the statements
 			mLoadUser = mConnection.prepareStatement("SELECT `Password`,`Salt` FROM `RconAccounts` WHERE `Name`=?");
-			mSaveUser = mConnection.prepareStatement("UPDATE `Users` SET `Password`=?,`Salt`=? WHERE `Name`=?");
-			mAddUser = mConnection.prepareStatement("INSERT `Users` VALUES(?,?,?)");
-			mRemoveUser = mConnection.prepareStatement("DELETE FROM `Users` WHERE `Name`=?");
+			mSaveUser = mConnection.prepareStatement("UPDATE `RconAccounts` SET `Password`=?,`Salt`=? WHERE `Name`=?");
+			mAddUser = mConnection.prepareStatement("INSERT `RconAccounts` VALUES(?,?,?)");
+			mRemoveUser = mConnection.prepareStatement("DELETE FROM `RconAccounts` WHERE `Name`=?");
 		}
 		catch (ClassNotFoundException e)
 		{
@@ -88,7 +88,7 @@ public class MySQLUserStore implements IUserStore
 			// Table does not exist
 		}
 		
-		statement.executeUpdate("CREATE TABLE `RconAccounts` (`Name` VARCHAR PRIMARY KEY, `Password` VARCHAR(128) NOT NULL, `Salt` VARCHAR(32) NOT NULL)");
+		statement.executeUpdate("CREATE TABLE `RconAccounts` (`Name` VARCHAR(30) PRIMARY KEY, `Password` VARCHAR(128) NOT NULL, `Salt` VARCHAR(32) NOT NULL)");
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class MySQLUserStore implements IUserStore
 	{
 		try
 		{
-			mLoadUser.setString(0, user.getName());
+			mLoadUser.setString(1, user.getName());
 			ResultSet result = mLoadUser.executeQuery();
 			
 			if(result.next())
