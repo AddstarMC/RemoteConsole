@@ -45,7 +45,7 @@ public class UserCommandSender implements ConsoleCommandSender
 	@Override
 	public void sendRawMessage( String message )
 	{
-		mUser.getManager().sendPacket(new PacketOutMessage(message, MessageType.Directed));
+		mUser.getManager().sendPacket(new PacketOutMessage(RemoteConsoleAppender.formatMessage(message), MessageType.Directed));
 	}
 	
 	public void sendMessage( String message, MessageType type )
