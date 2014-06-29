@@ -56,6 +56,7 @@ public class ConsoleScreen extends Thread
 		{
 			mConsole = new ConsoleReader();
 			mConsole.setBellEnabled(false);
+			mConsole.addCompleter(new TabCompleter());
 		}
 		catch(IOException e)
 		{
@@ -85,7 +86,6 @@ public class ConsoleScreen extends Thread
 	public void setNetworkHandler(NetworkManager manager)
 	{
 		mManager = manager;
-		mConsole.addCompleter(new TabCompleter(manager));
 	}
 	
 	@Override

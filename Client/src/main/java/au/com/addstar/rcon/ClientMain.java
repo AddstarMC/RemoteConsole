@@ -4,6 +4,8 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.net.ConnectException;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.ConnectionState;
@@ -11,6 +13,7 @@ import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
 import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
+import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
 
 public class ClientMain implements GenericFutureListener<Future<? super Void>>
 {
@@ -100,6 +103,8 @@ public class ClientMain implements GenericFutureListener<Future<? super Void>>
 	private String mPassword;
 	
 	private boolean mRunning;
+	private CountDownLatch mTabCompleteLatch; 
+	private List<String> mTabCompleteResults;
 	
 	public ClientMain(ClientConnection connection, ConsoleScreen screen, String username, String password)
 	{
@@ -181,5 +186,19 @@ public class ClientMain implements GenericFutureListener<Future<? super Void>>
 			System.err.println("Connection lost");
 		
 		mRunning = false;
+	}
+	
+	public static List<String> doTabComplete(String input) throws InterruptedException
+	{
+		mInstance.mTabCompleteLatch = new CountDownLatch(1);
+		mInstance.mConnection.sendPacket(new PacketInTabComplete(input));
+		mInstance.mTabCompleteLatch.await();
+		return mInstance.mTabCompleteResults;
+	}
+	
+	public static void onTabCompleteDone(List<String> data)
+	{
+		mInstance.mTabCompleteResults = data;
+		mInstance.mTabCompleteLatch.countDown();
 	}
 }

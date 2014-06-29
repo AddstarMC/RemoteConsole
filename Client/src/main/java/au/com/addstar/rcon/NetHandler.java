@@ -23,7 +23,7 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 	@Override
 	public void handleTabComplete( PacketOutTabComplete packet )
 	{
-		// TODO: Probably wake the main thread
+		ClientMain.onTabCompleteDone(packet.results);
 	}
 
 }
