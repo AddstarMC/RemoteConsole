@@ -10,11 +10,15 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import au.com.addstar.rcon.commands.RconCommand;
+import au.com.addstar.rcon.config.MainConfig;
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
 import au.com.addstar.rcon.server.RconServer;
 import au.com.addstar.rcon.server.ServerLoginHandler;
+import au.com.addstar.rcon.server.auth.IUserStore;
+import au.com.addstar.rcon.server.auth.MySQLUserStore;
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -24,6 +28,7 @@ public class RemoteConsolePlugin extends Plugin
 	
 	private RconServer mServer;
 	private RemoteConsoleLogHandler mLogHandler;
+	private MainConfig mConfig;
 	
 	private Formatter mFormatter;
 	
@@ -34,6 +39,20 @@ public class RemoteConsolePlugin extends Plugin
 		
 		if(!getDataFolder().exists())
 			getDataFolder().mkdirs();
+		
+		mConfig = new MainConfig();
+		
+		try
+		{
+			mConfig.init(new File(getDataFolder(), "config.yml"));
+			mConfig.checkValid();
+		}
+		catch ( InvalidConfigurationException e )
+		{
+			System.err.println("[RCON] Unable to start RconServer. Error loading config:");
+			e.printStackTrace();
+			return;
+		}
 		
 		HandlerCreator creator = new HandlerCreator()
 		{
@@ -50,10 +69,18 @@ public class RemoteConsolePlugin extends Plugin
 			}
 		};
 		
-		mServer = new BungeeRconServer(22050, new YamlUserStore(new File(getDataFolder(), "users.yml")));
+		IUserStore userstore = null;
+		
+		if(mConfig.store.equalsIgnoreCase("mysql"))
+			userstore = new MySQLUserStore(mConfig.databaseHost, mConfig.databaseName, mConfig.databaseUsername, mConfig.databaseUsername);
+		else
+			userstore = new YamlUserStore(new File(getDataFolder(), "users.yml"));
+		
+		mServer = new BungeeRconServer(mConfig.port, userstore);
 		
 		try
 		{
+			getLogger().info("Starting RconServer on port " + mConfig.port);
 			mServer.start(creator);
 		}
 		catch(IOException e)
