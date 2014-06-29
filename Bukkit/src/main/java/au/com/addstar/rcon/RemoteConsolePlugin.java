@@ -13,16 +13,20 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import au.com.addstar.rcon.commands.RconCommand;
+import au.com.addstar.rcon.config.Config;
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
 import au.com.addstar.rcon.server.RconServer;
 import au.com.addstar.rcon.server.ServerLoginHandler;
+import au.com.addstar.rcon.server.auth.IUserStore;
+import au.com.addstar.rcon.server.auth.MySQLUserStore;
 
 public class RemoteConsolePlugin extends JavaPlugin
 {
 	private RconServer mServer;
 	private RemoteConsoleAppender mAppender;
+	private Config mConfig;
 	
 	public static RemoteConsolePlugin instance;
 	
@@ -33,6 +37,14 @@ public class RemoteConsolePlugin extends JavaPlugin
 		
 		if(!getDataFolder().exists())
 			getDataFolder().mkdirs();
+		
+		mConfig = new Config(new File(getDataFolder(), "config.yml"));
+		if(!mConfig.load())
+		{
+			System.err.println("[RCON] Unable to start RconServer. Error loading config.");
+			return;
+		}
+		mConfig.save();
 		
 		HandlerCreator creator = new HandlerCreator()
 		{
@@ -49,10 +61,18 @@ public class RemoteConsolePlugin extends JavaPlugin
 			}
 		};
 		
-		mServer = new BukkitRconServer(22050, new YamlUserStore(new File(getDataFolder(), "users.yml")));
+		IUserStore userstore = null;
+		
+		if(mConfig.store.equalsIgnoreCase("mysql"))
+			userstore = new MySQLUserStore(mConfig.databaseHost, mConfig.databaseName, mConfig.databaseUsername, mConfig.databaseUsername);
+		else
+			userstore = new YamlUserStore(new File(getDataFolder(), "users.yml"));
+		
+		mServer = new BukkitRconServer(mConfig.port, userstore);
 		
 		try
 		{
+			getLogger().info("Starting RconServer on port " + mConfig.port);
 			mServer.start(creator);
 		}
 		catch(IOException e)
