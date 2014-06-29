@@ -18,3 +18,7 @@ permissions:
     default: op
   rcon.account.manage.remove:
     default: op
+  rcon.who:
+    default: op
+  rcon.kick:
+    default: op
