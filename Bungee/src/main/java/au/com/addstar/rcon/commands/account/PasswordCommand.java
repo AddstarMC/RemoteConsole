@@ -1,6 +1,5 @@
 package au.com.addstar.rcon.commands.account;
 
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -73,15 +72,8 @@ public class PasswordCommand implements ICommand
 					sender.sendMessage(user.getName() + "'s password has been changed");
 					RemoteConsolePlugin.instance.getLogger().warning(user.getName() + "'s RCon password was changed by " + sender.getName());
 					
-					try
-					{
-						RconServer.instance.save();
-					}
-					catch ( IOException e )
-					{
-						sender.sendMessage("Unable to save changes, an internal error occured.");
-						e.printStackTrace();
-					}
+					if(!RconServer.instance.saveUser(user))
+						sender.sendMessage(ChatColor.RED + "Unable to save changes, an internal error occured.");
 				}
 				else
 					throw new BadArgumentException(1, "The entered password does not match.");

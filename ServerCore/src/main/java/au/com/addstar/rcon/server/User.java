@@ -7,6 +7,7 @@ public abstract class User
 {
 	private NetworkManager mManager;
 	private String mName;
+	private StoredPassword mPassword;
 	
 	public User(String name)
 	{
@@ -28,5 +29,15 @@ public abstract class User
 		mManager = manager;
 	}
 	
-	public abstract StoredPassword getPassword();
+	public StoredPassword getPassword()
+	{
+		return mPassword;
+	}
+	
+	public void setPassword(StoredPassword password)
+	{
+		mPassword = password;
+	}
+	
+	
 }

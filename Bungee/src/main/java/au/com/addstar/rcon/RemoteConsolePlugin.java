@@ -35,19 +35,7 @@ public class RemoteConsolePlugin extends Plugin
 		if(!getDataFolder().exists())
 			getDataFolder().mkdirs();
 		
-		mServer = new BungeeRconServer(22050, new File(getDataFolder(), "users.yml"));
-		
-		try
-		{
-			mServer.load();
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-			return;
-		}
-		
-		mServer.start(new HandlerCreator()
+		HandlerCreator creator = new HandlerCreator()
 		{
 			@Override
 			public INetworkHandler newHandlerLogin( NetworkManager manager )
@@ -60,7 +48,20 @@ public class RemoteConsolePlugin extends Plugin
 			{
 				return new NetHandler(manager);
 			}
-		});
+		};
+		
+		mServer = new BungeeRconServer(22050, new YamlUserStore(new File(getDataFolder(), "users.yml")));
+		
+		try
+		{
+			mServer.start(creator);
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			mServer = null;
+			return;
+		}
 		
 		ProxyServer.getInstance().getPluginManager().registerCommand(this, new RconCommand());
 		installLogHandler();
@@ -69,10 +70,19 @@ public class RemoteConsolePlugin extends Plugin
 	@Override
 	public void onDisable()
 	{
-		mServer.shutdown();
-		
 		Logger bungeeCordLog = ProxyServer.getInstance().getLogger();
 		bungeeCordLog.removeHandler(mLogHandler);
+		
+		try
+		{
+			if(mServer != null)
+				mServer.shutdown();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			return;
+		}
 	}
 	
 	private void installLogHandler()

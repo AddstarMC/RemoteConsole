@@ -34,18 +34,7 @@ public class RemoteConsolePlugin extends JavaPlugin
 		if(!getDataFolder().exists())
 			getDataFolder().mkdirs();
 		
-		mServer = new BukkitRconServer(22050, new File(getDataFolder(), "users.yml"), this);
-		try
-		{
-			mServer.load();
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-			return;
-		}
-		
-		mServer.start(new HandlerCreator()
+		HandlerCreator creator = new HandlerCreator()
 		{
 			@Override
 			public INetworkHandler newHandlerLogin( NetworkManager manager )
@@ -58,7 +47,22 @@ public class RemoteConsolePlugin extends JavaPlugin
 			{
 				return new NetHandler(manager);
 			}
-		});
+		};
+		
+		mServer = new BukkitRconServer(22050, new YamlUserStore(new File(getDataFolder(), "users.yml")));
+		
+		try
+		{
+			mServer.start(creator);
+		}
+		catch(IOException e)
+		{
+			System.err.println("[RCON] Unable to start RconServer:");
+			e.printStackTrace();
+			mServer = null;
+			
+			return;
+		}
 		
 		new RconCommand().registerAs(getCommand("rcon"));
 		
@@ -75,7 +79,16 @@ public class RemoteConsolePlugin extends JavaPlugin
 			mAppender = null;
 		}
 		
-		mServer.shutdown();
+		try
+		{
+			if(mServer != null)
+				mServer.shutdown();
+		}
+		catch(IOException e)
+		{
+			System.err.println("[RCON] An error occured while shutting down RconServer:");
+			e.printStackTrace();
+		}
 	}
 	
 	private boolean loadLogAppender()

@@ -3,11 +3,14 @@ package au.com.addstar.rcon.server;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkInitializer;
 import au.com.addstar.rcon.network.packets.RconPacket;
+import au.com.addstar.rcon.server.auth.IUserStore;
+import au.com.addstar.rcon.server.auth.StoredPassword;
 import au.com.addstar.rcon.util.CryptHelper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
@@ -25,20 +28,27 @@ public abstract class RconServer
 	
 	private ArrayList<ServerNetworkManager> mManagers;
 	
+	private IUserStore mUserStore;
+	private HashMap<String, User> mUsers;
+	
 	public static RconServer instance;
 	
-	public RconServer(int port)
+	public RconServer(int port, IUserStore storage)
 	{
 		instance = this;
 		mPort = port;
 		mManagers = new ArrayList<ServerNetworkManager>();
+		mUserStore = storage;
+		mUsers = new HashMap<String, User>();
 		
 		mServerKey = CryptHelper.generateKey();
 		RconPacket.initialize();
 	}
 	
-	public void start(final HandlerCreator handlerCreator)
+	public void start(final HandlerCreator handlerCreator) throws IOException
 	{
+		mUserStore.initialize();
+		
 		mBoss = new NioEventLoopGroup();
 		mWorker = new NioEventLoopGroup();
 		
@@ -52,10 +62,12 @@ public abstract class RconServer
 		builder.bind(mPort);
 	}
 	
-	public void shutdown()
+	public void shutdown() throws IOException
 	{
 		mBoss.shutdownGracefully().syncUninterruptibly();
 		mWorker.shutdownGracefully().syncUninterruptibly();
+		
+		mUserStore.shutdown();
 	}
 	
 	public final KeyPair getServerKey()
@@ -63,10 +75,81 @@ public abstract class RconServer
 		return mServerKey;
 	}
 	
-	public abstract User getUser(String name);
+	/**
+	 * Should create a new user with the supplied name. It should *not* load it
+	 */
+	protected abstract User createUser(String name);
 	
-	public abstract void load() throws IOException;
-	public abstract void save() throws IOException;
+	public User getUser(String name)
+	{
+		if(mUsers.containsKey(name))
+			return mUsers.get(name);
+		
+		User user = createUser(name);
+		try
+		{
+			if(!mUserStore.loadUser(user))
+				return null;
+		}
+		catch(IOException e)
+		{
+			System.err.println("[RCON] Unable to load account " + name + ":");
+			e.printStackTrace();
+			return null;
+		}
+		
+		mUsers.put(name, user);
+		return user;
+	}
+	
+	public boolean saveUser(User user)
+	{
+		try
+		{
+			mUserStore.saveUser(user);
+			return true;
+		}
+		catch(IOException e)
+		{
+			System.err.println("[RCON] Unable to save account " + user.getName() + ":");
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public abstract boolean createUser(String name, StoredPassword password);
+	
+	protected boolean addUser(User user)
+	{
+		try
+		{
+			mUserStore.addUser(user);
+			mUsers.put(user.getName(), user);
+			return true;
+		}
+		catch(IOException e)
+		{
+			System.err.println("[RCON] Unable to add account " + user.getName() + ":");
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean removeUser(User user)
+	{
+		try
+		{
+			mUserStore.removeUser(user);
+			mUsers.remove(user.getName());
+			return true;
+		}
+		catch(IOException e)
+		{
+			System.err.println("[RCON] Unable to remove account " + user.getName() + ":");
+			e.printStackTrace();
+			return false;
+		}
+	}
 	
 	public List<ServerNetworkManager> getConnections()
 	{

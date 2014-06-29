@@ -1,6 +1,5 @@
 package au.com.addstar.rcon.commands.account;
 
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -69,24 +68,10 @@ public class AddCommand implements ICommand
 		
 		String password = args[1];
 		
-		try
-		{
-			user = server.createUser(args[0]);
-			
-			user.setPassword(StoredPassword.generate(password));
-			
-			sender.sendMessage(ChatColor.GREEN + "Account " + user.getName() + " was successfully created.");
-			server.save();
-		}
-		catch(IllegalArgumentException e)
-		{
-			sender.sendMessage(ChatColor.RED + e.getMessage());
-		}
-		catch ( IOException e )
-		{
+		if(server.createUser(args[0], StoredPassword.generate(password)))
+			sender.sendMessage(ChatColor.GREEN + "Account " + args[0] + " was successfully created.");
+		else
 			sender.sendMessage(ChatColor.RED + "An error occured while saving the new account.");
-			e.printStackTrace();
-		}
 		
 		return true;
 	}

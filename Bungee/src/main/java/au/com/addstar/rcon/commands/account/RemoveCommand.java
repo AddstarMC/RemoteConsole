@@ -1,6 +1,5 @@
 package au.com.addstar.rcon.commands.account;
 
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -68,22 +67,10 @@ public class RemoveCommand implements ICommand
 		if(user.getManager() != null)
 			user.getManager().getNetHandler().disconnect("Your account has been removed");
 		
-		try
-		{
-			server.removeUser(user);
-			server.save();
-			
-			sender.sendMessage("That user has been removed.");
-		}
-		catch(IllegalArgumentException e)
-		{
-			sender.sendMessage(ChatColor.RED + e.getMessage());
-		}
-		catch ( IOException e )
-		{
+		if(server.removeUser(user))
+			sender.sendMessage(ChatColor.GREEN + "That user has been removed.");
+		else
 			sender.sendMessage(ChatColor.RED + "An error occured while saving account data.");
-			e.printStackTrace();
-		}
 		
 		return true;
 	}

@@ -1,6 +1,5 @@
 package au.com.addstar.rcon.commands.account;
 
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -8,7 +7,6 @@ import java.util.WeakHashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import au.com.addstar.rcon.BukkitRconServer;
 import au.com.addstar.rcon.BukkitUser;
 import au.com.addstar.rcon.RemoteConsolePlugin;
 import au.com.addstar.rcon.commands.BadArgumentException;
@@ -73,15 +71,8 @@ public class PasswordCommand implements ICommand
 					sender.sendMessage(user.getName() + "'s password has been changed");
 					RemoteConsolePlugin.instance.getLogger().warning(user.getName() + "'s RCon password was changed by " + sender.getName());
 					
-					try
-					{
-						((BukkitRconServer)RconServer.instance).save();
-					}
-					catch ( IOException e )
-					{
-						sender.sendMessage("Unable to save changes, an internal error occured.");
-						e.printStackTrace();
-					}
+					if(!RconServer.instance.saveUser(user))
+						sender.sendMessage(ChatColor.RED + "Unable to save changes, an internal error occured.");
 				}
 				else
 					throw new BadArgumentException(1, "The entered password does not match.");
