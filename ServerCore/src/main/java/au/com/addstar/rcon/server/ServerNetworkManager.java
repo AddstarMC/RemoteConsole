@@ -38,6 +38,8 @@ public class ServerNetworkManager extends NetworkManager implements GenericFutur
 	@Override
 	public void operationComplete( Future<? super Void> future ) throws Exception
 	{
-		mUser.setManager(null);
+		if(mUser != null)
+			mUser.setManager(null);
+		RconServer.instance.connectionClose(this, getDisconnectReason());
 	}
 }

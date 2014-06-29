@@ -28,14 +28,14 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 			public void run()
 			{
 				BukkitUser user = (BukkitUser)((ServerNetworkManager)getManager()).getUser();
-				ServerCommandEvent event = new ServerCommandEvent(user, packet.command);
+				ServerCommandEvent event = new ServerCommandEvent(user.asCommandSender(), packet.command);
 				Bukkit.getPluginManager().callEvent(event);
 				
 				String command = event.getCommand();
 				if(command == null || command.trim().isEmpty())
 					return;
 				
-				Bukkit.dispatchCommand(user, command);
+				Bukkit.dispatchCommand(user.asCommandSender(), command);
 			}
 		});
 	}
@@ -49,7 +49,7 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 			public void run()
 			{
 				BukkitUser user = (BukkitUser)((ServerNetworkManager)getManager()).getUser();
-				getManager().sendPacket(new PacketOutTabComplete(RemoteConsolePlugin.getCommandMap().tabComplete(user, packet.message)));
+				getManager().sendPacket(new PacketOutTabComplete(RemoteConsolePlugin.getCommandMap().tabComplete(user.asCommandSender(), packet.message)));
 			}
 		});
 	}

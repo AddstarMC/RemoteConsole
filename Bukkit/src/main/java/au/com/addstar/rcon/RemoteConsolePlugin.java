@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,6 +22,7 @@ import au.com.addstar.rcon.server.ServerLoginHandler;
 public class RemoteConsolePlugin extends JavaPlugin
 {
 	private RconServer mServer;
+	private RemoteConsoleAppender mAppender;
 	
 	public static RemoteConsolePlugin instance;
 	
@@ -56,12 +61,37 @@ public class RemoteConsolePlugin extends JavaPlugin
 		});
 		
 		new RconCommand().registerAs(getCommand("rcon"));
+		
+		loadLogAppender();
 	}
 	
 	@Override
 	public void onDisable()
 	{
+		if(mAppender != null)
+		{
+			Logger log = (Logger)LogManager.getRootLogger();
+			log.removeAppender(mAppender);
+			mAppender = null;
+		}
+		
 		mServer.shutdown();
+	}
+	
+	private boolean loadLogAppender()
+	{
+		Logger log = (Logger)LogManager.getRootLogger();
+		for(Appender appender : log.getAppenders().values())
+		{
+			if(appender instanceof RemoteConsoleAppender)
+				log.removeAppender(appender);
+		}
+		
+		mAppender = new RemoteConsoleAppender(new DefaultConfiguration());
+		mAppender.start();
+		log.addAppender(mAppender);
+		
+		return true;
 	}
 	
 	private static CommandMap mCommandMap = null;

@@ -7,27 +7,39 @@ import io.netty.buffer.ByteBuf;
 
 public class PacketOutMessage extends RconPacket
 {
+	public enum MessageType
+	{
+		Directed,
+		Log,
+		Exception,
+		Chat
+	}
+	
 	public String message;
+	public MessageType type;
 	
 	public PacketOutMessage()
 	{
 	}
 	
-	public PacketOutMessage(String message)
+	public PacketOutMessage(String message, MessageType type)
 	{
 		this.message = message;
+		this.type = type;
 	}
 	
 	@Override
 	public void read( ByteBuf packet )
 	{
 		message = readString(packet);
+		type = MessageType.values()[packet.readByte()];
 	}
 
 	@Override
 	public void write( ByteBuf packet )
 	{
 		writeString(message, packet);
+		packet.writeByte(type.ordinal());
 	}
 	
 	@Override

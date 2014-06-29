@@ -3,6 +3,7 @@ package au.com.addstar.rcon.server;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.util.ArrayList;
+import java.util.List;
 
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkInitializer;
@@ -66,4 +67,25 @@ public abstract class RconServer
 	
 	public abstract void load() throws IOException;
 	public abstract void save() throws IOException;
+	
+	public List<ServerNetworkManager> getConnections()
+	{
+		return mManagers;
+	}
+
+	void connectionClose( ServerNetworkManager manager, String reason )
+	{
+		mManagers.remove(manager);
+		String username;
+		
+		if(manager.getUser() != null)
+			username = manager.getUser().getName();
+		else
+			username = manager.getAddress().toString();
+		
+		if(reason != null)
+			System.out.println("[RCON] " + username + " Disconnected: " + reason);
+		else
+			System.out.println("[RCON] " + username + " Disconnected: Connection lost");
+	}
 }
