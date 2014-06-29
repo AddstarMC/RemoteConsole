@@ -7,6 +7,7 @@ import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
+import au.com.addstar.rcon.commands.RconCommand;
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
@@ -57,6 +58,7 @@ public class RemoteConsolePlugin extends Plugin
 			}
 		});
 		
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new RconCommand());
 		installLogHandler();
 	}
 	
