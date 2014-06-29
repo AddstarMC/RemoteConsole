@@ -1,0 +1,6 @@
+name: RemoteConsole
+version: ${pluginversion}
+author: Schmoller
+
+main: au.com.addstar.rcon.RemoteConsolePlugin
+
