@@ -28,7 +28,7 @@ public class UserCommandSender implements CommandSender
 	@Deprecated
 	public void sendMessage( String message )
 	{
-		mUser.getManager().sendPacket(new PacketOutMessage(message, MessageType.Directed));
+		mUser.getManager().sendPacket(new PacketOutMessage(RemoteConsolePlugin.formatMessage(message), MessageType.Directed));
 	}
 	
 	public void sendMessage( String message, MessageType type )

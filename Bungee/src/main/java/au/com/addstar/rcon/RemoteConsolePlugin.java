@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import au.com.addstar.rcon.commands.RconCommand;
@@ -22,6 +24,8 @@ public class RemoteConsolePlugin extends Plugin
 	
 	private RconServer mServer;
 	private RemoteConsoleLogHandler mLogHandler;
+	
+	private Formatter mFormatter;
 	
 	@Override
 	public void onEnable()
@@ -75,20 +79,27 @@ public class RemoteConsolePlugin extends Plugin
 	{
 		Logger bungeeCordLog = ProxyServer.getInstance().getLogger();
 		
-		Formatter format = null;
-		
+		mFormatter = null;
 		for(Handler handler : bungeeCordLog.getHandlers())
 		{
-			if(handler instanceof FileHandler)
-				format = handler.getFormatter();
+			if(handler instanceof FileHandler && handler.getFormatter() != null)
+				mFormatter = handler.getFormatter();
 			
-			if(format == null)
+			if(mFormatter != null)
 				break;
 		}
 		
 		mLogHandler = new RemoteConsoleLogHandler();
-		mLogHandler.setFormatter(format);
+		mLogHandler.setFormatter(mFormatter);
 		bungeeCordLog.addHandler(mLogHandler);
 	}
 	
+	public static String formatMessage(String message)
+	{
+		message = instance.mFormatter.format(new LogRecord(Level.INFO, message));
+		if(message.endsWith("\n"))
+			message = message.substring(0, message.length()-1);
+		
+		return message;
+	}
 }
