@@ -12,9 +12,8 @@ public class ClientMain
 	{
 		System.err.println("Better Remote Console version 1.0");
 		System.err.println();
-		System.err.println("Usage: <host> [options]");
+		System.err.println("Usage: <host[:port]> <host[:port]> ... [options]");
 		System.err.println();
-		System.err.println("-p <port> Specifies port number. Defaults to 22050");
 		System.err.println("-U <username> Specifies your username.");
 		System.err.println("-P <password> Specifies password to use");
 	}
@@ -34,58 +33,76 @@ public class ClientMain
 			return;
 		}
 		
-		String host = args[0];
-		
-		int port = 22050;
+		int hostPart = -1;
+
 		String username = "";
 		String password = "";
 		
-		if(args.length > 1)
+		for(hostPart = 0; hostPart < args.length; ++hostPart)
 		{
-			for(int i = 1; i < args.length - 1; i+= 2)
+			if(args[hostPart].startsWith("-"))
+				break;
+		}
+			
+		for(int i = hostPart; i < args.length - 1; i+= 2)
+		{
+			if(!args[i].startsWith("-") || args[i].length() == 1)
 			{
-				if(!args[i].startsWith("-") || args[i].length() == 1)
-				{
-					System.out.println("Unknown option: " + args[i]);
-					printUsage();
-					return;
-				}
-				
-				char opt = args[i].charAt(1);
-				
-				switch(opt)
-				{
-				case 'p':
-					try
-					{
-						port = Integer.parseInt(args[i+1]);
-						if(port <= 0 || port > 65535)
-						{
-							printUsage();
-							return;
-						}
-					}
-					catch(NumberFormatException e)
-					{
-						printUsage();
-					}
-					break;
-				case 'P':
-					password = args[i+1];
-					break;
-				case 'U':
-					username = args[i+1];
-					break;
-				default:
-					System.out.println("Unknown option: " + args[i]);
-					printUsage();
-					return;
-				}
+				System.out.println("Unknown option: " + args[i]);
+				printUsage();
+				return;
+			}
+			
+			char opt = args[i].charAt(1);
+			
+			switch(opt)
+			{
+			case 'P':
+				password = args[i+1];
+				break;
+			case 'U':
+				username = args[i+1];
+				break;
+			default:
+				System.out.println("Unknown option: " + args[i]);
+				printUsage();
+				return;
 			}
 		}
 		
 		mInstance = new ClientMain(new ConsoleScreen(), username, password);
-		getConnectionManager().addConnection(host, port);
+		
+		for(int i = 0; i < hostPart; ++i)
+		{
+			String fullHost = args[i];
+			String host;
+			int port = 22050;
+			
+			if(fullHost.contains(":"))
+			{
+				String[] split = fullHost.split(":");
+				host = split[0];
+				
+				try
+				{
+					port = Integer.parseInt(split[1]);
+					if(port <= 0 || port > 65535)
+					{
+						System.err.println("Port number in " + fullHost + " is out of range");
+						return;
+					}
+				}
+				catch(NumberFormatException e)
+				{
+					printUsage();
+				}
+			}
+			else
+				host = fullHost;
+			
+			getConnectionManager().addConnection(host, port);
+		}
+		
 		mInstance.run();
 	}
 	
