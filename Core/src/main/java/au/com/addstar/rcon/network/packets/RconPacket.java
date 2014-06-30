@@ -6,6 +6,7 @@ import au.com.addstar.rcon.network.packets.login.PacketInEncryptGo;
 import au.com.addstar.rcon.network.packets.login.PacketInLogin;
 import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
 import au.com.addstar.rcon.network.packets.login.PacketOutEncryptStart;
+import au.com.addstar.rcon.network.packets.login.PacketOutLoginDone;
 import au.com.addstar.rcon.network.packets.login.PacketOutLoginReady;
 import au.com.addstar.rcon.network.packets.main.PacketInCommand;
 import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
@@ -62,6 +63,7 @@ public abstract class RconPacket
 		ConnectionState.Login.addPacketType(2, PacketInEncryptGo.class);
 		ConnectionState.Login.addPacketType(3, PacketOutLoginReady.class);
 		ConnectionState.Login.addPacketType(4, PacketInLogin.class);
+		ConnectionState.Login.addPacketType(5, PacketOutLoginDone.class);
 		
 		ConnectionState.Main.addPacketType(10, PacketInCommand.class);
 		ConnectionState.Main.addPacketType(11, PacketOutMessage.class);

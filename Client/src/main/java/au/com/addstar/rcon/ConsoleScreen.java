@@ -10,7 +10,6 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.Ansi.Attribute;
 
-import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.packets.main.PacketInCommand;
 
 public class ConsoleScreen extends Thread
@@ -45,7 +44,6 @@ public class ConsoleScreen extends Thread
 	}
 	
 	private ConsoleReader mConsole;
-	private NetworkManager mManager;
 	
 	public ConsoleScreen()
 	{
@@ -83,11 +81,6 @@ public class ConsoleScreen extends Thread
 		}
 	}
 	
-	public void setNetworkHandler(NetworkManager manager)
-	{
-		mManager = manager;
-	}
-	
 	@Override
 	public void run()
 	{
@@ -101,11 +94,12 @@ public class ConsoleScreen extends Thread
 				{
 					if(command.equals("exit"))
 					{
-						mManager.close("Quitting");
+						ClientMain.getConnectionManager().closeAll("Quitting");
 						break;
 					}
 					
-					mManager.sendPacket(new PacketInCommand(command));
+					if(ClientMain.getConnectionManager().getActive() != null)
+						ClientMain.getConnectionManager().getActive().sendPacket(new PacketInCommand(command));
 				}
 			}
 		}

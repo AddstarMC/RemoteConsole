@@ -1,4 +1,4 @@
-package au.com.addstar.rcon;
+package au.com.addstar.rcon.network;
 
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -30,9 +30,16 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 	private String mUsername;
 	private String mPassword;
 	
+	private ClientConnection mConnection;
+	
 	public ClientLoginHandler(NetworkManager manager)
 	{
 		super(manager);
+	}
+	
+	public void setClientConnection(ClientConnection connection)
+	{
+		mConnection = connection;
 	}
 	
 	public void setLoginInfo(String username, String password)
@@ -86,8 +93,7 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 			return;
 		}
 		
-		System.err.println("Successfully logged in");
-		
 		getManager().transitionState(ConnectionState.Main);
+		mConnection.onLoginComplete(packet.serverName);
 	}
 }

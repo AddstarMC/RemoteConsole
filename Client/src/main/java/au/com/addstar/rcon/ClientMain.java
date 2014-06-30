@@ -1,21 +1,12 @@
 package au.com.addstar.rcon;
 
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-
-import java.net.ConnectException;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import au.com.addstar.rcon.network.ClientConnection;
-import au.com.addstar.rcon.network.ConnectionState;
-import au.com.addstar.rcon.network.HandlerCreator;
-import au.com.addstar.rcon.network.NetworkManager;
-import au.com.addstar.rcon.network.handlers.INetworkHandler;
-import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
 import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
 
-public class ClientMain implements GenericFutureListener<Future<? super Void>>
+public class ClientMain
 {
 	private static void printUsage()
 	{
@@ -93,76 +84,44 @@ public class ClientMain implements GenericFutureListener<Future<? super Void>>
 			}
 		}
 		
-		mInstance = new ClientMain(new ClientConnection(host, port), new ConsoleScreen(), username, password);
+		mInstance = new ClientMain(new ConsoleScreen(), username, password);
+		getConnectionManager().addConnection(host, port);
 		mInstance.run();
 	}
 	
-	private ClientConnection mConnection;
+	private ConnectionManager mManager;
 	private ConsoleScreen mConsole;
 	private String mUsername;
 	private String mPassword;
 	
-	private boolean mRunning;
 	private CountDownLatch mTabCompleteLatch; 
 	private List<String> mTabCompleteResults;
 	
-	public ClientMain(ClientConnection connection, ConsoleScreen screen, String username, String password)
+	public ClientMain(ConsoleScreen screen, String username, String password)
 	{
-		mConnection = connection;
+		mManager = new ConnectionManager();
 		mConsole = screen;
 		mUsername = username;
 		mPassword = password;
 	}
 	
+	public static ConnectionManager getConnectionManager()
+	{
+		return mInstance.mManager;
+	}
+	
 	public void run()
 	{
-		HandlerCreator creator = new HandlerCreator()
-		{
-			@Override
-			public INetworkHandler newHandlerLogin( NetworkManager manager )
-			{
-				return new ClientLoginHandler(manager);
-			}
-			
-			@Override
-			public INetworkHandler newHandlerMain( NetworkManager manager )
-			{
-				return new NetHandler(manager);
-			}
-		};
-		
 		try
 		{
-			mConnection.run(creator);
-			mConnection.addTerminationListener(this);
-		
-			mRunning = true;
-			NetworkManager manager = mConnection.getManager();
-			
-			manager.waitForActive();
-			mConsole.setNetworkHandler(manager);
-			
-			((ClientLoginHandler)manager.getNetHandler()).setLoginInfo(mUsername, mPassword);
+			mManager.connectAll(mUsername, mPassword);
 			mUsername = mPassword = null;
-			
-			mConnection.sendPacket(new PacketInLoginBegin());
-			
-			while(mRunning && manager.getConnectionState() != ConnectionState.Main)
-				Thread.sleep(100);
-			
-			if(!mRunning)
-				return;
 			
 			mConsole.start();
 			
-			mConnection.waitForShutdown();
-			mConnection.shutdown();
+			mManager.waitUntilClosed();
 		}
 		catch(InterruptedException e)
-		{
-			System.err.println(e.getMessage());
-		}
-		catch(ConnectException e)
 		{
 			System.err.println(e.getMessage());
 		}
@@ -173,27 +132,17 @@ public class ClientMain implements GenericFutureListener<Future<? super Void>>
 		mConsole.printString(message);
 	}
 	
-	@Override
-	public void operationComplete( Future<? super Void> future ) throws Exception
-	{
-		String message = mConnection.getManager().getDisconnectReason();
-		
-		System.err.print("Disconnected: ");
-		
-		if(message != null)
-			System.err.println(message);
-		else
-			System.err.println("Connection lost");
-		
-		mRunning = false;
-	}
-	
 	public static List<String> doTabComplete(String input) throws InterruptedException
 	{
-		mInstance.mTabCompleteLatch = new CountDownLatch(1);
-		mInstance.mConnection.sendPacket(new PacketInTabComplete(input));
-		mInstance.mTabCompleteLatch.await();
-		return mInstance.mTabCompleteResults;
+		if(mInstance.mManager.getActive() != null)
+		{
+			mInstance.mTabCompleteLatch = new CountDownLatch(1);
+			mInstance.mManager.getActive().sendPacket(new PacketInTabComplete(input));
+			mInstance.mTabCompleteLatch.await();
+			return mInstance.mTabCompleteResults;
+		}
+		else
+			return Collections.emptyList();
 	}
 	
 	public static void onTabCompleteDone(List<String> data)
