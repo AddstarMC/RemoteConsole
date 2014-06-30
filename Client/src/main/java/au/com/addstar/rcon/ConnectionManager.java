@@ -144,6 +144,9 @@ public class ConnectionManager
 			{
 				mConnectingConnections.notifyAll();
 			}
+			
+			if(mActiveConnection == null)
+				mActiveConnection = connection;
 		}
 		
 		synchronized(mConnectionLock)
