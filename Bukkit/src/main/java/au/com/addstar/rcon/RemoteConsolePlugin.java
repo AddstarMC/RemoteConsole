@@ -68,7 +68,11 @@ public class RemoteConsolePlugin extends JavaPlugin
 		else
 			userstore = new YamlUserStore(new File(getDataFolder(), "users.yml"));
 		
-		mServer = new BukkitRconServer(mConfig.port, userstore);
+		String serverName = mConfig.serverName;
+		if(serverName.isEmpty())
+			serverName = Bukkit.getServerName();
+		
+		mServer = new BukkitRconServer(mConfig.port, serverName, userstore);
 		
 		try
 		{

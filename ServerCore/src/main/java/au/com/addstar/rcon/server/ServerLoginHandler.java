@@ -13,6 +13,7 @@ import au.com.addstar.rcon.network.packets.login.PacketInEncryptGo;
 import au.com.addstar.rcon.network.packets.login.PacketInLogin;
 import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
 import au.com.addstar.rcon.network.packets.login.PacketOutEncryptStart;
+import au.com.addstar.rcon.network.packets.login.PacketOutLoginDone;
 import au.com.addstar.rcon.network.packets.login.PacketOutLoginReady;
 import au.com.addstar.rcon.util.CryptHelper;
 
@@ -72,7 +73,7 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		
 		getManager().enableEncryption(key);
 		
-		getManager().sendPacket(new PacketOutLoginReady(1));
+		getManager().sendPacket(new PacketOutLoginReady());
 	}
 	
 	@Override
@@ -107,7 +108,7 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		((ServerNetworkManager)getManager()).setUser(user);
 		
 		System.out.println("[RCON] " + packet.username + " logged in on " + getManager().getAddress());
-		getManager().sendPacket(new PacketOutLoginReady(2));
+		getManager().sendPacket(new PacketOutLoginDone(RconServer.instance.getServerName()));
 		
 		getManager().transitionState(ConnectionState.Main);
 	}

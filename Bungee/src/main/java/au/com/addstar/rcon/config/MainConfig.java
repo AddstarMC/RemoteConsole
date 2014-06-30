@@ -1,5 +1,6 @@
 package au.com.addstar.rcon.config;
 
+import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Comments;
 import net.cubespace.Yamler.Config.Config;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
@@ -11,6 +12,9 @@ public class MainConfig extends Config
 	
 	@Comments({"The storage mode (where the account data will be stored)","Valid values are:","file, mysql"})
 	public String store = "file";
+	
+	@Comment("The server name to display to the client.")
+	public String serverName = "Proxy";
 	
 	@Path("database.host")
 	public String databaseHost = "localhost:3306";

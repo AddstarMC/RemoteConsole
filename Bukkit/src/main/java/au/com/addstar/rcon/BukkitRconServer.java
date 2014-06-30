@@ -6,9 +6,9 @@ import au.com.addstar.rcon.server.auth.StoredPassword;
 
 public class BukkitRconServer extends RconServer
 {
-	public BukkitRconServer(int port, IUserStore userstore)
+	public BukkitRconServer(int port, String name, IUserStore userstore)
 	{
-		super(port, userstore);
+		super(port, name, userstore);
 	}
 	
 	protected BukkitUser createUser( String name )

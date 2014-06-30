@@ -17,6 +17,9 @@ public class Config extends AutoConfig
 	@ConfigField(comment="The storage mode (where the account data will be stored)\nValid values are:\nfile, mysql")
 	public String store = "file";
 	
+	@ConfigField(comment="The server name to display to the client. If left blank, the name configured in server.properties will be used.")
+	public String serverName = "";
+	
 	@ConfigField(name="host", category="database")
 	public String databaseHost = "localhost:3306";
 	@ConfigField(name="database", category="database")

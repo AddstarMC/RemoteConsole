@@ -21,6 +21,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 public abstract class RconServer
 {
 	private int mPort;
+	private String mName;
 	private EventLoopGroup mBoss;
 	private EventLoopGroup mWorker;
 	
@@ -33,13 +34,14 @@ public abstract class RconServer
 	
 	public static RconServer instance;
 	
-	public RconServer(int port, IUserStore storage)
+	public RconServer(int port, String name, IUserStore storage)
 	{
 		instance = this;
 		mPort = port;
 		mManagers = new ArrayList<ServerNetworkManager>();
 		mUserStore = storage;
 		mUsers = new HashMap<String, User>();
+		mName = name;
 		
 		mServerKey = CryptHelper.generateKey();
 		RconPacket.initialize();
@@ -154,6 +156,11 @@ public abstract class RconServer
 	public List<ServerNetworkManager> getConnections()
 	{
 		return mManagers;
+	}
+	
+	public String getServerName()
+	{
+		return mName;
 	}
 
 	void connectionClose( ServerNetworkManager manager, String reason )

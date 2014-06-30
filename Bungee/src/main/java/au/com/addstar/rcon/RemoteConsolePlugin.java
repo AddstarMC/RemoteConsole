@@ -76,7 +76,11 @@ public class RemoteConsolePlugin extends Plugin
 		else
 			userstore = new YamlUserStore(new File(getDataFolder(), "users.yml"));
 		
-		mServer = new BungeeRconServer(mConfig.port, userstore);
+		String serverName = mConfig.serverName;
+		if(serverName == null)
+			serverName = "Proxy";
+		
+		mServer = new BungeeRconServer(mConfig.port, serverName, userstore);
 		
 		try
 		{

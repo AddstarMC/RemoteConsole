@@ -12,6 +12,7 @@ import au.com.addstar.rcon.network.handlers.INetworkLoginHandlerClient;
 import au.com.addstar.rcon.network.packets.login.PacketInEncryptGo;
 import au.com.addstar.rcon.network.packets.login.PacketInLogin;
 import au.com.addstar.rcon.network.packets.login.PacketOutEncryptStart;
+import au.com.addstar.rcon.network.packets.login.PacketOutLoginDone;
 import au.com.addstar.rcon.network.packets.login.PacketOutLoginReady;
 import au.com.addstar.rcon.util.CryptHelper;
 
@@ -65,18 +66,6 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 	@Override
 	public void handleLoginReady( PacketOutLoginReady packet )
 	{
-		if(packet.state == 1)
-			handleLoginReady0();
-		else if(packet.state == 2)
-			handleLoginSuccess();
-		else
-			getManager().close("Packet received out of sequence");
-
-		
-	}
-	
-	private void handleLoginReady0()
-	{
 		if(mState != State.Login)
 		{
 			getManager().close("Packet received out of sequence");
@@ -88,7 +77,8 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 		mState = State.Accept;
 	}
 	
-	private void handleLoginSuccess()
+	@Override
+	public void handleLoginDone( PacketOutLoginDone packet )
 	{
 		if(mState != State.Accept)
 		{
@@ -100,5 +90,4 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 		
 		getManager().transitionState(ConnectionState.Main);
 	}
-
 }

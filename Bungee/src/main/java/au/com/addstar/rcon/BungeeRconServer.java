@@ -6,9 +6,9 @@ import au.com.addstar.rcon.server.auth.StoredPassword;
 
 public class BungeeRconServer extends RconServer
 {
-	public BungeeRconServer(int port, IUserStore userstore)
+	public BungeeRconServer(int port, String name, IUserStore userstore)
 	{
-		super(port, userstore);
+		super(port, name, userstore);
 	}
 	
 	protected BungeeUser createUser(String name)
