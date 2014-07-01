@@ -2,8 +2,6 @@ package au.com.addstar.rcon;
 
 import java.io.Serializable;
 
-import io.netty.util.CharsetUtil;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Appender;
@@ -44,7 +42,7 @@ public class RemoteConsoleAppender extends AbstractAppender
 		if(event.getThreadName().equals("Async Chat Thread"))
 			type = MessageType.Chat;
 		
-		String message = new String(mLayout.toByteArray(event), CharsetUtil.UTF_8);
+		String message = (String)mLayout.toSerializable(event);
 		if(message.endsWith("\n"))
 			message = message.substring(0, message.length()-1);
 		
@@ -58,7 +56,7 @@ public class RemoteConsoleAppender extends AbstractAppender
 	public static String formatMessage(String message)
 	{
 		LogEvent event = new Log4jLogEvent("Minecraft", null, RemoteConsoleAppender.class.getName(), Level.INFO, new SimpleMessage(message), null);
-		message = new String(mLayout.toByteArray(event), CharsetUtil.UTF_8);
+		message = (String)mLayout.toSerializable(event);
 		
 		if(message.endsWith("\n"))
 			message = message.substring(0, message.length()-1);
