@@ -8,10 +8,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import au.com.addstar.rcon.Event.EventType;
 import au.com.addstar.rcon.command.CommandDispatcher;
 import au.com.addstar.rcon.command.ConnectCommand;
+import au.com.addstar.rcon.command.CreateViewCommand;
 import au.com.addstar.rcon.command.DisconnectCommand;
 import au.com.addstar.rcon.command.ExitCommand;
+import au.com.addstar.rcon.command.FilterCommand;
+import au.com.addstar.rcon.command.RemoveViewCommand;
 import au.com.addstar.rcon.command.ServersCommand;
 import au.com.addstar.rcon.command.SwitchCommand;
+import au.com.addstar.rcon.command.ViewCommand;
+import au.com.addstar.rcon.command.ViewsCommand;
 import au.com.addstar.rcon.command.WhoCommand;
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.packets.main.PacketInCommand;
@@ -154,6 +159,12 @@ public class ClientMain
 		mDispatcher.registerCommand(new ConnectCommand());
 		mDispatcher.registerCommand(new DisconnectCommand());
 		mDispatcher.registerCommand(new WhoCommand());
+		
+		mDispatcher.registerCommand(new CreateViewCommand());
+		mDispatcher.registerCommand(new RemoveViewCommand());
+		mDispatcher.registerCommand(new ViewCommand());
+		mDispatcher.registerCommand(new ViewsCommand());
+		mDispatcher.registerCommand(new FilterCommand());
 	}
 	
 	public static ConnectionManager getConnectionManager()
@@ -218,13 +229,13 @@ eventLoop:	while(true)
 				case ConnectionStart:
 				{
 					ClientConnection connection = event.getArgument();
-					mViewManager.addView(connection.getId(), new SingleConsoleView(connection));
+					mViewManager.addView("*" + connection.getId(), new SingleConsoleView(connection));
 					break;
 				}
 				case ConnectionShutdown:
 				{
 					ClientConnection connection = event.getArgument();
-					mViewManager.removeView(connection.getId());
+					mViewManager.removeView("*" + connection.getId());
 					if(mManager.getActive() == connection)
 					{
 						mManager.switchActive(null);
@@ -283,7 +294,7 @@ eventLoop:	while(true)
 	private void onSwitchActive(ClientConnection active)
 	{
 		if(mViewManager.getActive() == ViewManager.nullView || mViewManager.getActive() instanceof SingleConsoleView)
-			mViewManager.setActive(active.getId());
+			mViewManager.setActive("*" + active.getId());
 	}
 	
 	public static void onTabCompleteDone(List<String> data)

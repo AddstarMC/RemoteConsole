@@ -1,6 +1,8 @@
 package au.com.addstar.rcon.view;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import au.com.addstar.rcon.ClientMain;
 import au.com.addstar.rcon.network.ClientConnection;
@@ -26,6 +28,11 @@ public class ViewManager
 	public synchronized ConsoleView getView(String name)
 	{
 		return mViews.get(name.toLowerCase());
+	}
+	
+	public synchronized Set<String> getViewNames()
+	{
+		return Collections.unmodifiableSet(mViews.keySet());
 	}
 	
 	public synchronized void removeView(String name) throws IllegalArgumentException
@@ -83,7 +90,7 @@ public class ViewManager
 		for(ConsoleView view : mViews.values())
 		{
 			if(view.isHandling(from))
-				view.getBuffer().addMessage(message, type);
+				view.getBuffer().addMessage(view.getPrefix(from, type) + message + view.getSuffix(from, type), type);
 		}
 	}
 	
