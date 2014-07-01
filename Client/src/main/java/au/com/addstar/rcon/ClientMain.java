@@ -1,7 +1,6 @@
 package au.com.addstar.rcon;
 
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,7 +16,8 @@ import au.com.addstar.rcon.command.WhoCommand;
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.packets.main.PacketInCommand;
 import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
-import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
+import au.com.addstar.rcon.view.SingleConsoleView;
+import au.com.addstar.rcon.view.ViewManager;
 
 public class ClientMain
 {
@@ -127,6 +127,7 @@ public class ClientMain
 	
 	private ConnectionManager mManager;
 	private ConsoleScreen mConsole;
+	private ViewManager mViewManager;
 	
 	private CountDownLatch mTabCompleteLatch; 
 	private List<String> mTabCompleteResults;
@@ -141,6 +142,7 @@ public class ClientMain
 		
 		mEventQueue = new LinkedBlockingQueue<Event>();
 		mDispatcher = new CommandDispatcher();
+		mViewManager = new ViewManager();
 		registerCommands();
 	}
 	
@@ -157,6 +159,11 @@ public class ClientMain
 	public static ConnectionManager getConnectionManager()
 	{
 		return mInstance.mManager;
+	}
+	
+	public static ViewManager getViewManager()
+	{
+		return mInstance.mViewManager;
 	}
 	
 	public static void handleCommand(ConsoleScreen screen, String command)
@@ -208,9 +215,16 @@ eventLoop:	while(true)
 				
 				switch(event.getType())
 				{
+				case ConnectionStart:
+				{
+					ClientConnection connection = event.getArgument();
+					mViewManager.addView(connection.getId(), new SingleConsoleView(connection));
+					break;
+				}
 				case ConnectionShutdown:
 				{
 					ClientConnection connection = event.getArgument();
+					mViewManager.removeView(connection.getId());
 					if(mManager.getActive() == connection)
 					{
 						mManager.switchActive(null);
@@ -229,15 +243,18 @@ eventLoop:	while(true)
 				case MessageUpdate:
 				{
 					ClientConnection connection = event.getArgument();
-					if(connection == mManager.getActive())
-					{
-						connection.getMessageBuffer().update(mConsole, EnumSet.allOf(MessageType.class));
-					}
+					mViewManager.update(connection);
 					break;
 				}
 				case Command:
 				{
 					mDispatcher.dispatchCommand(mConsole, event.<String>getArgument());
+					break;
+				}
+				case ActiveServerChange:
+				{
+					ClientConnection connection = event.getArgument();
+					onSwitchActive(connection);
 					break;
 				}
 				case Quit:
@@ -263,9 +280,20 @@ eventLoop:	while(true)
 		}
 	}
 	
+	private void onSwitchActive(ClientConnection active)
+	{
+		if(mViewManager.getActive() == ViewManager.nullView || mViewManager.getActive() instanceof SingleConsoleView)
+			mViewManager.setActive(active.getId());
+	}
+	
 	public static void onTabCompleteDone(List<String> data)
 	{
 		mInstance.mTabCompleteResults = data;
 		mInstance.mTabCompleteLatch.countDown();
+	}
+
+	public static ConsoleScreen getConsole()
+	{
+		return mInstance.mConsole;
 	}
 }

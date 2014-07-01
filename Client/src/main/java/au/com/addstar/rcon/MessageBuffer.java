@@ -48,7 +48,9 @@ public class MessageBuffer
 	
 	public synchronized void display(ConsoleScreen screen, EnumSet<MessageType> allowed)
 	{
-		screen.clear();
+		if(mNextLine != 0)
+			screen.clear();
+		
 		for(int i = 0; i < mLines.size(); ++i)
 		{
 			if(!allowed.contains(mLineTypes.get(i)))

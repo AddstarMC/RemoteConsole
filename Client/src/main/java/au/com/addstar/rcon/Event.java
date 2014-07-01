@@ -5,9 +5,11 @@ public class Event
 	public enum EventType
 	{
 		Quit,
+		ConnectionStart,
 		ConnectionShutdown,
 		MessageUpdate,
-		Command
+		Command,
+		ActiveServerChange
 	}
 	
 	private EventType mType;

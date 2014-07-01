@@ -135,6 +135,7 @@ public class ConnectionManager
 			String id = generateId(connection);
 			connection.setId(id);
 			mIdConnections.put(id, connection);
+			ClientMain.callEvent(new Event(EventType.ConnectionStart, connection));
 			ClientMain.printErrMessage("Successfully logged into " + id);
 			
 			connection.addTerminationListener(new GenericFutureListener<Future<? super Void>>()
@@ -154,7 +155,10 @@ public class ConnectionManager
 			}
 			
 			if(mActiveConnection == null)
+			{
 				mActiveConnection = connection;
+				ClientMain.callEvent(new Event(EventType.ActiveServerChange, connection));
+			}
 		}
 		
 		synchronized(mConnectionLock)
@@ -195,6 +199,7 @@ public class ConnectionManager
 		if(id == null)
 		{
 			mActiveConnection = null;
+			ClientMain.callEvent(new Event(EventType.ActiveServerChange, null));
 			return;
 		}
 		
@@ -205,6 +210,7 @@ public class ConnectionManager
 				throw new IllegalArgumentException("Unknown server " + id);
 			
 			mActiveConnection = connection;
+			ClientMain.callEvent(new Event(EventType.ActiveServerChange, connection));
 		}
 	}
 	
