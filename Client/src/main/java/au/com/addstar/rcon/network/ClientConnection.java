@@ -4,6 +4,8 @@ import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
+import au.com.addstar.rcon.ClientMain;
+import au.com.addstar.rcon.MessageBuffer;
 import au.com.addstar.rcon.network.packets.RconPacket;
 import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
 import io.netty.bootstrap.Bootstrap;
@@ -26,6 +28,7 @@ public class ClientConnection
 	private EventLoopGroup mWorker;
 	
 	private ArrayList<NetworkManager> mManagers;
+	private MessageBuffer mBuffer;
 	
 	private CountDownLatch mLoginLatch = new CountDownLatch(1);
 	
@@ -36,6 +39,7 @@ public class ClientConnection
 		
 		mManagers = new ArrayList<NetworkManager>();
 		mServerName = "Unknown Server";
+		mBuffer = new MessageBuffer(ClientMain.maxConsoleLines);
 		
 		RconPacket.initialize();
 	}
@@ -87,6 +91,11 @@ public class ClientConnection
 	public NetworkManager getManager()
 	{
 		return mManagers.get(0);
+	}
+	
+	public MessageBuffer getMessageBuffer()
+	{
+		return mBuffer;
 	}
 
 	public void addTerminationListener( GenericFutureListener<Future<? super Void>> listener )

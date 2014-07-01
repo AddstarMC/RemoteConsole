@@ -5,6 +5,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 
 import javax.crypto.SecretKey;
 
+import au.com.addstar.rcon.NetHandler;
 import au.com.addstar.rcon.network.ConnectionState;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.AbstractNetworkHandler;
@@ -94,6 +95,7 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 		}
 		
 		getManager().transitionState(ConnectionState.Main);
+		((NetHandler)getManager().getNetHandler()).setClientConnection(mConnection);
 		mConnection.onLoginComplete(packet.serverName);
 	}
 }

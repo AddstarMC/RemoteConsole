@@ -1,6 +1,7 @@
 package au.com.addstar.rcon;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -8,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import au.com.addstar.rcon.Event.EventType;
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
+import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 
 public class ClientMain
 {
@@ -22,6 +24,7 @@ public class ClientMain
 	}
 	
 	private static ClientMain mInstance;
+	public static int maxConsoleLines = 1000;
 	
 	public static void printMessage(String message)
 	{
@@ -157,6 +160,15 @@ eventLoop:	while(true)
 				case ConnectionShutdown:
 					event.<ClientConnection>getArgument().shutdown();
 					break;
+				case MessageUpdate:
+				{
+					ClientConnection connection = event.getArgument();
+					if(connection == mManager.getActive())
+					{
+						connection.getMessageBuffer().update(mConsole, EnumSet.allOf(MessageType.class));
+					}
+					break;
+				}
 				case Quit:
 					break eventLoop;
 				}

@@ -109,4 +109,16 @@ public class ConsoleScreen extends Thread
 			e.printStackTrace();
 		}
 	}
+	
+	public void clear()
+	{
+		try
+		{
+			mConsole.clearScreen();
+		}
+		catch ( IOException e )
+		{
+			e.printStackTrace();
+		}
+	}
 }
