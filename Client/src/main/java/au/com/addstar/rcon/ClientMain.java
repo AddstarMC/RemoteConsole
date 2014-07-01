@@ -13,6 +13,7 @@ import au.com.addstar.rcon.command.DisconnectCommand;
 import au.com.addstar.rcon.command.ExitCommand;
 import au.com.addstar.rcon.command.ServersCommand;
 import au.com.addstar.rcon.command.SwitchCommand;
+import au.com.addstar.rcon.command.WhoCommand;
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.packets.main.PacketInCommand;
 import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
@@ -150,6 +151,7 @@ public class ClientMain
 		mDispatcher.registerCommand(new SwitchCommand());
 		mDispatcher.registerCommand(new ConnectCommand());
 		mDispatcher.registerCommand(new DisconnectCommand());
+		mDispatcher.registerCommand(new WhoCommand());
 	}
 	
 	public static ConnectionManager getConnectionManager()

@@ -4,33 +4,32 @@ import java.util.List;
 
 import au.com.addstar.rcon.ClientMain;
 import au.com.addstar.rcon.ConsoleScreen;
-import au.com.addstar.rcon.Event.EventType;
-import au.com.addstar.rcon.Event;
+import au.com.addstar.rcon.network.ClientConnection;
 
-public class ExitCommand implements ICommand
+public class WhoCommand implements ICommand
 {
 	@Override
 	public String getName()
 	{
-		return "exit";
+		return "who";
 	}
-	
+
 	@Override
 	public String[] getAliases()
 	{
-		return new String[] {"quit"};
+		return null;
 	}
-	
-	@Override
-	public String getDescription()
-	{
-		return "Exits the remote console";
-	}
-	
+
 	@Override
 	public String getUsage()
 	{
 		return "<command>";
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return "Displays what server you are connected to";
 	}
 
 	@Override
@@ -39,7 +38,12 @@ public class ExitCommand implements ICommand
 		if(args.length != 0)
 			return false;
 		
-		ClientMain.callEvent(new Event(EventType.Quit));
+		ClientConnection connection = ClientMain.getConnectionManager().getActive();
+		
+		if(connection == null)
+			screen.printString("You are not connected to a server");
+		else
+			screen.printString("You are connected to " + connection.getId());
 		
 		return true;
 	}
