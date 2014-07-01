@@ -79,6 +79,25 @@ public class ConsoleScreen extends Thread
 		}
 	}
 	
+	public void printErrString(String string)
+	{
+		try
+		{
+			string = string.replaceAll("Â", "");
+            for (Character color : mColors.keySet()) 
+                string = string.replaceAll(mColorChar + color, mColors.get(color));
+			
+            AnsiConsole.err.println(ConsoleReader.RESET_LINE + string + Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT));
+			
+			mConsole.redrawLine();
+			mConsole.flush();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void run()
 	{

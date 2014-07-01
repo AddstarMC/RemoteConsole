@@ -35,7 +35,12 @@ public class ClientMain
 	
 	public static void printMessage(String message)
 	{
-		mInstance.printMessage0(message);
+		mInstance.mConsole.printString(message);
+	}
+	
+	public static void printErrMessage(String message)
+	{
+		mInstance.mConsole.printErrString(message);
 	}
 	
 	public static void main(String[] args) throws Exception
@@ -249,11 +254,6 @@ eventLoop:	while(true)
 		{
 			System.err.println(e.getMessage());
 		}
-	}
-	
-	private void printMessage0(String message)
-	{
-		mConsole.printString(message);
 	}
 	
 	public static void onTabCompleteDone(List<String> data)
