@@ -10,9 +10,6 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.Ansi.Attribute;
 
-import au.com.addstar.rcon.Event.EventType;
-import au.com.addstar.rcon.network.packets.main.PacketInCommand;
-
 public class ConsoleScreen extends Thread
 {
 	private static final Map<Character, String> mColors = new HashMap<Character, String>();
@@ -55,7 +52,7 @@ public class ConsoleScreen extends Thread
 		{
 			mConsole = new ConsoleReader();
 			mConsole.setBellEnabled(false);
-			mConsole.addCompleter(new TabCompleter());
+			mConsole.addCompleter(new TabCompleter(this));
 		}
 		catch(IOException e)
 		{
@@ -92,16 +89,7 @@ public class ConsoleScreen extends Thread
 				String command = mConsole.readLine(">");
 				
 				if(command != null) // Handle commands
-				{
-					if(command.equals("exit"))
-					{
-						ClientMain.callEvent(new Event(EventType.Quit));
-						break;
-					}
-					
-					if(ClientMain.getConnectionManager().getActive() != null)
-						ClientMain.getConnectionManager().getActive().sendPacket(new PacketInCommand(command));
-				}
+					ClientMain.handleCommand(this, command);
 			}
 		}
 		catch(IOException e)

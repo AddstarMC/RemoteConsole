@@ -5,33 +5,27 @@ import jline.console.completer.Completer;
 
 public class TabCompleter implements Completer
 {
-	public TabCompleter()
+	private ConsoleScreen mScreen;
+	public TabCompleter(ConsoleScreen screen)
 	{
+		mScreen = screen;
 	}
 	
 	@SuppressWarnings( { "unchecked", "rawtypes" } )
 	@Override
 	public int complete( String buffer, int cursor, List candidates )
 	{
-		try
-		{
-			List<String> results = ClientMain.doTabComplete(buffer);
-			
-			if(results == null)
-				return cursor;
-			
-			candidates.addAll(results);
-			
-			 int lastSpace = buffer.lastIndexOf(' ');
-	         if (lastSpace == -1)
-	             return cursor - buffer.length();
-	         else
-	             return cursor - (buffer.length() - lastSpace - 1);
-		}
-		catch(InterruptedException e)
-		{
+		List<String> results = ClientMain.handleTabComplete(mScreen, buffer);
+		
+		if(results == null)
 			return cursor;
-		}
+		
+		candidates.addAll(results);
+		
+		 int lastSpace = buffer.lastIndexOf(' ');
+         if (lastSpace == -1)
+             return cursor - buffer.length();
+         else
+             return cursor - (buffer.length() - lastSpace - 1);
 	}
-
 }

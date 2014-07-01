@@ -7,7 +7,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import au.com.addstar.rcon.Event.EventType;
+import au.com.addstar.rcon.command.CommandDispatcher;
+import au.com.addstar.rcon.command.ExitCommand;
 import au.com.addstar.rcon.network.ClientConnection;
+import au.com.addstar.rcon.network.packets.main.PacketInCommand;
 import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 
@@ -121,6 +124,7 @@ public class ClientMain
 	private List<String> mTabCompleteResults;
 	
 	private LinkedBlockingQueue<Event> mEventQueue;
+	private CommandDispatcher mDispatcher;
 	
 	public ClientMain(ConsoleScreen screen, String username, String password)
 	{
@@ -130,11 +134,48 @@ public class ClientMain
 		mPassword = password;
 		
 		mEventQueue = new LinkedBlockingQueue<Event>();
+		mDispatcher = new CommandDispatcher();
+		registerCommands();
+	}
+	
+	private void registerCommands()
+	{
+		mDispatcher.registerCommand(new ExitCommand());
 	}
 	
 	public static ConnectionManager getConnectionManager()
 	{
 		return mInstance.mManager;
+	}
+	
+	public static void handleCommand(ConsoleScreen screen, String command)
+	{
+		if(command.startsWith("."))
+			mInstance.mDispatcher.dispatchCommand(screen, command);
+		else if(mInstance.mManager.getActive() != null)
+			mInstance.mManager.getActive().sendPacket(new PacketInCommand(command));
+	}
+	
+	public static List<String> handleTabComplete(ConsoleScreen screen, String command)
+	{
+		if(command.startsWith("."))
+			return mInstance.mDispatcher.tabComplete(screen, command);
+		else if(mInstance.mManager.getActive() != null)
+		{
+			try
+			{
+				mInstance.mTabCompleteLatch = new CountDownLatch(1);
+				mInstance.mManager.getActive().sendPacket(new PacketInTabComplete(command));
+				mInstance.mTabCompleteLatch.await();
+				return mInstance.mTabCompleteResults;
+			}
+			catch(InterruptedException e)
+			{
+				return Collections.emptyList();
+			}
+		}
+		else
+			return Collections.emptyList();
 	}
 	
 	public static void callEvent(Event event)
@@ -195,19 +236,6 @@ eventLoop:	while(true)
 	private void printMessage0(String message)
 	{
 		mConsole.printString(message);
-	}
-	
-	public static List<String> doTabComplete(String input) throws InterruptedException
-	{
-		if(mInstance.mManager.getActive() != null)
-		{
-			mInstance.mTabCompleteLatch = new CountDownLatch(1);
-			mInstance.mManager.getActive().sendPacket(new PacketInTabComplete(input));
-			mInstance.mTabCompleteLatch.await();
-			return mInstance.mTabCompleteResults;
-		}
-		else
-			return Collections.emptyList();
 	}
 	
 	public static void onTabCompleteDone(List<String> data)
