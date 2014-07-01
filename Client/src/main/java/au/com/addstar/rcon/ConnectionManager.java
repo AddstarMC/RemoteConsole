@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import au.com.addstar.rcon.Event.EventType;
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.ClientLoginHandler;
 import au.com.addstar.rcon.network.HandlerCreator;
@@ -24,7 +25,6 @@ public class ConnectionManager
 
 	private ArrayDeque<ClientConnection> mPendingConnections;
 	private HashSet<ClientConnection> mConnectingConnections;
-	private ArrayDeque<ClientConnection> mClosedConnections;
 	
 	private Object mConnectionLock = new Object();
 	
@@ -37,7 +37,6 @@ public class ConnectionManager
 		
 		mPendingConnections = new ArrayDeque<ClientConnection>();
 		mConnectingConnections = new HashSet<ClientConnection>();
-		mClosedConnections = new ArrayDeque<ClientConnection>();
 		
 		mHandlerCreator = new HandlerCreator()
 		{
@@ -170,14 +169,11 @@ public class ConnectionManager
 		{
 			mIdConnections.remove(connection.getId());
 		}
+		ClientMain.callEvent(new Event(EventType.ConnectionShutdown, connection));
+		
 		synchronized(mConnectionLock)
 		{
 			mAllConnections.remove(connection);
-			mClosedConnections.add(connection);
-		}
-		synchronized(mClosedConnections)
-		{
-			mClosedConnections.notifyAll();
 		}
 	}
 	
@@ -245,22 +241,11 @@ public class ConnectionManager
 		{
 			synchronized(mConnectionLock)
 			{
-				if(mAllConnections.isEmpty() && mClosedConnections.isEmpty())
+				if(mAllConnections.isEmpty())
 					break;
 				
-				while(!mClosedConnections.isEmpty())
-				{
-					ClientConnection connection = mClosedConnections.poll();
-					connection.shutdown();
-				}
-				
-				if(mAllConnections.isEmpty() && mClosedConnections.isEmpty())
-					break;
-			}
-			
-			synchronized(mClosedConnections)
-			{
-				mClosedConnections.wait();
+				ClientConnection connection = mAllConnections.get(0);
+				connection.waitForShutdown();
 			}
 		}
 	}

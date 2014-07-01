@@ -10,6 +10,7 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.Ansi.Attribute;
 
+import au.com.addstar.rcon.Event.EventType;
 import au.com.addstar.rcon.network.packets.main.PacketInCommand;
 
 public class ConsoleScreen extends Thread
@@ -94,7 +95,7 @@ public class ConsoleScreen extends Thread
 				{
 					if(command.equals("exit"))
 					{
-						ClientMain.getConnectionManager().closeAll("Quitting");
+						ClientMain.callEvent(new Event(EventType.Quit));
 						break;
 					}
 					

@@ -3,7 +3,10 @@ package au.com.addstar.rcon;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
 
+import au.com.addstar.rcon.Event.EventType;
+import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
 
 public class ClientMain
@@ -114,17 +117,26 @@ public class ClientMain
 	private CountDownLatch mTabCompleteLatch; 
 	private List<String> mTabCompleteResults;
 	
+	private LinkedBlockingQueue<Event> mEventQueue;
+	
 	public ClientMain(ConsoleScreen screen, String username, String password)
 	{
 		mManager = new ConnectionManager();
 		mConsole = screen;
 		mUsername = username;
 		mPassword = password;
+		
+		mEventQueue = new LinkedBlockingQueue<Event>();
 	}
 	
 	public static ConnectionManager getConnectionManager()
 	{
 		return mInstance.mManager;
+	}
+	
+	public static void callEvent(Event event)
+	{
+		mInstance.mEventQueue.add(event);
 	}
 	
 	public void run()
@@ -136,7 +148,31 @@ public class ClientMain
 			
 			mConsole.start();
 			
+eventLoop:	while(true)
+			{
+				Event event = mEventQueue.take();
+				
+				switch(event.getType())
+				{
+				case ConnectionShutdown:
+					event.<ClientConnection>getArgument().shutdown();
+					break;
+				case Quit:
+					break eventLoop;
+				}
+				
+			}
+			
+			mManager.closeAll("Quitting");
 			mManager.waitUntilClosed();
+			
+			// Shutdown all remaining threads
+			while(!mEventQueue.isEmpty())
+			{
+				Event event = mEventQueue.take();
+				if(event.getType() == EventType.ConnectionShutdown)
+					event.<ClientConnection>getArgument().shutdown();
+			}
 		}
 		catch(InterruptedException e)
 		{
