@@ -160,7 +160,7 @@ public class ClientMain
 	public static void handleCommand(ConsoleScreen screen, String command)
 	{
 		if(command.startsWith("."))
-			mInstance.mDispatcher.dispatchCommand(screen, command);
+			mInstance.mEventQueue.add(new Event(EventType.Command, command));
 		else if(mInstance.mManager.getActive() != null)
 			mInstance.mManager.getActive().sendPacket(new PacketInCommand(command));
 	}
@@ -231,6 +231,11 @@ eventLoop:	while(true)
 					{
 						connection.getMessageBuffer().update(mConsole, EnumSet.allOf(MessageType.class));
 					}
+					break;
+				}
+				case Command:
+				{
+					mDispatcher.dispatchCommand(mConsole, event.<String>getArgument());
 					break;
 				}
 				case Quit:

@@ -6,7 +6,8 @@ public class Event
 	{
 		Quit,
 		ConnectionShutdown,
-		MessageUpdate
+		MessageUpdate,
+		Command
 	}
 	
 	private EventType mType;
