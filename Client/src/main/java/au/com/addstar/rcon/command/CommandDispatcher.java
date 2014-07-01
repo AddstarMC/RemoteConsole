@@ -49,6 +49,9 @@ public class CommandDispatcher
 		}
 		catch(IllegalArgumentException e)
 		{
+			if(e.getMessage() == null)
+				throw e;
+			
 			screen.printString(e.getMessage());
 		}
 	}

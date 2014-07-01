@@ -8,7 +8,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import au.com.addstar.rcon.Event.EventType;
 import au.com.addstar.rcon.command.CommandDispatcher;
+import au.com.addstar.rcon.command.ConnectCommand;
+import au.com.addstar.rcon.command.DisconnectCommand;
 import au.com.addstar.rcon.command.ExitCommand;
+import au.com.addstar.rcon.command.ServersCommand;
+import au.com.addstar.rcon.command.SwitchCommand;
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.packets.main.PacketInCommand;
 import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
@@ -117,8 +121,6 @@ public class ClientMain
 	
 	private ConnectionManager mManager;
 	private ConsoleScreen mConsole;
-	private String mUsername;
-	private String mPassword;
 	
 	private CountDownLatch mTabCompleteLatch; 
 	private List<String> mTabCompleteResults;
@@ -128,10 +130,8 @@ public class ClientMain
 	
 	public ClientMain(ConsoleScreen screen, String username, String password)
 	{
-		mManager = new ConnectionManager();
+		mManager = new ConnectionManager(username, password);
 		mConsole = screen;
-		mUsername = username;
-		mPassword = password;
 		
 		mEventQueue = new LinkedBlockingQueue<Event>();
 		mDispatcher = new CommandDispatcher();
@@ -141,6 +141,10 @@ public class ClientMain
 	private void registerCommands()
 	{
 		mDispatcher.registerCommand(new ExitCommand());
+		mDispatcher.registerCommand(new ServersCommand());
+		mDispatcher.registerCommand(new SwitchCommand());
+		mDispatcher.registerCommand(new ConnectCommand());
+		mDispatcher.registerCommand(new DisconnectCommand());
 	}
 	
 	public static ConnectionManager getConnectionManager()
@@ -187,8 +191,7 @@ public class ClientMain
 	{
 		try
 		{
-			mManager.connectAll(mUsername, mPassword);
-			mUsername = mPassword = null;
+			mManager.connectAll();
 			
 			mConsole.start();
 			
@@ -199,8 +202,23 @@ eventLoop:	while(true)
 				switch(event.getType())
 				{
 				case ConnectionShutdown:
-					event.<ClientConnection>getArgument().shutdown();
+				{
+					ClientConnection connection = event.getArgument();
+					if(mManager.getActive() == connection)
+					{
+						mManager.switchActive(null);
+						for(String id : mManager.getConnectionNames())
+						{
+							if(!id.equals(connection.getId()))
+							{
+								mManager.switchActive(id);
+								break;
+							}
+						}
+					}
+					connection.shutdown();
 					break;
+				}
 				case MessageUpdate:
 				{
 					ClientConnection connection = event.getArgument();

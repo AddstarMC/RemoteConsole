@@ -30,8 +30,13 @@ public class ConnectionManager
 	
 	private HandlerCreator mHandlerCreator;
 	
-	public ConnectionManager()
+	private String mUsername;
+	private String mPassword;
+	
+	public ConnectionManager(String username, String password)
 	{
+		mUsername = username;
+		mPassword = password;
 		mAllConnections = new ArrayList<ClientConnection>();
 		mIdConnections = new HashMap<String, ClientConnection>();
 		
@@ -66,11 +71,9 @@ public class ConnectionManager
 	
 	/**
 	 * Connects to all pending connections
-	 * @param username The username to connect with
-	 * @param password The password to connect with
 	 * @throws InterruptedException
 	 */
-	public void connectAll(String username, String password) throws InterruptedException
+	public void connectAll() throws InterruptedException
 	{
 		while(!mPendingConnections.isEmpty())
 		{
@@ -79,7 +82,7 @@ public class ConnectionManager
 			{
 				connection.connect(mHandlerCreator);
 				mConnectingConnections.add(connection);
-				connection.startLogin(username, password);
+				connection.startLogin(mUsername, mPassword);
 				ConnectionThread thread = new ConnectionThread(connection);
 				thread.start();
 			}
@@ -183,6 +186,12 @@ public class ConnectionManager
 	 */
 	public void switchActive(String id)
 	{
+		if(id == null)
+		{
+			mActiveConnection = null;
+			return;
+		}
+		
 		synchronized(mIdConnections)
 		{
 			ClientConnection connection = mIdConnections.get(id);
