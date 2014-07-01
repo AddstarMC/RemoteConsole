@@ -4,6 +4,7 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.net.ConnectException;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,6 +86,11 @@ public class ConnectionManager
 				connection.startLogin(mUsername, mPassword);
 				ConnectionThread thread = new ConnectionThread(connection);
 				thread.start();
+			}
+			catch(UnresolvedAddressException e)
+			{
+				System.err.println("Failed to connect to " + connection.toString());
+				connection.shutdown();
 			}
 			catch(ConnectException e)
 			{
