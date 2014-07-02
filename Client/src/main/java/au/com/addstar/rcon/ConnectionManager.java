@@ -9,6 +9,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import au.com.addstar.rcon.Event.EventType;
@@ -27,6 +28,9 @@ public class ConnectionManager
 	private ArrayDeque<ClientConnection> mPendingConnections;
 	private HashSet<ClientConnection> mConnectingConnections;
 	
+	private ArrayList<ClientConnection> mReconnectConnections;
+	private ReconnectionThread mReconnectThread;
+	
 	private Object mConnectionLock = new Object();
 	
 	private HandlerCreator mHandlerCreator;
@@ -43,6 +47,7 @@ public class ConnectionManager
 		
 		mPendingConnections = new ArrayDeque<ClientConnection>();
 		mConnectingConnections = new HashSet<ClientConnection>();
+		mReconnectConnections = new ArrayList<ClientConnection>();
 		
 		mHandlerCreator = new HandlerCreator()
 		{
@@ -71,6 +76,17 @@ public class ConnectionManager
 	}
 	
 	/**
+	 * Adds a server to connect to upon {@link #connectAll}
+	 * @param host The host name to connect to
+	 * @param port The port number for the host
+	 * @param reconnect When true, will reconnect upon connection lost
+	 */
+	public void addConnection(String host, int port, boolean reconnect)
+	{
+		mPendingConnections.add(new ClientConnection(host, port, reconnect));
+	}
+	
+	/**
 	 * Connects to all pending connections
 	 * @throws InterruptedException
 	 */
@@ -79,23 +95,61 @@ public class ConnectionManager
 		while(!mPendingConnections.isEmpty())
 		{
 			ClientConnection connection = mPendingConnections.poll();
-			try
-			{
-				connection.connect(mHandlerCreator);
-				mConnectingConnections.add(connection);
-				connection.startLogin(mUsername, mPassword);
-				ConnectionThread thread = new ConnectionThread(connection);
-				thread.start();
-			}
-			catch(UnresolvedAddressException e)
-			{
+			connect(connection, false);
+		}
+	}
+	
+	/**
+	 * Connects to the specified connection. NOTE: This does not check if the connection is already established
+	 * @param connection The connection to connect 
+	 * @param silent If true, no messages will be printed upon fail
+	 * @return True if connection was formed.
+	 * @throws InterruptedException
+	 */
+	private boolean connect(ClientConnection connection, boolean silent) throws InterruptedException
+	{
+		try
+		{
+			connection.connect(mHandlerCreator);
+			mConnectingConnections.add(connection);
+			connection.startLogin(mUsername, mPassword);
+			ConnectionThread thread = new ConnectionThread(connection);
+			thread.start();
+			return true;
+		}
+		catch(UnresolvedAddressException e)
+		{
+			if(!silent)
 				ClientMain.printErrMessage("Failed to connect to " + connection.toString());
-				connection.shutdown();
-			}
-			catch(ConnectException e)
-			{
+			connection.shutdown();
+		}
+		catch(ConnectException e)
+		{
+			if(!silent)
 				ClientMain.printErrMessage("Failed to connect to " + connection.toString());
-				connection.shutdown();
+			
+			connection.shutdown();
+			if(connection.shouldReconnect())
+				scheduleReconnect(connection);
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Schedules this connection to reconnect when possible
+	 */
+	private void scheduleReconnect(ClientConnection connection)
+	{
+		synchronized(mReconnectConnections)
+		{
+			if(!mReconnectConnections.contains(connection))
+				mReconnectConnections.add(connection);
+			
+			if(mReconnectThread == null)
+			{
+				mReconnectThread = new ReconnectionThread();
+				mReconnectThread.start();
 			}
 		}
 	}
@@ -188,6 +242,9 @@ public class ConnectionManager
 		{
 			mAllConnections.remove(connection);
 		}
+		
+		if(connection.shouldReconnect())
+			scheduleReconnect(connection);
 	}
 	
 	/**
@@ -241,9 +298,15 @@ public class ConnectionManager
 	
 	public void closeAll(String reason)
 	{
+		if(mReconnectThread != null)
+			mReconnectThread.interrupt();
+		
 		ArrayList<ClientConnection> connections = new ArrayList<ClientConnection>(mAllConnections);
 		for(ClientConnection connection : connections)
+		{
+			connection.setShouldReconnect(false);
 			connection.getManager().close(reason);
+		}
 	}
 	
 	public void waitUntilClosed() throws InterruptedException
@@ -304,7 +367,37 @@ public class ConnectionManager
 			interrupt();
 			mConnection.shutdown();
 		}
-		
-		
+	}
+	
+	/**
+	 * Attempts to reconnect to disconnected servers every 2 seconds
+	 */
+	private class ReconnectionThread extends Thread
+	{
+		@Override
+		public void run()
+		{
+			try
+			{
+				while(true)
+				{
+					Thread.sleep(2000);
+					
+					synchronized(mReconnectConnections)
+					{
+						Iterator<ClientConnection> it = mReconnectConnections.iterator();
+						while(it.hasNext())
+						{
+							ClientConnection connection = it.next();
+							if(connect(connection, true))
+								it.remove();
+						}
+					}
+				}
+			}
+			catch(InterruptedException e)
+			{
+			}
+		}
 	}
 }

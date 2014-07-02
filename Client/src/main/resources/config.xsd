@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="rcon">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="servers" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="server" maxOccurs="unbounded" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="reconnect" type="xs:boolean" default="false"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="views" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="default" minOccurs="0" type="xs:string"/>
+							<xs:element name="view" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="filters" type="filter" minOccurs="0"/>
+										<xs:element name="servers" minOccurs="0">
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="includes" minOccurs="0" type="basicserverlist"/>
+													<xs:element name="excludes" minOccurs="0" type="basicserverlist"/>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+									<xs:attribute name="name" use="required"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="filter">
+		<xs:all>
+			<xs:element name="directed" minOccurs="0"/>
+			<xs:element name="chat" minOccurs="0"/>
+			<xs:element name="exception" minOccurs="0"/>
+			<xs:element name="log" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="basicserverlist">
+		<xs:sequence>
+			<xs:element name="server" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

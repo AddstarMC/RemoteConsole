@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import au.com.addstar.rcon.ClientMain;
+import au.com.addstar.rcon.IConnectionListener;
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 
@@ -23,6 +24,8 @@ public class ViewManager
 	public synchronized void addView(String name, ConsoleView view)
 	{
 		mViews.put(name.toLowerCase(), view);
+		if(view instanceof IConnectionListener)
+			ClientMain.registerConnectionListener((IConnectionListener)view);
 	}
 	
 	public synchronized ConsoleView getView(String name)
@@ -40,6 +43,9 @@ public class ViewManager
 		ConsoleView view = mViews.remove(name.toLowerCase());
 		if(view == null)
 			throw new IllegalArgumentException("Unknown view " + name);
+		
+		if(view instanceof IConnectionListener)
+			ClientMain.deregisterConnectionListener((IConnectionListener)view);
 		
 		if(mActiveView == view)
 		{
@@ -72,11 +78,17 @@ public class ViewManager
 	
 	public synchronized void setActive(String name) throws IllegalArgumentException
 	{
-		ConsoleView view = getView(name);
-		if(view == null)
-			throw new IllegalArgumentException("Unknown view " + name);
+		if(name == null)
+			mActiveView = nullView;
+		else
+		{
+			ConsoleView view = getView(name);
+			if(view == null)
+				throw new IllegalArgumentException("Unknown view " + name);
+			
+			mActiveView = view;
+		}
 		
-		mActiveView = view;
 		mActiveView.getBuffer().display(ClientMain.getConsole(), mActiveView.getFilter());
 	}
 	

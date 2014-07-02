@@ -23,6 +23,7 @@ public class ClientConnection
 	private String mHost;
 	private String mServerName;
 	private String mId;
+	private boolean mReconnect;
 	
 	private Channel mChannel;
 	private EventLoopGroup mWorker;
@@ -30,12 +31,18 @@ public class ClientConnection
 	private ArrayList<NetworkManager> mManagers;
 	private MessageBuffer mBuffer;
 	
-	private CountDownLatch mLoginLatch = new CountDownLatch(1);
+	private CountDownLatch mLoginLatch;
 	
 	public ClientConnection(String host, int port)
 	{
+		this(host, port, false);
+	}
+	
+	public ClientConnection(String host, int port, boolean reconnect)
+	{
 		mHost = host;
 		mPort = port;
+		mReconnect = reconnect;
 		
 		mManagers = new ArrayList<NetworkManager>();
 		mServerName = "Unknown Server";
@@ -46,6 +53,7 @@ public class ClientConnection
 	
 	public void connect(HandlerCreator handlerCreator) throws ConnectException, InterruptedException
 	{
+		mManagers.clear();
 		mWorker = new NioEventLoopGroup();
 		
 		Bootstrap builder = new Bootstrap();
@@ -63,6 +71,7 @@ public class ClientConnection
 	{
 		((ClientLoginHandler)getManager().getNetHandler()).setLoginInfo(username, password);
 		((ClientLoginHandler)getManager().getNetHandler()).setClientConnection(this);
+		mLoginLatch = new CountDownLatch(1);
 		sendPacket(new PacketInLoginBegin());
 	}
 	
@@ -116,6 +125,15 @@ public class ClientConnection
 	public boolean isLoggedIn()
 	{
 		return getManager().getConnectionState() == ConnectionState.Main;
+	}
+	
+	public void setShouldReconnect(boolean value)
+	{
+		mReconnect = value;
+	}
+	public boolean shouldReconnect()
+	{
+		return mReconnect;
 	}
 
 	public void waitForShutdown() throws InterruptedException

@@ -44,6 +44,7 @@ public class DisconnectCommand implements ICommand
 		if(connection == null)
 			throw new IllegalArgumentException("Unknown server " + args[0]);
 		
+		connection.setShouldReconnect(false);
 		connection.getManager().close("Disconnecting");
 		return true;
 	}

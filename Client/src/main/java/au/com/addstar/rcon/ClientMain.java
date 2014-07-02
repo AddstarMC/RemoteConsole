@@ -1,5 +1,7 @@
 package au.com.addstar.rcon;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -34,6 +36,7 @@ public class ClientMain
 		System.err.println();
 		System.err.println("-U <username> Specifies your username.");
 		System.err.println("-P <password> Specifies password to use");
+		System.err.println("-c <configfile> Specifies a config file to load");
 	}
 	
 	private static ClientMain mInstance;
@@ -61,6 +64,7 @@ public class ClientMain
 
 		String username = "";
 		String password = "";
+		String config = null;
 		
 		for(hostPart = 0; hostPart < args.length; ++hostPart)
 		{
@@ -86,6 +90,9 @@ public class ClientMain
 				break;
 			case 'U':
 				username = args[i+1];
+				break;
+			case 'c':
+				config = args[i+1];
 				break;
 			default:
 				System.out.println("Unknown option: " + args[i]);
@@ -127,12 +134,18 @@ public class ClientMain
 			getConnectionManager().addConnection(host, port);
 		}
 		
+		if(config != null)
+		{
+			ConfigLoader.loadConfig(new File(config));
+		}
+		
 		mInstance.run();
 	}
 	
 	private ConnectionManager mManager;
 	private ConsoleScreen mConsole;
 	private ViewManager mViewManager;
+	private ArrayList<IConnectionListener> mConnectionListeners;
 	
 	private CountDownLatch mTabCompleteLatch; 
 	private List<String> mTabCompleteResults;
@@ -148,6 +161,7 @@ public class ClientMain
 		mEventQueue = new LinkedBlockingQueue<Event>();
 		mDispatcher = new CommandDispatcher();
 		mViewManager = new ViewManager();
+		mConnectionListeners = new ArrayList<IConnectionListener>();
 		registerCommands();
 	}
 	
@@ -212,6 +226,16 @@ public class ClientMain
 		mInstance.mEventQueue.add(event);
 	}
 	
+	public static void registerConnectionListener(IConnectionListener listener)
+	{
+		mInstance.mConnectionListeners.add(listener);
+	}
+	
+	public static void deregisterConnectionListener(IConnectionListener listener)
+	{
+		mInstance.mConnectionListeners.remove(listener);
+	}
+	
 	public void run()
 	{
 		try
@@ -230,6 +254,8 @@ eventLoop:	while(true)
 				{
 					ClientConnection connection = event.getArgument();
 					mViewManager.addView("*" + connection.getId(), new SingleConsoleView(connection));
+					for(IConnectionListener listener : mConnectionListeners)
+						listener.connectionJoin(connection);
 					break;
 				}
 				case ConnectionShutdown:
@@ -248,6 +274,10 @@ eventLoop:	while(true)
 							}
 						}
 					}
+					
+					for(IConnectionListener listener : mConnectionListeners)
+						listener.connectionEnd(connection);
+					
 					connection.shutdown();
 					break;
 				}
@@ -294,7 +324,12 @@ eventLoop:	while(true)
 	private void onSwitchActive(ClientConnection active)
 	{
 		if(mViewManager.getActive() == ViewManager.nullView || mViewManager.getActive() instanceof SingleConsoleView)
-			mViewManager.setActive("*" + active.getId());
+		{
+			if(active == null)
+				mViewManager.setActive(null);
+			else
+				mViewManager.setActive("*" + active.getId());
+		}
 	}
 	
 	public static void onTabCompleteDone(List<String> data)
