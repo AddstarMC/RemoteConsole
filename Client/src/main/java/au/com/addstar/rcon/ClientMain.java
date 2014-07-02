@@ -188,7 +188,7 @@ public class ClientMain
 	public static List<String> handleTabComplete(ConsoleScreen screen, String command)
 	{
 		if(command.startsWith("."))
-			return mInstance.mDispatcher.tabComplete(screen, command);
+			return mInstance.mDispatcher.tabComplete(screen, command.substring(1));
 		else if(mInstance.mManager.getActive() != null)
 		{
 			try
@@ -259,7 +259,7 @@ eventLoop:	while(true)
 				}
 				case Command:
 				{
-					mDispatcher.dispatchCommand(mConsole, event.<String>getArgument());
+					mDispatcher.dispatchCommand(mConsole, event.<String>getArgument().substring(1));
 					break;
 				}
 				case ActiveServerChange:

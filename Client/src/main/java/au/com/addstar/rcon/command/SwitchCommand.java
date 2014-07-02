@@ -1,5 +1,6 @@
 package au.com.addstar.rcon.command;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -50,6 +51,17 @@ public class SwitchCommand implements ICommand
 	@Override
 	public List<String> tabComplete( ConsoleScreen screen, String label, String[] args )
 	{
+		if(args.length == 1)
+		{
+			ArrayList<String> matches = new ArrayList<String>();
+			for(String name : ClientMain.getConnectionManager().getConnectionNames())
+			{
+				if(name.toLowerCase().startsWith(args[0].toLowerCase()))
+					matches.add(name);
+			}
+			
+			return matches;
+		}
 		return null;
 	}
 

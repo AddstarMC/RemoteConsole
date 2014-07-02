@@ -5,12 +5,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import au.com.addstar.rcon.ConsoleScreen;
 
 public class CommandDispatcher
 {
 	private HashMap<String, ICommand> mCommands;
+	private static final Pattern mSplitPattern = Pattern.compile(" ", Pattern.LITERAL);
 	
 	public CommandDispatcher()
 	{
@@ -31,9 +33,8 @@ public class CommandDispatcher
 
 	public void dispatchCommand(ConsoleScreen screen, String message)
 	{
-		String[] parts = message.split(" ");
-		if(parts[0].startsWith("."))
-			parts[0] = parts[0].substring(1);
+		String[] parts = mSplitPattern.split(message);
+		
 		ICommand command = mCommands.get(parts[0].toLowerCase());
 		
 		if(command == null)
@@ -58,10 +59,8 @@ public class CommandDispatcher
 	
 	public List<String> tabComplete(ConsoleScreen screen, String message)
 	{
-		String[] parts = message.split(" ");
-		if(parts[0].startsWith("."))
-			parts[0] = parts[0].substring(1);
-		
+		String[] parts = mSplitPattern.split(message, -1);
+
 		if(parts.length == 1)
 		{
 			ArrayList<String> commands = new ArrayList<String>();

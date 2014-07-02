@@ -1,5 +1,6 @@
 package au.com.addstar.rcon.command;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -85,7 +86,16 @@ public class FilterCommand implements ICommand
 	@Override
 	public List<String> tabComplete( ConsoleScreen screen, String label, String[] args )
 	{
-		return null;
+		ArrayList<String> results = new ArrayList<String>();
+		
+		String part = args[args.length-1].toLowerCase();
+		for(MessageType type : MessageType.values())
+		{
+			if(type.name().toLowerCase().startsWith(part))
+				results.add(type.name().toLowerCase());
+		}
+		
+		return results;
 	}
 
 }
