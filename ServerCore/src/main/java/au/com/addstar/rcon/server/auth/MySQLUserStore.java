@@ -72,6 +72,12 @@ public class MySQLUserStore implements IUserStore
 		}
 	}
 	
+	private void ensureConnection() throws IOException, SQLException
+	{
+		if(!mConnection.isValid(10))
+			initialize();
+	}
+	
 	private void ensureTable() throws SQLException
 	{
 		Statement statement = mConnection.createStatement();
@@ -96,6 +102,8 @@ public class MySQLUserStore implements IUserStore
 	{
 		try
 		{
+			ensureConnection();
+			
 			mLoadUser.setString(1, user.getName());
 			ResultSet result = mLoadUser.executeQuery();
 			
@@ -124,6 +132,8 @@ public class MySQLUserStore implements IUserStore
 	{
 		try
 		{
+			ensureConnection();
+			
 			mSaveUser.setString(1, user.getPassword().getHash());
 			mSaveUser.setString(2, user.getPassword().getSalt());
 			mSaveUser.setString(3, user.getName());
@@ -140,6 +150,8 @@ public class MySQLUserStore implements IUserStore
 	{
 		try
 		{
+			ensureConnection();
+			
 			mAddUser.setString(1, user.getName());
 			mAddUser.setString(2, user.getPassword().getHash());
 			mAddUser.setString(3, user.getPassword().getSalt());
@@ -156,6 +168,8 @@ public class MySQLUserStore implements IUserStore
 	{
 		try
 		{
+			ensureConnection();
+			
 			mRemoveUser.setString(1, user.getName());
 			mRemoveUser.executeUpdate();
 		}
