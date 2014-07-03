@@ -39,7 +39,7 @@ public class RemoteConsoleAppender extends AbstractAppender
 		MessageType type = MessageType.Log;
 		if(event.getThrown() != null)
 			type = MessageType.Exception;
-		if(event.getThreadName().equals("Async Chat Thread"))
+		else if(event.getThreadName().startsWith("Async Chat Thread"))
 			type = MessageType.Chat;
 		
 		String message = (String)mLayout.toSerializable(event);
