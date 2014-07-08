@@ -1,5 +1,6 @@
 package au.com.addstar.rcon.network;
 
+import java.io.IOException;
 import java.net.SocketAddress;
 import java.util.concurrent.CountDownLatch;
 
@@ -95,7 +96,19 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	public void channelInactive( ChannelHandlerContext ctx ) throws Exception
 	{
 		super.channelInactive(ctx);
-		close("Connection lost");
+		close("Disconnected");
+	}
+	
+	@Override
+	public void exceptionCaught( ChannelHandlerContext ctx, Throwable cause ) throws Exception
+	{
+		if(cause instanceof IOException && cause.getMessage().contains("closed by the remote host")) // Why can't there be a specific exception?!
+			close("Connection lost");
+		else
+		{
+			cause.printStackTrace();
+			close("Internal server error");
+		}
 	}
 	
 	public void close(String reason)

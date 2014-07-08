@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jline.console.ConsoleReader;
+import jline.console.UserInterruptException;
 
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
@@ -53,8 +54,14 @@ public class ConsoleScreen extends Thread
 			mConsole = new ConsoleReader();
 			mConsole.setBellEnabled(false);
 			mConsole.addCompleter(new TabCompleter(this));
+			mConsole.setHandleUserInterrupt(true);
+			mConsole.getTerminal().init();
 		}
 		catch(IOException e)
+		{
+			throw new UnsupportedOperationException("No console available");
+		}
+		catch ( Exception e )
 		{
 			throw new UnsupportedOperationException("No console available");
 		}
@@ -114,6 +121,10 @@ public class ConsoleScreen extends Thread
 		catch(IOException e)
 		{
 			e.printStackTrace();
+		}
+		catch(UserInterruptException e)
+		{
+			System.exit(1);
 		}
 	}
 	
