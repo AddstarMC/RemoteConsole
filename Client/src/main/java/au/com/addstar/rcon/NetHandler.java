@@ -25,6 +25,7 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 	@Override
 	public void handleMessage( PacketOutMessage packet )
 	{
+		packet.message.setServer(mConnection.getId(), mConnection.getServerName());
 		ClientMain.getViewManager().addMessage(mConnection, packet.message);
 		ClientMain.callEvent(new Event(EventType.MessageUpdate, mConnection));
 	}

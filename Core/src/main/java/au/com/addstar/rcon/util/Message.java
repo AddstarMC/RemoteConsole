@@ -15,8 +15,10 @@ public class Message
 	private String mThread;
 	private String mLogger;
 	private MessageType mType;
+	private String mServerName;
+	private String mServerId;
 	
-	public Message(String message, MessageType type, long time, Level level, String thread, String logger)
+	public Message(String message, MessageType type, long time, Level level, String thread, String logger, String serverId, String serverName)
 	{
 		mMessage = message;
 		mType = type;
@@ -24,11 +26,18 @@ public class Message
 		mLevel = level;
 		mThread = thread;
 		mLogger = logger;
+		mServerId = serverId;
+		mServerName = serverName;
+	}
+	
+	public Message(String message, MessageType type, long time, Level level, String thread, String logger)
+	{
+		this(message, type, time, level, thread, logger, null, null);
 	}
 	
 	public Message(String message, MessageType type, String logger)
 	{
-		this(message, type, System.currentTimeMillis(), Level.INFO, Thread.currentThread().getName(), "");
+		this(message, type, System.currentTimeMillis(), Level.INFO, Thread.currentThread().getName(), "", null, null);
 	}
 	
 	public String getMessage()
@@ -61,9 +70,30 @@ public class Message
 		return mLogger;
 	}
 	
+	public String getServerName()
+	{
+		return mServerName;
+	}
+	
+	public String getServerId()
+	{
+		return mServerId;
+	}
+	
+	public void setServer(String id, String name)
+	{
+		mServerId = id;
+		mServerName = name;
+	}
+	
+	public Message copyAs(String message)
+	{
+		return new Message(message, mType, mTime, mLevel, mThread, mLogger, mServerId, mServerName);
+	}
+	
 	private static Pattern mPattern = Pattern.compile("%(?:(message|msg|m)|(level|p)|(thread|t)|(?:date|d)\\{(.*?)\\}|(server)|(serverid|sid)|(n))");
 	
-	public String getFormatted(String format, String serverName, String serverId)
+	public String getFormatted(String format)
 	{
 		Matcher matcher = mPattern.matcher(format);
 		
@@ -79,10 +109,10 @@ public class Message
 			else if(matcher.group(4) != null) // Date
 				matcher.appendReplacement(buffer, new SimpleDateFormat(matcher.group(4)).format(mTime));
 			else if(matcher.group(5) != null) // ServerName
-				matcher.appendReplacement(buffer, serverName);
+				matcher.appendReplacement(buffer, mServerName);
 			else if(matcher.group(6) != null) // ServerId
-				matcher.appendReplacement(buffer, serverId);
-			else if(matcher.group(6) != null) // Newline
+				matcher.appendReplacement(buffer, mServerId);
+			else if(matcher.group(7) != null) // Newline
 				matcher.appendReplacement(buffer, ""); // Ignoring as newline is already present
 		}
 		

@@ -3,47 +3,55 @@ package au.com.addstar.rcon;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
+import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
+import au.com.addstar.rcon.util.Message;
 
 public class MessageBuffer
 {
-	private ArrayList<String> mLines;
-	private ArrayList<MessageType> mLineTypes;
+	private ArrayList<Message> mLines;
 	private int mNextLine;
 	private int mMaxLines;
+	private String mOverrideFormat;
 	
 	public MessageBuffer(int maxLines)
 	{
-		mLines = new ArrayList<String>();
-		mLineTypes = new ArrayList<MessageType>();
+		mLines = new ArrayList<Message>();
 		mMaxLines = maxLines;
 	}
 	
 	public void clear()
 	{
 		mLines.clear();
-		mLineTypes.clear();
 	}
 	
-	private synchronized void addLine(String line, MessageType type)
+	public String getOverrideFormat()
 	{
-		mLines.add(line);
-		mLineTypes.add(type);
+		return mOverrideFormat;
+	}
+	
+	public void setOverrideFormat(String format)
+	{
+		mOverrideFormat = format;
+	}
+	
+	private synchronized void addLine(Message message)
+	{
+		mLines.add(message);
 		
 		while(mLines.size() > mMaxLines)
 		{
 			mLines.remove(0);
-			mLineTypes.remove(0);
 			
 			--mNextLine;
 		}
 	}
 	
-	public synchronized void addMessage(String message, MessageType type)
+	public synchronized void addMessage(Message message)
 	{
-		String[] parts = message.split("\n");
+		String[] parts = message.getMessage().split("\n");
 		for(String part : parts)
-			addLine(part, type);
+			addLine(message.copyAs(part));
 	}
 	
 	public synchronized void display(ConsoleScreen screen, EnumSet<MessageType> allowed)
@@ -51,28 +59,34 @@ public class MessageBuffer
 		if(mNextLine != 0)
 			screen.clear();
 		
-		for(int i = 0; i < mLines.size(); ++i)
-		{
-			if(!allowed.contains(mLineTypes.get(i)))
-				continue;
-			
-			screen.printString(mLines.get(i));
-		}
-		
-		mNextLine = mLines.size();
+		mNextLine = 0;
+		update(screen, allowed);
 	}
 	
 	public synchronized void update(ConsoleScreen screen, EnumSet<MessageType> allowed)
 	{
 		for(int i = mNextLine; i < mLines.size(); ++i)
 		{
-			if(!allowed.contains(mLineTypes.get(i)))
+			Message message = mLines.get(i);
+			if(!allowed.contains(message.getType()))
 				continue;
 			
-			if(mLineTypes.get(i) == MessageType.System)
-				screen.printErrString(mLines.get(i));
+			String format = mOverrideFormat;
+			if(format == null)
+			{
+				ClientConnection connection = ClientMain.getConnectionManager().getConnection(message.getServerId());
+				if(connection != null)
+					format = connection.getFormat();
+				
+				if(format == null)
+					format = "%m";
+			}
+			
+			String text = message.getFormatted(format);
+			if(message.getType() == MessageType.System)
+				screen.printErrString(text);
 			else
-				screen.printString(mLines.get(i));
+				screen.printString(text);
 		}
 		
 		mNextLine = mLines.size();

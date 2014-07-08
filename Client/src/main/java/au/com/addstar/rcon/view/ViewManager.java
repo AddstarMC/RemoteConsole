@@ -104,20 +104,19 @@ public class ViewManager
 	
 	public synchronized void addMessage(ClientConnection from, Message message)
 	{
-		String formatted = message.getFormatted(from.getFormat(), from.getServerName(), from.getId());
 		for(ConsoleView view : mViews.values())
 		{
 			if(view.isHandling(from))
-				view.getBuffer().addMessage(view.getPrefix(from, message.getType()) + formatted + view.getSuffix(from, message.getType()), message.getType());
+				view.getBuffer().addMessage(message);
 		}
 	}
 	
 	public synchronized void addSystemMessage(String message)
 	{
-		systemView.getBuffer().addMessage(message, MessageType.System);
+		systemView.getBuffer().addMessage(new Message(message, MessageType.System, "RemoteConsole"));
 		
 		for(ConsoleView view : mViews.values())
-			view.getBuffer().addMessage(message, MessageType.System);
+			view.getBuffer().addMessage(new Message(message, MessageType.System, "RemoteConsole"));
 		
 		mActiveView.getBuffer().update(ClientMain.getConsole(), mActiveView.getFilter());
 	}

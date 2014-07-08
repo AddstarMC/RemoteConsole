@@ -27,7 +27,7 @@ public abstract class ConsoleView
 	{
 		mName = name;
 	}
-
+	
 	public EnumSet<MessageType> getFilter()
 	{
 		return mFilter;
