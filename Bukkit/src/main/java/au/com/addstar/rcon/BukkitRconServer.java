@@ -23,4 +23,10 @@ public class BukkitRconServer extends RconServer
 		user.setPassword(password);
 		return addUser(user);
 	}
+	
+	@Override
+	public String getConsoleFormat()
+	{
+		return RemoteConsolePlugin.instance.getConsoleFormat();
+	}
 }

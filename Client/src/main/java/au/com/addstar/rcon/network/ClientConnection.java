@@ -8,6 +8,7 @@ import au.com.addstar.rcon.ClientMain;
 import au.com.addstar.rcon.MessageBuffer;
 import au.com.addstar.rcon.network.packets.RconPacket;
 import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
+import au.com.addstar.rcon.network.packets.login.PacketOutLoginDone;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
@@ -23,6 +24,7 @@ public class ClientConnection
 	private String mHost;
 	private String mServerName;
 	private String mId;
+	private String mConsoleFormat;
 	private boolean mReconnect;
 	
 	private Channel mChannel;
@@ -80,9 +82,10 @@ public class ClientConnection
 		mLoginLatch.await();
 	}
 	
-	void onLoginComplete(String serverName)
+	void onLoginComplete(PacketOutLoginDone packet)
 	{
-		mServerName = serverName;
+		mServerName = packet.serverName;
+		mConsoleFormat = packet.consoleFormat;
 		
 		mLoginLatch.countDown();
 	}
@@ -155,5 +158,15 @@ public class ClientConnection
 	public String getId()
 	{
 		return mId;
+	}
+	
+	public void setFormat(String format)
+	{
+		mConsoleFormat = format;
+	}
+	
+	public String getFormat()
+	{
+		return mConsoleFormat;
 	}
 }

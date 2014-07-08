@@ -96,6 +96,6 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 		
 		getManager().transitionState(ConnectionState.Main);
 		((NetHandler)getManager().getNetHandler()).setClientConnection(mConnection);
-		mConnection.onLoginComplete(packet.serverName);
+		mConnection.onLoginComplete(packet);
 	}
 }

@@ -5,8 +5,9 @@ import java.util.Collections;
 
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
-
+import au.com.addstar.rcon.util.Message;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 public class UserCommandSender implements CommandSender
@@ -28,12 +29,12 @@ public class UserCommandSender implements CommandSender
 	@Deprecated
 	public void sendMessage( String message )
 	{
-		mUser.getManager().sendPacket(new PacketOutMessage(RemoteConsolePlugin.formatMessage(message), MessageType.Directed));
+		mUser.getManager().sendPacket(new PacketOutMessage(new Message(message, MessageType.Directed, ProxyServer.getInstance().getLogger().getName())));
 	}
 	
 	public void sendMessage( String message, MessageType type )
 	{
-		mUser.getManager().sendPacket(new PacketOutMessage(message, type));
+		mUser.getManager().sendPacket(new PacketOutMessage(new Message(message, type, ProxyServer.getInstance().getLogger().getName())));
 	}
 
 	@Override

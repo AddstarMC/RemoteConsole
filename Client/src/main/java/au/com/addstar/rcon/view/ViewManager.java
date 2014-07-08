@@ -8,6 +8,7 @@ import au.com.addstar.rcon.ClientMain;
 import au.com.addstar.rcon.IConnectionListener;
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
+import au.com.addstar.rcon.util.Message;
 
 public class ViewManager
 {
@@ -101,12 +102,13 @@ public class ViewManager
 		return mActiveView;
 	}
 	
-	public synchronized void addMessage(ClientConnection from, String message, MessageType type)
+	public synchronized void addMessage(ClientConnection from, Message message)
 	{
+		String formatted = message.getFormatted(from.getFormat(), from.getServerName(), from.getId());
 		for(ConsoleView view : mViews.values())
 		{
 			if(view.isHandling(from))
-				view.getBuffer().addMessage(view.getPrefix(from, type) + message + view.getSuffix(from, type), type);
+				view.getBuffer().addMessage(view.getPrefix(from, message.getType()) + formatted + view.getSuffix(from, message.getType()), message.getType());
 		}
 	}
 	

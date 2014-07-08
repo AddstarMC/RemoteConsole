@@ -17,6 +17,7 @@ import org.bukkit.plugin.Plugin;
 
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
+import au.com.addstar.rcon.util.Message;
 
 public class UserCommandSender implements ConsoleCommandSender
 {
@@ -45,12 +46,12 @@ public class UserCommandSender implements ConsoleCommandSender
 	@Override
 	public void sendRawMessage( String message )
 	{
-		mUser.getManager().sendPacket(new PacketOutMessage(RemoteConsoleAppender.formatMessage(message), MessageType.Directed));
+		mUser.getManager().sendPacket(new PacketOutMessage(new Message(message, MessageType.Directed, RemoteConsolePlugin.instance.getLogger().getName())));
 	}
 	
 	public void sendMessage( String message, MessageType type )
 	{
-		mUser.getManager().sendPacket(new PacketOutMessage(message, type));
+		mUser.getManager().sendPacket(new PacketOutMessage(new Message(message, type, RemoteConsolePlugin.instance.getLogger().getName())));
 	}
 	
 	@Override

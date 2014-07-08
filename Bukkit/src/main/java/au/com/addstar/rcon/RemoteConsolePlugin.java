@@ -115,6 +115,11 @@ public class RemoteConsolePlugin extends JavaPlugin
 		}
 	}
 	
+	public String getConsoleFormat()
+	{
+		return mAppender.getFormat();
+	}
+	
 	private boolean loadLogAppender()
 	{
 		Logger log = (Logger)LogManager.getRootLogger();

@@ -1,8 +1,11 @@
 package au.com.addstar.rcon.network.packets.main;
 
+import java.util.logging.Level;
+
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
 import au.com.addstar.rcon.network.handlers.INetworkMainHandlerClient;
 import au.com.addstar.rcon.network.packets.RconPacket;
+import au.com.addstar.rcon.util.Message;
 import io.netty.buffer.ByteBuf;
 
 public class PacketOutMessage extends RconPacket
@@ -17,33 +20,41 @@ public class PacketOutMessage extends RconPacket
 		System;
 	}
 	
-	public String message;
-	public MessageType type;
+	public Message message;
 	
 	public PacketOutMessage()
 	{
 	}
 	
-	public PacketOutMessage(String message, MessageType type)
+	public PacketOutMessage(Message message)
 	{
 		this.message = message;
-		if(type == MessageType.System)
+		if(message.getType() == MessageType.System)
 			throw new IllegalArgumentException("Cannot send system message type");
-		this.type = type;
 	}
 	
 	@Override
 	public void read( ByteBuf packet )
 	{
-		message = readString(packet);
-		type = MessageType.values()[packet.readByte()];
+		long time = packet.readLong();
+		Level level = Level.parse(String.valueOf(packet.readInt()));
+		MessageType type = MessageType.values()[packet.readUnsignedByte()];
+		String msg = readString(packet);
+		String thread = readString(packet);
+		String logger = readString(packet);
+		
+		message = new Message(msg, type, time, level, thread, logger);
 	}
 
 	@Override
 	public void write( ByteBuf packet )
 	{
-		writeString(message, packet);
-		packet.writeByte(type.ordinal());
+		packet.writeLong(message.getTime());
+		packet.writeInt(message.getLevel().intValue());
+		packet.writeByte(message.getType().ordinal());
+		writeString(message.getMessage(), packet);
+		writeString(message.getThreadName(), packet);
+		writeString(message.getLogger(), packet);
 	}
 	
 	@Override

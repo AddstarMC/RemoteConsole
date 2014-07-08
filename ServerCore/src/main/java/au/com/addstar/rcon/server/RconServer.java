@@ -162,6 +162,8 @@ public abstract class RconServer
 	{
 		return mName;
 	}
+	
+	public abstract String getConsoleFormat();
 
 	void connectionClose( ServerNetworkManager manager, String reason )
 	{
