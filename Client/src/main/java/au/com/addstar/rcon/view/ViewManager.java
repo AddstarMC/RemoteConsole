@@ -112,6 +112,8 @@ public class ViewManager
 	
 	public synchronized void addSystemMessage(String message)
 	{
+		systemView.getBuffer().addMessage(message, MessageType.System);
+		
 		for(ConsoleView view : mViews.values())
 			view.getBuffer().addMessage(message, MessageType.System);
 		

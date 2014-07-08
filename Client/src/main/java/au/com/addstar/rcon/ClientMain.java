@@ -1,6 +1,8 @@
 package au.com.addstar.rcon;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -126,7 +128,20 @@ public class ClientMain
 		
 		if(config != null)
 		{
-			ConfigLoader.loadConfig(new File(config));
+			try
+			{
+				ConfigLoader.loadConfig(new File(config));
+			}
+			catch(FileNotFoundException e)
+			{
+				System.err.println("Cannot find config " + config);
+				return;
+			}
+			catch(IOException e)
+			{
+				System.err.println("Failed to load config " + config + ": " + e.getMessage());
+				return;
+			}
 		}
 		
 		mInstance.run();

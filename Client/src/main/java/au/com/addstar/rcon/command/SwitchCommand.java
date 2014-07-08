@@ -1,12 +1,10 @@
 package au.com.addstar.rcon.command;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 import au.com.addstar.rcon.ClientMain;
 import au.com.addstar.rcon.ConsoleScreen;
-import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 
 public class SwitchCommand implements ICommand
 {
@@ -43,7 +41,6 @@ public class SwitchCommand implements ICommand
 		
 		String server = args[0];
 		ClientMain.getConnectionManager().switchActive(server);
-		ClientMain.getConnectionManager().getActive().getMessageBuffer().display(screen, EnumSet.allOf(MessageType.class));
 		screen.printString("Switched active server to " + server);
 		return true;
 	}
