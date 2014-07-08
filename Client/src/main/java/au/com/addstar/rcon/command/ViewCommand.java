@@ -24,7 +24,7 @@ public class ViewCommand implements ICommand
 	@Override
 	public String getUsage()
 	{
-		return "<command> <view>";
+		return "<command> [view]";
 	}
 
 	@Override
@@ -36,6 +36,12 @@ public class ViewCommand implements ICommand
 	@Override
 	public boolean onCommand( ConsoleScreen screen, String label, String[] args )
 	{
+		if(args.length == 0)
+		{
+			screen.printString("Current view is " + ClientMain.getViewManager().getActive().getName());
+			return true;
+		}
+		
 		if(args.length != 1)
 			return false;
 		

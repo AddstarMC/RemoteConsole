@@ -51,6 +51,7 @@
 			<xs:element name="chat" minOccurs="0"/>
 			<xs:element name="exception" minOccurs="0"/>
 			<xs:element name="log" minOccurs="0"/>
+			<xs:element name="system" minOccurs="0"/>
 		</xs:all>
 	</xs:complexType>
 	

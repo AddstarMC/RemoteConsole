@@ -46,6 +46,9 @@ public class CreateViewCommand implements ICommand
 		if(ClientMain.getViewManager().getView(args[0]) != null)
 			throw new IllegalArgumentException("A view with that name already exists");
 		
+		if(args[0].equalsIgnoreCase("system"))
+			throw new IllegalArgumentException("A view with that name already exists");
+		
 		CombinedConsoleView view = new CombinedConsoleView();
 		
 		for(int i = 1; i < args.length; ++i)

@@ -10,11 +10,22 @@ public abstract class ConsoleView
 {
 	private EnumSet<MessageType> mFilter;
 	private final MessageBuffer mBuffer;
+	private String mName;
 
 	protected ConsoleView(MessageBuffer buffer)
 	{
 		mFilter = EnumSet.allOf(MessageType.class);
 		mBuffer = buffer;
+	}
+	
+	public String getName()
+	{
+		return mName;
+	}
+	
+	public void setName(String name)
+	{
+		mName = name;
 	}
 
 	public EnumSet<MessageType> getFilter()

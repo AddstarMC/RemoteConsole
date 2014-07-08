@@ -120,13 +120,13 @@ public class ConnectionManager
 		catch(UnresolvedAddressException e)
 		{
 			if(!silent)
-				ClientMain.printErrMessage("Failed to connect to " + connection.toString());
+				ClientMain.getViewManager().addSystemMessage("Failed to connect to " + connection.toString());
 			connection.shutdown();
 		}
 		catch(ConnectException e)
 		{
 			if(!silent)
-				ClientMain.printErrMessage("Failed to connect to " + connection.toString());
+				ClientMain.getViewManager().addSystemMessage("Failed to connect to " + connection.toString());
 			
 			connection.shutdown();
 			if(connection.shouldReconnect())
@@ -190,7 +190,7 @@ public class ConnectionManager
 			connection.setId(id);
 			mIdConnections.put(id, connection);
 			ClientMain.callEvent(new Event(EventType.ConnectionStart, connection));
-			ClientMain.printErrMessage("Successfully logged into " + id);
+			ClientMain.getViewManager().addSystemMessage("Successfully logged into " + id);
 			
 			connection.addTerminationListener(new GenericFutureListener<Future<? super Void>>()
 			{
@@ -230,7 +230,7 @@ public class ConnectionManager
 		if(message == null)
 			message = "Connection lost";
 		
-		ClientMain.printErrMessage(String.format("Disconnected from %s: %s", connection.getId(), message));
+		ClientMain.getViewManager().addSystemMessage(String.format("Disconnected from %s: %s", connection.getId(), message));
 		
 		synchronized(mIdConnections)
 		{
@@ -357,7 +357,7 @@ public class ConnectionManager
 			catch ( InterruptedException e )
 			{
 				if(mConnection.getManager().getDisconnectReason() != null)
-					ClientMain.printErrMessage(String.format("Disconnected from %s: %s", mConnection, mConnection.getManager().getDisconnectReason()));
+					ClientMain.getViewManager().addSystemMessage(String.format("Disconnected from %s: %s", mConnection, mConnection.getManager().getDisconnectReason()));
 			}
 		}
 		

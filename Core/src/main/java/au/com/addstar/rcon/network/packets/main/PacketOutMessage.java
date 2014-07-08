@@ -12,7 +12,9 @@ public class PacketOutMessage extends RconPacket
 		Directed,
 		Log,
 		Exception,
-		Chat
+		Chat,
+		// Client side only
+		System;
 	}
 	
 	public String message;
@@ -25,6 +27,8 @@ public class PacketOutMessage extends RconPacket
 	public PacketOutMessage(String message, MessageType type)
 	{
 		this.message = message;
+		if(type == MessageType.System)
+			throw new IllegalArgumentException("Cannot send system message type");
 		this.type = type;
 	}
 	

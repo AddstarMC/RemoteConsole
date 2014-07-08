@@ -11,19 +11,23 @@ import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 
 public class ViewManager
 {
-	public static final NullConsoleView nullView = new NullConsoleView();
+	public static final SystemOnlyConsoleView systemView = new SystemOnlyConsoleView();
 	private ConsoleView mActiveView;
 	private HashMap<String, ConsoleView> mViews;
 	
 	public ViewManager()
 	{
 		mViews = new HashMap<String, ConsoleView>();
-		mActiveView = nullView;
+		mActiveView = systemView;
 	}
 	
 	public synchronized void addView(String name, ConsoleView view)
 	{
+		if(name.equalsIgnoreCase("system"))
+			throw new IllegalArgumentException("System console cannot be overridden");
+		
 		mViews.put(name.toLowerCase(), view);
+		view.setName(name);
 		if(view instanceof IConnectionListener)
 			ClientMain.registerConnectionListener((IConnectionListener)view);
 	}
@@ -49,7 +53,7 @@ public class ViewManager
 		
 		if(mActiveView == view)
 		{
-			mActiveView = nullView;
+			mActiveView = systemView;
 			if(!mViews.isEmpty())
 			{
 				// Try to use one that handles the current connection
@@ -68,7 +72,7 @@ public class ViewManager
 				}
 				
 				// Use the first one we found
-				if(mActiveView == nullView)
+				if(mActiveView == systemView)
 					mActiveView = first;
 			}
 			
@@ -79,7 +83,7 @@ public class ViewManager
 	public synchronized void setActive(String name) throws IllegalArgumentException
 	{
 		if(name == null)
-			mActiveView = nullView;
+			mActiveView = systemView;
 		else
 		{
 			ConsoleView view = getView(name);
@@ -104,6 +108,14 @@ public class ViewManager
 			if(view.isHandling(from))
 				view.getBuffer().addMessage(view.getPrefix(from, type) + message + view.getSuffix(from, type), type);
 		}
+	}
+	
+	public synchronized void addSystemMessage(String message)
+	{
+		for(ConsoleView view : mViews.values())
+			view.getBuffer().addMessage(message, MessageType.System);
+		
+		mActiveView.getBuffer().update(ClientMain.getConsole(), mActiveView.getFilter());
 	}
 	
 	public void update(ClientConnection connection)

@@ -42,16 +42,6 @@ public class ClientMain
 	private static ClientMain mInstance;
 	public static int maxConsoleLines = 1000;
 	
-	public static void printMessage(String message)
-	{
-		mInstance.mConsole.printString(message);
-	}
-	
-	public static void printErrMessage(String message)
-	{
-		mInstance.mConsole.printErrString(message);
-	}
-	
 	public static void main(String[] args) throws Exception
 	{
 		if(args.length < 1)
@@ -323,7 +313,7 @@ eventLoop:	while(true)
 	
 	private void onSwitchActive(ClientConnection active)
 	{
-		if(mViewManager.getActive() == ViewManager.nullView || mViewManager.getActive() instanceof SingleConsoleView)
+		if(mViewManager.getActive() == ViewManager.systemView || mViewManager.getActive() instanceof SingleConsoleView)
 		{
 			if(active == null)
 				mViewManager.setActive(null);

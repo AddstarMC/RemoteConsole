@@ -69,7 +69,10 @@ public class MessageBuffer
 			if(!allowed.contains(mLineTypes.get(i)))
 				continue;
 			
-			screen.printString(mLines.get(i));
+			if(mLineTypes.get(i) == MessageType.System)
+				screen.printErrString(mLines.get(i));
+			else
+				screen.printString(mLines.get(i));
 		}
 		
 		mNextLine = mLines.size();
