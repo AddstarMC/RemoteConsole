@@ -23,7 +23,8 @@ public class RemoteConsoleLogHandler extends Handler
 		for(ServerNetworkManager connection : RconServer.instance.getConnections())
 		{
 			BungeeUser user = (BungeeUser)connection.getUser();
-			((UserCommandSender)user.asCommandSender()).sendMessage(message, type);
+			if(user != null)
+				((UserCommandSender)user.asCommandSender()).sendMessage(message, type);
 		}
 	}
 

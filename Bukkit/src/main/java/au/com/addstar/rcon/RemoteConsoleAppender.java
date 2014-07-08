@@ -49,7 +49,8 @@ public class RemoteConsoleAppender extends AbstractAppender
 		for(ServerNetworkManager connection : RconServer.instance.getConnections())
 		{
 			BukkitUser user = (BukkitUser)connection.getUser();
-			user.sendMessage(message, type);
+			if(user != null)
+				user.sendMessage(message, type);
 		}
 	}
 	
