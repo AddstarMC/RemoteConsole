@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.EnumSet;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
@@ -15,7 +16,9 @@ import javax.xml.validation.SchemaFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 import au.com.addstar.rcon.view.ConfigConsoleView;
@@ -35,7 +38,16 @@ public class ConfigLoader
 			// Load the config
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setSchema(schema);
-			Document doc = factory.newDocumentBuilder().parse(file);
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			
+			ConfigErrorHandler handler = new ConfigErrorHandler();
+			builder.setErrorHandler(handler);
+			
+			Document doc = builder.parse(file);
+			
+			if(handler.errored)
+				throw new IOException("Errors occured during parsing");
+			
 			parseAll(doc);
 		}
 		catch (SAXException e)
@@ -178,5 +190,30 @@ public class ConfigLoader
 	private static boolean boolFromString(String value)
 	{
 		return (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("1"));
+	}
+	
+	private static class ConfigErrorHandler implements ErrorHandler
+	{
+		public boolean errored = false;
+		
+		@Override
+		public void warning( SAXParseException exception ) throws SAXException
+		{
+			System.err.println("WARN: " + exception.getMessage());
+		}
+		
+		@Override
+		public void fatalError( SAXParseException exception ) throws SAXException
+		{
+			errored = true;
+			System.err.println("FATAL: " + exception.getMessage());
+		}
+		
+		@Override
+		public void error( SAXParseException exception ) throws SAXException
+		{
+			errored = true;
+			System.err.println("ERROR: " + exception.getMessage());
+		}
 	}
 }
