@@ -7,11 +7,14 @@ import java.util.regex.Pattern;
 
 import au.com.addstar.rcon.IConnectionListener;
 import au.com.addstar.rcon.network.ClientConnection;
+import au.com.addstar.rcon.util.Message;
 
 public class ConfigConsoleView extends CombinedConsoleView implements IConnectionListener
 {
 	private ArrayList<String> mWhitelistServers = new ArrayList<String>();
 	private ArrayList<String> mBlacklistServers = new ArrayList<String>();
+	
+	private MessageProcessor mProcessor = new MessageProcessor();
 	
 	public void includes(String server)
 	{
@@ -78,4 +81,16 @@ public class ConfigConsoleView extends CombinedConsoleView implements IConnectio
 			removeConnection(connection);
 	}
 	
+	public MessageProcessor getProcessor()
+	{
+		return mProcessor;
+	}
+	
+	@Override
+	public void addMessage( Message message )
+	{
+		message = mProcessor.process(message);
+		if(message != null)
+			super.addMessage(message);
+	}
 }

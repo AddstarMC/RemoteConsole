@@ -25,6 +25,11 @@
 							<xs:element name="view" minOccurs="0" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:all>
+										<xs:element name="layout" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:attribute name="format" type="xs:string" use="required"/>
+											</xs:complexType>
+										</xs:element>
 										<xs:element name="filters" type="filter" minOccurs="0"/>
 										<xs:element name="servers" minOccurs="0">
 											<xs:complexType>
@@ -34,6 +39,7 @@
 												</xs:all>
 											</xs:complexType>
 										</xs:element>
+										<xs:element name="format" minOccurs="0" type="formatting"/>
 									</xs:all>
 									<xs:attribute name="name" use="required"/>
 								</xs:complexType>
@@ -60,4 +66,77 @@
 			<xs:element name="server" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
+	
+	<xs:complexType name="formatting">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="drop">
+				<xs:complexType>
+					<xs:attribute name="pattern" type="xs:string" use="required"/>
+				</xs:complexType>
+			</xs:element>
+			
+			<xs:element name="replace">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="pattern" type="xs:string" use="required"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			
+			<xs:element name="color">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="color">
+							<xs:attribute name="level" type="level"/>
+							<xs:attribute name="pattern" type="xs:string" default=""/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	
+	<xs:simpleType name="color">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="black"/>
+			<xs:enumeration value="darkBlue"/>
+			<xs:enumeration value="darkGreen"/>
+			<xs:enumeration value="darkAqua"/>
+			<xs:enumeration value="darkCyan"/>
+			<xs:enumeration value="darkRed"/>
+			<xs:enumeration value="darkPurple"/>
+			<xs:enumeration value="darkMagenta"/>
+			<xs:enumeration value="gold"/>
+			<xs:enumeration value="orange"/>
+			<xs:enumeration value="gray"/>
+			<xs:enumeration value="grey"/>
+			<xs:enumeration value="darkGray"/>
+			<xs:enumeration value="darkGrey"/>
+			<xs:enumeration value="blue"/>
+			<xs:enumeration value="green"/>
+			<xs:enumeration value="lime"/>
+			<xs:enumeration value="aqua"/>
+			<xs:enumeration value="cyan"/>
+			<xs:enumeration value="red"/>
+			<xs:enumeration value="purple"/>
+			<xs:enumeration value="magenta"/>
+			<xs:enumeration value="yellow"/>
+			<xs:enumeration value="white"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="level">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALL"/>
+			<xs:enumeration value="SEVERE"/>
+			<xs:enumeration value="WARNING"/>
+			<xs:enumeration value="INFO"/>
+			<xs:enumeration value="FINE"/>
+			<xs:enumeration value="FINER"/>
+			<xs:enumeration value="FINEST"/>
+			<xs:enumeration value="OFF"/>
+		</xs:restriction>
+	</xs:simpleType>
 </xs:schema>

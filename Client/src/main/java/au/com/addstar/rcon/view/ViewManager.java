@@ -107,16 +107,16 @@ public class ViewManager
 		for(ConsoleView view : mViews.values())
 		{
 			if(view.isHandling(from))
-				view.getBuffer().addMessage(message);
+				view.addMessage(message);
 		}
 	}
 	
 	public synchronized void addSystemMessage(String message)
 	{
-		systemView.getBuffer().addMessage(new Message(message, MessageType.System, "RemoteConsole"));
+		systemView.addMessage(new Message(message, MessageType.System, "RemoteConsole"));
 		
 		for(ConsoleView view : mViews.values())
-			view.getBuffer().addMessage(new Message(message, MessageType.System, "RemoteConsole"));
+			view.addMessage(new Message(message, MessageType.System, "RemoteConsole"));
 		
 		mActiveView.getBuffer().update(ClientMain.getConsole(), mActiveView.getFilter());
 	}

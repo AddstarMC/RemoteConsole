@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import au.com.addstar.rcon.MessageBuffer;
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
+import au.com.addstar.rcon.util.Message;
 
 public abstract class ConsoleView
 {
@@ -51,6 +52,11 @@ public abstract class ConsoleView
 	public String getSuffix(ClientConnection connection, MessageType type)
 	{ 
 		return "";
+	}
+	
+	public void addMessage(Message message)
+	{
+		mBuffer.addMessage(message);
 	}
 	
 	public abstract boolean isHandling(ClientConnection connection);

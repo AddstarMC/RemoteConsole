@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
+import java.util.logging.Level;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -120,12 +121,20 @@ public class ConfigLoader
 			
 			NodeList filters = el.getElementsByTagName("filters");
 			NodeList servers = el.getElementsByTagName("servers");
+			NodeList layout = el.getElementsByTagName("layout");
+			NodeList format = el.getElementsByTagName("format");
 			
 			if(filters.getLength() != 0)
 				view.setFilter(parseFilters((Element)filters.item(0)));
 			
 			if(servers.getLength() != 0)
 				parseViewServers((Element)servers.item(0), view);
+			
+			if(layout.getLength() != 0)
+				view.getBuffer().setOverrideFormat(((Element)layout.item(0)).getAttribute("format"));
+			
+			if(format.getLength() != 0)
+				parseViewFormatter((Element)format.item(0), view);
 			
 			ClientMain.getViewManager().addView(name, view);
 		}
@@ -140,6 +149,28 @@ public class ConfigLoader
 			catch(IllegalArgumentException e)
 			{
 				throw new SAXException("Unknown view " + defaultView);
+			}
+		}
+	}
+	
+	private static void parseViewFormatter(Element root, ConfigConsoleView view)
+	{
+		NodeList children = root.getChildNodes();
+		
+		for(int i = 0; i < children.getLength(); ++i)
+		{
+			if(!(children.item(i) instanceof Element))
+				continue;
+			
+			Element element = (Element)children.item(i);
+			if(element.getTagName().equals("drop"))
+				view.getProcessor().drop(element.getAttribute("pattern"));
+			else if(element.getTagName().equals("replace"))
+				view.getProcessor().replace(element.getAttribute("pattern"), element.getTextContent());
+			else if(element.getTagName().equals("color"))
+			{
+				Level level = (element.hasAttribute("level") ? Level.parse(element.getAttribute("level")) : null);
+				view.getProcessor().color(element.getAttribute("pattern"), level, element.getTextContent());
 			}
 		}
 	}

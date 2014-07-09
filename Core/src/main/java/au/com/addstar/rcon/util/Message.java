@@ -91,7 +91,7 @@ public class Message
 		return new Message(message, mType, mTime, mLevel, mThread, mLogger, mServerId, mServerName);
 	}
 	
-	private static Pattern mPattern = Pattern.compile("%(?:(message|msg|m)|(level|p)|(thread|t)|(?:date|d)\\{(.*?)\\}|(server)|(serverid|sid)|(n))");
+	private static Pattern mPattern = Pattern.compile("%(?:(message|msg|m)|(level|p)|(thread|t)|(?:date|d)\\{(.*?)\\}|(server|srv)|(serverid|sid)|(n))");
 	
 	public String getFormatted(String format)
 	{
@@ -105,18 +105,25 @@ public class Message
 			else if(matcher.group(2) != null) // Level
 				matcher.appendReplacement(buffer, mLevel.getLocalizedName());
 			else if(matcher.group(3) != null) // Thread
-				matcher.appendReplacement(buffer, mThread);
+				matcher.appendReplacement(buffer, getOrEmpty(mThread));
 			else if(matcher.group(4) != null) // Date
 				matcher.appendReplacement(buffer, new SimpleDateFormat(matcher.group(4)).format(mTime));
 			else if(matcher.group(5) != null) // ServerName
-				matcher.appendReplacement(buffer, mServerName);
+				matcher.appendReplacement(buffer, getOrEmpty(mServerName));
 			else if(matcher.group(6) != null) // ServerId
-				matcher.appendReplacement(buffer, mServerId);
+				matcher.appendReplacement(buffer, getOrEmpty(mServerId));
 			else if(matcher.group(7) != null) // Newline
 				matcher.appendReplacement(buffer, ""); // Ignoring as newline is already present
 		}
 		
 		matcher.appendTail(buffer);
 		return buffer.toString();
+	}
+	
+	private String getOrEmpty(String str)
+	{
+		if(str == null)
+			return "";
+		return str;
 	}
 }
