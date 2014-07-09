@@ -9,6 +9,13 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import au.com.addstar.rcon.Event.EventType;
 import au.com.addstar.rcon.command.CommandDispatcher;
 import au.com.addstar.rcon.command.ConnectCommand;
@@ -30,121 +37,135 @@ import au.com.addstar.rcon.view.ViewManager;
 
 public class ClientMain
 {
-	private static void printUsage()
+	private static void printUsage(Options options)
 	{
-		System.err.println("Better Remote Console version 1.0");
-		System.err.println();
-		System.err.println("Usage: <host[:port]> <host[:port]> ... [options]");
-		System.err.println();
-		System.err.println("-U <username> Specifies your username.");
-		System.err.println("-P <password> Specifies password to use");
-		System.err.println("-c <configfile> Specifies a config file to load");
+		HelpFormatter formatter = new HelpFormatter();
+		String header = "Remote Console version 1.0.0\n" + 
+						"Connects remotely to supported consoles allowing you to see and interact with them." + 
+						"Hosts can either be specified as 'hostname' or 'hostname:port'\n\n";
+		
+		formatter.printHelp("rcon [OPTIONS]... [HOST]...", header, options, "", false);
 	}
 	
 	private static ClientMain mInstance;
 	public static int maxConsoleLines = 1000;
+	public static boolean showPrompt = true;
 	
+	@SuppressWarnings( "static-access" )
 	public static void main(String[] args) throws Exception
 	{
-		if(args.length < 1)
-		{
-			printUsage();
-			return;
-		}
+		Options options = new Options();
 		
-		int hostPart = -1;
-
-		String username = "";
-		String password = "";
-		String config = null;
+		options.addOption(OptionBuilder.withArgName("USERNAME")
+							.hasArg()
+							.withDescription("Specifies your username")
+							.isRequired()
+							.withLongOpt("username")
+							.create('u'));
 		
-		for(hostPart = 0; hostPart < args.length; ++hostPart)
+		options.addOption(OptionBuilder.withArgName("PASSWORD")
+				.hasArg()
+				.withDescription("Specifies your password")
+				.isRequired()
+				.withLongOpt("password")
+				.create('p'));
+		
+		options.addOption(OptionBuilder.withArgName("FILE")
+				.hasArg()
+				.withDescription("Specifies a config file to load")
+				.withLongOpt("config")
+				.create('c'));
+		
+		options.addOption("n", "no-prompt", false, "Disables the prompt, useful for piping the output");
+		
+		options.addOption(OptionBuilder.withArgName("COUNT")
+				.hasArg()
+				.withDescription("Sets the maximum number of lines to show. Default: 1000")
+				.withLongOpt("max-lines")
+				.withType(Integer.valueOf(1000))
+				.create('c'));
+		
+		BasicParser parser = new BasicParser();
+		CommandLine cl = null;
+		try
 		{
-			if(args[hostPart].startsWith("-"))
-				break;
-		}
+			cl = parser.parse(options, args, true);
 			
-		for(int i = hostPart; i < args.length - 1; i+= 2)
-		{
-			if(!args[i].startsWith("-") || args[i].length() == 1)
+			// Load options
+			String username = cl.getOptionValue('u');
+			String password = cl.getOptionValue('p');
+			
+			String config = null;
+			if(cl.hasOption('c'))
+				config = cl.getOptionValue('c');
+			
+			if(cl.hasOption('n'))
+				showPrompt = false;
+			
+			if(cl.hasOption('l'))
+				maxConsoleLines = (Integer)cl.getParsedOptionValue("l");
+			
+			// Init
+			mInstance = new ClientMain(new ConsoleScreen(), username, password);
+			
+			// Load hosts
+			for(String fullHost : cl.getArgs())
 			{
-				System.out.println("Unknown option: " + args[i]);
-				printUsage();
-				return;
-			}
-			
-			char opt = args[i].charAt(1);
-			
-			switch(opt)
-			{
-			case 'P':
-				password = args[i+1];
-				break;
-			case 'U':
-				username = args[i+1];
-				break;
-			case 'c':
-				config = args[i+1];
-				break;
-			default:
-				System.out.println("Unknown option: " + args[i]);
-				printUsage();
-				return;
-			}
-		}
-		
-		mInstance = new ClientMain(new ConsoleScreen(), username, password);
-		
-		for(int i = 0; i < hostPart; ++i)
-		{
-			String fullHost = args[i];
-			String host;
-			int port = 22050;
-			
-			if(fullHost.contains(":"))
-			{
-				String[] split = fullHost.split(":");
-				host = split[0];
+				String host;
+				int port = 22050;
 				
-				try
+				if(fullHost.contains(":"))
 				{
-					port = Integer.parseInt(split[1]);
-					if(port <= 0 || port > 65535)
+					String[] split = fullHost.split(":");
+					host = split[0];
+					
+					try
 					{
-						System.err.println("Port number in " + fullHost + " is out of range");
-						return;
+						port = Integer.parseInt(split[1]);
+						if(port <= 0 || port > 65535)
+						{
+							System.err.println("Port number in " + fullHost + " is out of range");
+							printUsage(options);
+							return;
+						}
+					}
+					catch(NumberFormatException e)
+					{
+						System.err.println("Port number in " + fullHost + " is not a number");
+						printUsage(options);
 					}
 				}
-				catch(NumberFormatException e)
+				else
+					host = fullHost;
+				
+				getConnectionManager().addConnection(host, port);
+			}
+			
+			if(config != null)
+			{
+				try
 				{
-					printUsage();
+					ConfigLoader.loadConfig(new File(config));
+				}
+				catch(FileNotFoundException e)
+				{
+					System.out.println("Cannot find config " + config);
+					return;
+				}
+				catch(IOException e)
+				{
+					System.out.println("Failed to load config " + config + ": " + e.getMessage());
+					return;
 				}
 			}
-			else
-				host = fullHost;
 			
-			getConnectionManager().addConnection(host, port);
+			mInstance.run();
 		}
-		
-		if(config != null)
+		catch(ParseException e)
 		{
-			try
-			{
-				ConfigLoader.loadConfig(new File(config));
-			}
-			catch(FileNotFoundException e)
-			{
-				System.err.println("Cannot find config " + config);
-				return;
-			}
-			catch(IOException e)
-			{
-				System.err.println("Failed to load config " + config + ": " + e.getMessage());
-				return;
-			}
+			System.out.println(e.getMessage());
+			printUsage(options);
 		}
-		
-		mInstance.run();
 	}
 	
 	private ConnectionManager mManager;
