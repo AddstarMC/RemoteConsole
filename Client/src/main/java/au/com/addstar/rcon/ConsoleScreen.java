@@ -39,7 +39,6 @@ public class ConsoleScreen extends Thread
 	{
 		try
 		{
-			string = string.replaceAll("Â", "");
             for (ChatColor color : ChatColor.values()) 
                 string = string.replaceAll(String.valueOf(ChatColor.COLORCHAR) + color.getChar(), color.getAnsi());
 			
@@ -58,7 +57,6 @@ public class ConsoleScreen extends Thread
 	{
 		try
 		{
-			string = string.replaceAll("Â", "");
 			for (ChatColor color : ChatColor.values()) 
                 string = string.replaceAll(String.valueOf(ChatColor.COLORCHAR) + color.getChar(), color.getAnsi());
 			
