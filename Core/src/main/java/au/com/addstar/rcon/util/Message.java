@@ -101,17 +101,17 @@ public class Message
 		while(matcher.find())
 		{
 			if(matcher.group(1) != null) // Message
-				matcher.appendReplacement(buffer, mMessage);
+				matcher.appendReplacement(buffer, Matcher.quoteReplacement(mMessage));
 			else if(matcher.group(2) != null) // Level
-				matcher.appendReplacement(buffer, mLevel.getLocalizedName());
+				matcher.appendReplacement(buffer, Matcher.quoteReplacement(mLevel.getLocalizedName()));
 			else if(matcher.group(3) != null) // Thread
-				matcher.appendReplacement(buffer, getOrEmpty(mThread));
+				matcher.appendReplacement(buffer, Matcher.quoteReplacement(getOrEmpty(mThread)));
 			else if(matcher.group(4) != null) // Date
-				matcher.appendReplacement(buffer, new SimpleDateFormat(matcher.group(4)).format(mTime));
+				matcher.appendReplacement(buffer, Matcher.quoteReplacement(new SimpleDateFormat(matcher.group(4)).format(mTime)));
 			else if(matcher.group(5) != null) // ServerName
-				matcher.appendReplacement(buffer, getOrEmpty(mServerName));
+				matcher.appendReplacement(buffer, Matcher.quoteReplacement(getOrEmpty(mServerName)));
 			else if(matcher.group(6) != null) // ServerId
-				matcher.appendReplacement(buffer, getOrEmpty(mServerId));
+				matcher.appendReplacement(buffer, Matcher.quoteReplacement(getOrEmpty(mServerId)));
 			else if(matcher.group(7) != null) // Newline
 				matcher.appendReplacement(buffer, ""); // Ignoring as newline is already present
 		}
