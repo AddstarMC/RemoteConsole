@@ -80,6 +80,8 @@ public class RemoteConsolePlugin extends Plugin
 		if(serverName == null)
 			serverName = "Proxy";
 		
+		installLogHandler();
+		
 		mServer = new BungeeRconServer(mConfig.port, serverName, userstore);
 		
 		try
@@ -95,7 +97,6 @@ public class RemoteConsolePlugin extends Plugin
 		}
 		
 		ProxyServer.getInstance().getPluginManager().registerCommand(this, new RconCommand());
-		installLogHandler();
 	}
 	
 	@Override

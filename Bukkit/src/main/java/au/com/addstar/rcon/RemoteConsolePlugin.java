@@ -72,6 +72,8 @@ public class RemoteConsolePlugin extends JavaPlugin
 		if(serverName.isEmpty())
 			serverName = Bukkit.getServerName();
 		
+		loadLogAppender();
+		
 		mServer = new BukkitRconServer(mConfig.port, serverName, userstore);
 		
 		try
@@ -89,8 +91,6 @@ public class RemoteConsolePlugin extends JavaPlugin
 		}
 		
 		new RconCommand().registerAs(getCommand("rcon"));
-		
-		loadLogAppender();
 	}
 	
 	@Override
