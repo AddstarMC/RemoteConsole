@@ -35,6 +35,22 @@ public class ConsoleScreen extends Thread
 		}
 	}
 	
+	public String readPassword()
+	{
+		try
+		{
+			String result = mConsole.readLine("password>", '\0');
+			mConsole.setPrompt(null);
+			AnsiConsole.out.print(ConsoleReader.RESET_LINE);
+			
+			return result;
+		}
+		catch(IOException e)
+		{
+			return null;
+		}
+	}
+	
 	public void printString(String string)
 	{
 		try

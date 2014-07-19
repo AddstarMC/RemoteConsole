@@ -66,7 +66,6 @@ public class ClientMain
 		options.addOption(OptionBuilder.withArgName("PASSWORD")
 				.hasArg()
 				.withDescription("Specifies your password")
-				.isRequired()
 				.withLongOpt("password")
 				.create('p'));
 		
@@ -93,7 +92,9 @@ public class ClientMain
 			
 			// Load options
 			String username = cl.getOptionValue('u');
-			String password = cl.getOptionValue('p');
+			String password = null;
+			if(cl.hasOption('p'))
+				password = cl.getOptionValue('p');
 			
 			String config = null;
 			if(cl.hasOption('c'))
@@ -105,8 +106,19 @@ public class ClientMain
 			if(cl.hasOption('l'))
 				maxConsoleLines = (Integer)cl.getParsedOptionValue("l");
 			
+			ConsoleScreen screen = new ConsoleScreen();
+			
+			if(password == null)
+				password = screen.readPassword();
+			
+			if(password == null)
+			{
+				System.err.println("No password supplied. Unable to start.");
+				return;
+			}
+			
 			// Init
-			mInstance = new ClientMain(new ConsoleScreen(), username, password);
+			mInstance = new ClientMain(screen, username, password);
 			
 			// Load hosts
 			for(String fullHost : cl.getArgs())
