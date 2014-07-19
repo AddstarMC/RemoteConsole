@@ -51,7 +51,17 @@ public class BungeeUser extends User
 			}
 		}
 		
-		Message message = new Message(record.getMessage(), type, record.getMillis(), record.getLevel(), threadName, record.getLoggerName());
+		String text = record.getMessage();
+		if(text == null)
+			text = "";
+		
+		if(record.getParameters() != null)
+		{
+			for(int i = 0; i < record.getParameters().length; ++i)
+				text = text.replace("{" + i + "}", String.valueOf(record.getParameters()[i]));
+		}
+		
+		Message message = new Message(text, type, record.getMillis(), record.getLevel(), threadName, record.getLoggerName());
 		getManager().sendPacket(new PacketOutMessage(message));
 	}
 }
