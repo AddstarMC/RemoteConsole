@@ -1,6 +1,8 @@
 package au.com.addstar.rcon;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
@@ -70,6 +72,21 @@ public enum ChatColor
 	public static ChatColor getByName(String name)
 	{
 		return mNameMap.get(name.toLowerCase());
+	}
+	
+	private static Pattern mBGErasorPattern = Pattern.compile("\u001B\\[[0-9]{1,2};([0-9]{1,2};[0-9]{1,2})m");
+	
+	public static String translateColors(String string)
+	{
+		Matcher m = mBGErasorPattern.matcher(string);
+		string = m.replaceAll("\u001B[$1m");
+		
+		if(string.endsWith("\u001B[m"))
+			string = string.substring(0, string.length() - 3);
+		
+		for (ChatColor color : values()) 
+            string = string.replaceAll(String.valueOf(ChatColor.COLORCHAR) + color.getChar(), color.getAnsi());
+		return string;
 	}
 	
 	static

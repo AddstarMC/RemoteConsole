@@ -45,6 +45,11 @@ public class Message
 		return mMessage;
 	}
 	
+	public void setMessage(String message)
+	{
+		mMessage = message;
+	}
+	
 	public String getThreadName()
 	{
 		return mThread;
@@ -91,6 +96,11 @@ public class Message
 		return new Message(message, mType, mTime, mLevel, mThread, mLogger, mServerId, mServerName);
 	}
 	
+	public boolean isRoughDuplicate(Message message)
+	{
+		return message.mLevel.equals(mLevel) && message.mMessage.equals(mMessage) && message.mServerId.equals(mServerId); 
+	}
+	
 	private static Pattern mPattern = Pattern.compile("%(?:(message|msg|m)|(level|p)|(thread|t)|(?:date|d)\\{(.*?)\\}|(server|srv)|(serverid|sid)|(n))");
 	
 	public String getFormatted(String format)
@@ -125,5 +135,11 @@ public class Message
 		if(str == null)
 			return "";
 		return str;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return String.format("Message: %d [%s] %s %s", mTime, mServerId, mLevel.toString(), mMessage);
 	}
 }

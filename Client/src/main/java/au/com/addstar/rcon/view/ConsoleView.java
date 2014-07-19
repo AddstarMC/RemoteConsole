@@ -56,7 +56,8 @@ public abstract class ConsoleView
 	
 	public void addMessage(Message message)
 	{
-		mBuffer.addMessage(message);
+		if(!mBuffer.isDuplicate(message))
+			mBuffer.addMessage(message);
 	}
 	
 	public abstract boolean isHandling(ClientConnection connection);

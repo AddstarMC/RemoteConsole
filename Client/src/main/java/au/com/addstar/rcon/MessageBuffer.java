@@ -47,6 +47,21 @@ public class MessageBuffer
 		}
 	}
 	
+	public synchronized boolean isDuplicate(Message message)
+	{
+		for(int i = mLines.size()-1; i >= 0; i--)
+		{
+			Message other = mLines.get(i);
+			if(other.getTime() < message.getTime() - 500)
+				break;
+			
+			if(message.isRoughDuplicate(other))
+				return true;
+		}
+		
+		return false;
+	}
+	
 	public synchronized void addMessage(Message message)
 	{
 		String[] parts = message.getMessage().split("\n");

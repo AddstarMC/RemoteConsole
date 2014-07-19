@@ -39,9 +39,6 @@ public class ConsoleScreen extends Thread
 	{
 		try
 		{
-            for (ChatColor color : ChatColor.values()) 
-                string = string.replaceAll(String.valueOf(ChatColor.COLORCHAR) + color.getChar(), color.getAnsi());
-			
             AnsiConsole.out.println(ConsoleReader.RESET_LINE + string + Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT));
 			
 			mConsole.redrawLine();
@@ -57,9 +54,6 @@ public class ConsoleScreen extends Thread
 	{
 		try
 		{
-			for (ChatColor color : ChatColor.values()) 
-                string = string.replaceAll(String.valueOf(ChatColor.COLORCHAR) + color.getChar(), color.getAnsi());
-			
             AnsiConsole.err.println(ConsoleReader.RESET_LINE + string + Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT));
 			
 			mConsole.redrawLine();
