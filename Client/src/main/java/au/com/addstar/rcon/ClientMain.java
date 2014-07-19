@@ -59,7 +59,6 @@ public class ClientMain
 		options.addOption(OptionBuilder.withArgName("USERNAME")
 							.hasArg()
 							.withDescription("Specifies your username")
-							.isRequired()
 							.withLongOpt("username")
 							.create('u'));
 		
@@ -89,10 +88,14 @@ public class ClientMain
 		try
 		{
 			cl = parser.parse(options, args, true);
+			UserSettings settings = UserSettings.load();
 			
 			// Load options
-			String username = cl.getOptionValue('u');
+			String username = null;
 			String password = null;
+			
+			if(cl.hasOption('u'))
+				username = cl.getOptionValue('u');
 			if(cl.hasOption('p'))
 				password = cl.getOptionValue('p');
 			
@@ -108,8 +111,23 @@ public class ClientMain
 			
 			ConsoleScreen screen = new ConsoleScreen();
 			
+			if(settings != null && username == null && password == null)
+			{
+				username = settings.username;
+				password = settings.password;
+			}
+			
+			if(username == null)
+				username = screen.readUsername();
+			
 			if(password == null)
 				password = screen.readPassword();
+			
+			if(username == null)
+			{
+				System.err.println("No username supplied. Unable to start.");
+				return;
+			}
 			
 			if(password == null)
 			{

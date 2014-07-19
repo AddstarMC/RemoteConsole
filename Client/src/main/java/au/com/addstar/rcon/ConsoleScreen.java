@@ -35,6 +35,22 @@ public class ConsoleScreen extends Thread
 		}
 	}
 	
+	public String readUsername()
+	{
+		try
+		{
+			String result = mConsole.readLine("username>");
+			mConsole.setPrompt(null);
+			AnsiConsole.out.print(ConsoleReader.RESET_LINE);
+			
+			return result;
+		}
+		catch(IOException e)
+		{
+			return null;
+		}
+	}
+	
 	public String readPassword()
 	{
 		try
