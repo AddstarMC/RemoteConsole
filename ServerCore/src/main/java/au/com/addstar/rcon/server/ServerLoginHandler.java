@@ -85,10 +85,19 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 			return;
 		}
 		
-		User user = RconServer.instance.getUser(packet.username);
-		if(user == null)
+		User user;
+		try
 		{
-			disconnect("Authentication failed");
+			user = RconServer.instance.getUser(packet.username, false);
+			if(user == null)
+			{
+				disconnect("Authentication failed");
+				return;
+			}
+		}
+		catch(RuntimeException e)
+		{
+			disconnect("Internal error");
 			return;
 		}
 		

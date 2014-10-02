@@ -84,6 +84,11 @@ public abstract class RconServer
 	
 	public User getUser(String name)
 	{
+		return getUser(name, true);
+	}
+	
+	public User getUser(String name, boolean silent)
+	{
 		if(mUsers.containsKey(name))
 			return mUsers.get(name);
 		
@@ -97,7 +102,10 @@ public abstract class RconServer
 		{
 			System.err.println("[RCON] Unable to load account " + name + ":");
 			e.printStackTrace();
-			return null;
+			if (silent)
+				return null;
+			else
+				throw new RuntimeException("Unable to load account");
 		}
 		
 		mUsers.put(name, user);
