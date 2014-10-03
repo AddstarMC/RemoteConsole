@@ -98,7 +98,7 @@ public class Message
 	
 	public boolean isRoughDuplicate(Message message)
 	{
-		return message.mLevel.equals(mLevel) && message.mMessage.equals(mMessage) && message.mServerId.equals(mServerId); 
+		return message.mLevel.equals(mLevel) && message.mMessage.equals(mMessage); 
 	}
 	
 	private static Pattern mPattern = Pattern.compile("%(?:(message|msg|m)|(level|p)|(thread|t)|(?:date|d)\\{(.*?)\\}|(server|srv)|(serverid|sid)|(n))");
