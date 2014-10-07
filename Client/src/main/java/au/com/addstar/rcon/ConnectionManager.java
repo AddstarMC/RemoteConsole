@@ -357,7 +357,11 @@ public class ConnectionManager
 			catch ( InterruptedException e )
 			{
 				if(mConnection.getManager().getDisconnectReason() != null)
+				{
+					if (mConnection.getManager().getDisconnectReason().equals("Server is starting up"))
+						scheduleReconnect(mConnection);
 					ClientMain.getViewManager().addSystemMessage(String.format("Disconnected from %s: %s", mConnection, mConnection.getManager().getDisconnectReason()));
+				}
 			}
 		}
 		

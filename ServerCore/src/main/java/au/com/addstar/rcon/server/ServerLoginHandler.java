@@ -45,6 +45,12 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 			return;
 		}
 		
+		if(!RconServer.instance.canConnect())
+		{
+			disconnect("Server is starting up");
+			return;
+		}
+		
 		mRand.nextBytes(mBlob);
 		getManager().sendPacket(new PacketOutEncryptStart(RconServer.instance.getServerKey().getPublic(), mBlob));
 		mCurrentState = State.Encrypt;

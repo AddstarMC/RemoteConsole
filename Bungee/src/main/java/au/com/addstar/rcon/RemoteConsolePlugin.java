@@ -88,6 +88,7 @@ public class RemoteConsolePlugin extends Plugin
 		{
 			getLogger().info("Starting RconServer on port " + mConfig.port);
 			mServer.start(creator);
+			mServer.openServer();
 		}
 		catch(IOException e)
 		{

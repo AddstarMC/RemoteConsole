@@ -91,6 +91,15 @@ public class RemoteConsolePlugin extends JavaPlugin
 		}
 		
 		new RconCommand().registerAs(getCommand("rcon"));
+		
+		Bukkit.getScheduler().runTask(this, new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				mServer.openServer();
+			}
+		});
 	}
 	
 	@Override

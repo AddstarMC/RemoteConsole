@@ -31,6 +31,7 @@ public abstract class RconServer
 	
 	private IUserStore mUserStore;
 	private HashMap<String, User> mUsers;
+	private boolean mCanConnect = false;
 	
 	public static RconServer instance;
 	
@@ -70,6 +71,16 @@ public abstract class RconServer
 		mWorker.shutdownGracefully().syncUninterruptibly();
 		
 		mUserStore.shutdown();
+	}
+	
+	public final void openServer()
+	{
+		mCanConnect = true;
+	}
+	
+	public final boolean canConnect()
+	{
+		return mCanConnect;
 	}
 	
 	public final KeyPair getServerKey()
