@@ -21,6 +21,7 @@ public class ConsoleScreen extends Thread
 		{
 			mConsole = new ConsoleReader();
 			mConsole.setBellEnabled(false);
+			mConsole.setExpandEvents(false);
 			mConsole.addCompleter(new TabCompleter(this));
 			mConsole.setHandleUserInterrupt(true);
 			mConsole.getTerminal().init();
