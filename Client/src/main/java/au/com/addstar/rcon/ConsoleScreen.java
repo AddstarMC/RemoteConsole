@@ -1,22 +1,26 @@
 package au.com.addstar.rcon;
 
 import java.io.IOException;
+
 import jline.console.ConsoleReader;
 import jline.console.UserInterruptException;
 
 import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.Ansi.Erase;
 import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.Ansi.Attribute;
 
 public class ConsoleScreen extends Thread
 {
 	private ConsoleReader mConsole;
+	private String mPromptText;
 	
 	public ConsoleScreen()
 	{
 		super("ConsoleReader");
 		setDaemon(true);
 		
+		mPromptText = "";
 		try
 		{
 			mConsole = new ConsoleReader();
@@ -68,11 +72,34 @@ public class ConsoleScreen extends Thread
 		}
 	}
 	
+	private int getCursorLines()
+	{
+		int promptSize = (mConsole.getPrompt() != null ? mConsole.getPrompt().length() : 0);
+		int size = mConsole.getCursorBuffer().length() + promptSize + 1;
+		
+		return (int)Math.ceil(size / (double)mConsole.getTerminal().getWidth());
+	}
+	
 	public void printString(String string)
 	{
 		try
 		{
-            AnsiConsole.out.println(ConsoleReader.RESET_LINE + string + Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT));
+			StringBuffer buffer = new StringBuffer();
+			int lines = getCursorLines();
+			while (lines > 1)
+			{
+				buffer.append(Ansi.ansi().eraseLine(Erase.ALL));
+				buffer.append(ConsoleReader.RESET_LINE);
+				buffer.append(Ansi.ansi().cursorUp(1));
+				--lines;
+			}
+			
+			buffer.append(Ansi.ansi().eraseLine(Erase.ALL));
+			buffer.append(ConsoleReader.RESET_LINE);
+			
+			buffer.append(string);
+			buffer.append(Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT));
+            AnsiConsole.out.println(buffer.toString());
 			
 			mConsole.redrawLine();
 			mConsole.flush();
@@ -87,7 +114,22 @@ public class ConsoleScreen extends Thread
 	{
 		try
 		{
-            AnsiConsole.err.println(ConsoleReader.RESET_LINE + string + Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT));
+			StringBuffer buffer = new StringBuffer();
+			int lines = getCursorLines();
+			while (lines > 1)
+			{
+				buffer.append(Ansi.ansi().eraseLine(Erase.ALL));
+				buffer.append(ConsoleReader.RESET_LINE);
+				buffer.append(Ansi.ansi().cursorUp(1));
+				--lines;
+			}
+			
+			buffer.append(Ansi.ansi().eraseLine(Erase.ALL));
+			buffer.append(ConsoleReader.RESET_LINE);
+			
+			buffer.append(string);
+			buffer.append(Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT));
+            AnsiConsole.err.println(buffer.toString());
 			
 			mConsole.redrawLine();
 			mConsole.flush();
@@ -105,7 +147,7 @@ public class ConsoleScreen extends Thread
 		{
 			while(true)
 			{
-				String command = mConsole.readLine((ClientMain.showPrompt ? ">" : ""));
+				String command = mConsole.readLine((ClientMain.showPrompt ? mPromptText + ">" : ""));
 				
 				if(command != null) // Handle commands
 					ClientMain.handleCommand(this, command);
@@ -131,5 +173,11 @@ public class ConsoleScreen extends Thread
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void setPromptText(String text)
+	{
+		mPromptText = text;
+		mConsole.setPrompt(mPromptText + ">");
 	}
 }

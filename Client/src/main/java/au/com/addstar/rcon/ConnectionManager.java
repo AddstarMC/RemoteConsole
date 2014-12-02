@@ -211,6 +211,7 @@ public class ConnectionManager
 			if(mActiveConnection == null)
 			{
 				mActiveConnection = connection;
+				ClientMain.getConsole().setPromptText(connection.getId());
 				ClientMain.callEvent(new Event(EventType.ActiveServerChange, connection));
 			}
 		}
@@ -257,8 +258,11 @@ public class ConnectionManager
 		{
 			mActiveConnection = null;
 			ClientMain.callEvent(new Event(EventType.ActiveServerChange, null));
+			ClientMain.getConsole().setPromptText("");
 			return;
 		}
+		else
+			ClientMain.getConsole().setPromptText(id);
 		
 		synchronized(mIdConnections)
 		{
