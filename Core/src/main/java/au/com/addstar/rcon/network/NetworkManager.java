@@ -143,6 +143,6 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	
 	public SocketAddress getAddress()
 	{
-		return mChannel.localAddress();
+		return mChannel.remoteAddress();
 	}
 }
