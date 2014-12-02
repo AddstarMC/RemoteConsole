@@ -3,6 +3,7 @@ package au.com.addstar.rcon;
 import java.util.logging.LogRecord;
 
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
@@ -61,7 +62,14 @@ public class BungeeUser extends User
 				text = text.replace("{" + i + "}", String.valueOf(record.getParameters()[i]));
 		}
 		
-		Message message = new Message(text, type, record.getMillis(), record.getLevel(), threadName, record.getLoggerName());
-		getManager().sendPacket(new PacketOutMessage(message));
+		final Message message = new Message(text, type, record.getMillis(), record.getLevel(), threadName, record.getLoggerName());
+		ProxyServer.getInstance().getScheduler().runAsync(RemoteConsolePlugin.instance, new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				getManager().sendPacket(new PacketOutMessage(message));
+			}
+		});
 	}
 }
