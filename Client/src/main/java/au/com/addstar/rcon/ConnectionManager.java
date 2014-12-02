@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import au.com.addstar.rcon.Event.EventType;
 import au.com.addstar.rcon.network.ClientConnection;
@@ -38,6 +40,8 @@ public class ConnectionManager
 	private String mUsername;
 	private String mPassword;
 	
+	private ExecutorService mConnectionExecutor;
+	
 	public ConnectionManager(String username, String password)
 	{
 		mUsername = username;
@@ -63,6 +67,8 @@ public class ConnectionManager
 				return new NetHandler(manager);
 			}
 		};
+		
+		mConnectionExecutor = Executors.newCachedThreadPool();
 	}
 	
 	/**
@@ -110,11 +116,7 @@ public class ConnectionManager
 	{
 		try
 		{
-			connection.connect(mHandlerCreator);
-			mConnectingConnections.add(connection);
-			connection.startLogin(mUsername, mPassword);
-			ConnectionThread thread = new ConnectionThread(connection);
-			thread.start();
+			mConnectionExecutor.execute(new ConnectionThread(connection, silent));
 			return true;
 		}
 		catch(UnresolvedAddressException e)
@@ -122,15 +124,6 @@ public class ConnectionManager
 			if(!silent)
 				ClientMain.getViewManager().addSystemMessage("Failed to connect to " + connection.toString());
 			connection.shutdown();
-		}
-		catch(ConnectException e)
-		{
-			if(!silent)
-				ClientMain.getViewManager().addSystemMessage("Failed to connect to " + connection.toString());
-			
-			connection.shutdown();
-			if(connection.shouldReconnect())
-				scheduleReconnect(connection);
 		}
 		
 		return false;
@@ -338,15 +331,15 @@ public class ConnectionManager
 		}
 	}
 	
-	private class ConnectionThread extends Thread implements GenericFutureListener<Future<? super Void>>
+	private class ConnectionThread implements GenericFutureListener<Future<? super Void>>, Runnable
 	{
 		private ClientConnection mConnection;
+		private boolean mSilent;
 		
-		public ConnectionThread(ClientConnection connection)
+		public ConnectionThread(ClientConnection connection, boolean silent)
 		{
-			super("LoginThread: " + connection.getManager().getAddress());
 			mConnection = connection;
-			mConnection.addTerminationListener(this);
+			mSilent = silent;
 		}
 
 		@Override
@@ -354,6 +347,12 @@ public class ConnectionManager
 		{
 			try
 			{
+				mConnection.connect(mHandlerCreator);
+				mConnection.addTerminationListener(this);
+				
+				mConnectingConnections.add(mConnection);
+				mConnection.startLogin(mUsername, mPassword);
+				
 				mConnection.waitForLogin();
 				mConnection.removeTerminationListener(this);
 				onConnectionEstabolished(mConnection);
@@ -367,12 +366,21 @@ public class ConnectionManager
 					ClientMain.getViewManager().addSystemMessage(String.format("Disconnected from %s: %s", mConnection, mConnection.getManager().getDisconnectReason()));
 				}
 			}
+			catch(ConnectException e)
+			{
+				if(!mSilent)
+					ClientMain.getViewManager().addSystemMessage("Failed to connect to " + mConnection.toString());
+				
+				mConnection.shutdown();
+				if(mConnection.shouldReconnect())
+					scheduleReconnect(mConnection);
+			}
 		}
 		
 		@Override
 		public void operationComplete( Future<? super Void> future ) throws Exception
 		{
-			interrupt();
+			Thread.currentThread().interrupt();
 			mConnection.shutdown();
 		}
 	}
