@@ -254,14 +254,14 @@ public class ConnectionManager
 			ClientMain.getConsole().setPromptText("");
 			return;
 		}
-		else
-			ClientMain.getConsole().setPromptText(id);
 		
 		synchronized(mIdConnections)
 		{
 			ClientConnection connection = mIdConnections.get(id);
 			if(connection == null)
 				throw new IllegalArgumentException("Unknown server " + id);
+			
+			ClientMain.getConsole().setPromptText(connection.getId());
 			
 			mActiveConnection = connection;
 			ClientMain.callEvent(new Event(EventType.ActiveServerChange, connection));
