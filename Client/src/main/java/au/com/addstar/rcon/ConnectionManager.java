@@ -109,15 +109,14 @@ public class ConnectionManager
 	 * Connects to the specified connection. NOTE: This does not check if the connection is already established
 	 * @param connection The connection to connect 
 	 * @param silent If true, no messages will be printed upon fail
-	 * @return True if connection was formed.
 	 * @throws InterruptedException
 	 */
-	private boolean connect(ClientConnection connection, boolean silent) throws InterruptedException
+	private void connect(ClientConnection connection, boolean silent) throws InterruptedException
 	{
 		try
 		{
-			mConnectionExecutor.execute(new ConnectionThread(connection, silent));
-			return true;
+			if (mConnectingConnections.add(connection))
+				mConnectionExecutor.execute(new ConnectionThread(connection, silent));
 		}
 		catch(UnresolvedAddressException e)
 		{
@@ -125,8 +124,6 @@ public class ConnectionManager
 				ClientMain.getViewManager().addSystemMessage("Failed to connect to " + connection.toString());
 			connection.shutdown();
 		}
-		
-		return false;
 	}
 	
 	/**
@@ -350,7 +347,6 @@ public class ConnectionManager
 				mConnection.connect(mHandlerCreator);
 				mConnection.addTerminationListener(this);
 				
-				mConnectingConnections.add(mConnection);
 				mConnection.startLogin(mUsername, mPassword);
 				
 				mConnection.waitForLogin();
@@ -359,15 +355,18 @@ public class ConnectionManager
 			}
 			catch ( InterruptedException e )
 			{
+				mConnectingConnections.remove(mConnection);
 				if(mConnection.getManager().getDisconnectReason() != null)
 				{
 					if (mConnection.getManager().getDisconnectReason().equals("Server is starting up"))
 						scheduleReconnect(mConnection);
-					ClientMain.getViewManager().addSystemMessage(String.format("Disconnected from %s: %s", mConnection, mConnection.getManager().getDisconnectReason()));
+					else
+						ClientMain.getViewManager().addSystemMessage(String.format("Disconnected from %s: %s", mConnection, mConnection.getManager().getDisconnectReason()));
 				}
 			}
 			catch(ConnectException e)
 			{
+				mConnectingConnections.remove(mConnection);
 				if(!mSilent)
 					ClientMain.getViewManager().addSystemMessage("Failed to connect to " + mConnection.toString());
 				
@@ -405,8 +404,8 @@ public class ConnectionManager
 						while(it.hasNext())
 						{
 							ClientConnection connection = it.next();
-							if(connect(connection, true))
-								it.remove();
+							it.remove();
+							connect(connection, true);
 						}
 					}
 				}

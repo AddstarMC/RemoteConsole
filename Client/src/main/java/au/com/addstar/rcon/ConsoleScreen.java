@@ -179,5 +179,28 @@ public class ConsoleScreen extends Thread
 	{
 		mPromptText = text;
 		mConsole.setPrompt(mPromptText + ">");
+		try
+		{
+			StringBuffer buffer = new StringBuffer();
+			int lines = getCursorLines();
+			while (lines > 1)
+			{
+				buffer.append(Ansi.ansi().eraseLine(Erase.ALL));
+				buffer.append(ConsoleReader.RESET_LINE);
+				buffer.append(Ansi.ansi().cursorUp(1));
+				--lines;
+			}
+			
+			buffer.append(Ansi.ansi().eraseLine(Erase.ALL));
+			buffer.append(ConsoleReader.RESET_LINE);
+			
+			mConsole.print(buffer.toString());
+			mConsole.drawLine();
+			mConsole.flush();
+		}
+		catch ( IOException e )
+		{
+			e.printStackTrace();
+		}
 	}
 }
