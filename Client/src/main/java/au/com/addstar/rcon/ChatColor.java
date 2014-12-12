@@ -89,6 +89,13 @@ public enum ChatColor
 		return string;
 	}
 	
+	private static Pattern mColorErasorPattern = Pattern.compile("(?:\u001B\\[.*?m|\u00A7[a-fA-F0-9rl-o])");
+	public static String stripColors(String string)
+	{
+		Matcher m = mColorErasorPattern.matcher(string);
+		return m.replaceAll("");
+	}
+	
 	static
 	{
 		for(ChatColor color : values())

@@ -52,14 +52,15 @@ public class MessageProcessor
 		return message;
 	}
 	
-	private static Pattern mMetaPattern = Pattern.compile("/(.*)/([imsxduU]*)");
-	private static Pattern compilePattern(String pattern) throws IllegalArgumentException
+	private static Pattern mMetaPattern = Pattern.compile("/(.*)/([imsxduUC]*)");
+	private static ExtPattern compilePattern(String pattern) throws IllegalArgumentException
 	{
 		Matcher matcher = mMetaPattern.matcher(pattern);
 		
 		if(!matcher.matches())
 			throw new IllegalArgumentException("Illegal regex: " + pattern);
 		
+		boolean stripColours = false;
 		int flags = 0;
 		if(matcher.group(2) != null)
 		{
@@ -90,13 +91,17 @@ public class MessageProcessor
 				case 'U':
 					flags |= Pattern.UNICODE_CHARACTER_CLASS;
 					break;
+				// Custom flags
+				case 'C':
+					stripColours = true;
+					break;
 				}
 			}
 		}
 		
 		try
 		{
-			return Pattern.compile(matcher.group(1), flags);
+			return new ExtPattern(Pattern.compile(matcher.group(1), flags), stripColours);
 		}
 		catch(PatternSyntaxException e)
 		{
@@ -111,7 +116,7 @@ public class MessageProcessor
 	
 	private static class DropProcess implements Process
 	{
-		private Pattern mPattern;
+		private ExtPattern mPattern;
 		
 		public DropProcess(String pattern) throws IllegalArgumentException
 		{
@@ -131,7 +136,7 @@ public class MessageProcessor
 	
 	private static class ReplaceProcess implements Process
 	{
-		private Pattern mPattern;
+		private ExtPattern mPattern;
 		private String mReplacement;
 		
 		public ReplaceProcess(String pattern, String replacement) throws IllegalArgumentException
@@ -153,7 +158,7 @@ public class MessageProcessor
 	
 	private static class ColorProcess implements Process
 	{
-		private Pattern mPattern;
+		private ExtPattern mPattern;
 		private Level mLevel;
 		private String mColor;
 		
@@ -180,6 +185,26 @@ public class MessageProcessor
 			}
 			
 			return message;
+		}
+	}
+	
+	private static class ExtPattern
+	{
+		private Pattern mPattern;
+		private boolean mStripColours;
+		
+		public ExtPattern(Pattern pattern, boolean stripColours)
+		{
+			mPattern = pattern;
+			mStripColours = stripColours;
+		}
+		
+		public Matcher matcher(String string)
+		{
+			if (mStripColours)
+				string = ChatColor.stripColors(string);
+			
+			return mPattern.matcher(string);
 		}
 	}
 }
