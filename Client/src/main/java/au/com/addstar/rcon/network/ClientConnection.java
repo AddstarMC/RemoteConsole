@@ -23,6 +23,7 @@ public class ClientConnection
 	private int mPort;
 	private String mHost;
 	private String mServerName;
+	private String mAlias;
 	private String mId;
 	private String mConsoleFormat;
 	private boolean mReconnect;
@@ -37,14 +38,15 @@ public class ClientConnection
 	
 	public ClientConnection(String host, int port)
 	{
-		this(host, port, false);
+		this(host, port, false, null);
 	}
 	
-	public ClientConnection(String host, int port, boolean reconnect)
+	public ClientConnection(String host, int port, boolean reconnect, String alias)
 	{
 		mHost = host;
 		mPort = port;
 		mReconnect = reconnect;
+		mAlias = alias;
 		
 		mManagers = new ArrayList<NetworkManager>();
 		mServerName = "Unknown Server";
@@ -122,7 +124,15 @@ public class ClientConnection
 	
 	public String getServerName()
 	{
-		return mServerName;
+		if (mAlias != null)
+			return mAlias;
+		else
+			return mServerName;
+	}
+	
+	public String getAlias()
+	{
+		return mAlias;
 	}
 	
 	public boolean isLoggedIn()
@@ -147,7 +157,10 @@ public class ClientConnection
 	@Override
 	public String toString()
 	{
-		return mHost + ":" + mPort;
+		if (mAlias != null)
+			return String.format("%s - %s:%d", mAlias, mHost, mPort);
+		else
+			return String.format("%s:%d", mHost, mPort);
 	}
 	
 	public void setId(String id)

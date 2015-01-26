@@ -168,7 +168,7 @@ public class ClientMain
 				else
 					host = fullHost;
 				
-				getConnectionManager().addConnection(host, port);
+				getConnectionManager().addConnection(host, port, null);
 			}
 			
 			if(config != null)

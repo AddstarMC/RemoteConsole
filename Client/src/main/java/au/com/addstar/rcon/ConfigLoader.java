@@ -80,7 +80,11 @@ public class ConfigLoader
 			Element server = (Element)servers.item(i);
 			
 			boolean reconnect = boolFromString(server.getAttribute("reconnect"));
+			String name = server.getAttribute("name").trim();
 			String fullHost = server.getTextContent();
+			
+			if (name.isEmpty())
+				name = null;
 			
 			String host;
 			int port = 22050;
@@ -104,7 +108,9 @@ public class ConfigLoader
 			else
 				host = fullHost;
 			
-			ClientMain.getConnectionManager().addConnection(host, port, reconnect);
+			if (name != null)
+				ClientMain.getConnectionManager().setAlias(host, port, name);
+			ClientMain.getConnectionManager().addConnection(host, port, reconnect, name);
 		}
 	}
 	

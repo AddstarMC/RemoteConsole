@@ -26,6 +26,7 @@ public class ConnectionManager
 	private ClientConnection mActiveConnection;
 	private ArrayList<ClientConnection> mAllConnections;
 	private HashMap<String, ClientConnection> mIdConnections;
+	private HashMap<String, String> mAliases;
 
 	private ArrayDeque<ClientConnection> mPendingConnections;
 	private HashSet<ClientConnection> mConnectingConnections;
@@ -48,6 +49,7 @@ public class ConnectionManager
 		mPassword = password;
 		mAllConnections = new ArrayList<ClientConnection>();
 		mIdConnections = new HashMap<String, ClientConnection>();
+		mAliases = new HashMap<String, String>();
 		
 		mPendingConnections = new ArrayDeque<ClientConnection>();
 		mConnectingConnections = new HashSet<ClientConnection>();
@@ -75,10 +77,11 @@ public class ConnectionManager
 	 * Adds a server to connect to upon {@link #connectAll}
 	 * @param host The host name to connect to
 	 * @param port The port number for the host
+	 * @param name The name for this host
 	 */
-	public void addConnection(String host, int port)
+	public void addConnection(String host, int port, String name)
 	{
-		mPendingConnections.add(new ClientConnection(host, port));
+		mPendingConnections.add(new ClientConnection(host, port, false, name));
 	}
 	
 	/**
@@ -86,10 +89,16 @@ public class ConnectionManager
 	 * @param host The host name to connect to
 	 * @param port The port number for the host
 	 * @param reconnect When true, will reconnect upon connection lost
+	 * @param name If set, this name will be used as an alias
 	 */
-	public void addConnection(String host, int port, boolean reconnect)
+	public void addConnection(String host, int port, boolean reconnect, String name)
 	{
-		mPendingConnections.add(new ClientConnection(host, port, reconnect));
+		mPendingConnections.add(new ClientConnection(host, port, reconnect, name));
+	}
+	
+	public void setAlias(String host, int port, String name)
+	{
+		mAliases.put(name, String.format("%s:%d", host, port));
 	}
 	
 	/**
@@ -288,6 +297,11 @@ public class ConnectionManager
 		{
 			return mIdConnections.get(id);
 		}
+	}
+	
+	public String resolveAlias(String name)
+	{
+		return mAliases.get(name);
 	}
 	
 	public void closeAll(String reason)
