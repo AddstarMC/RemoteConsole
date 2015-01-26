@@ -101,7 +101,7 @@ public class Message
 		return message.mLevel.equals(mLevel) && message.mMessage.equals(mMessage); 
 	}
 	
-	private static Pattern mPattern = Pattern.compile("%(?:(message|msg|m)|(level|p)|(thread|t)|(?:date|d)\\{(.*?)\\}|(server|srv)|(serverid|sid)|(n))");
+	private static Pattern mPattern = Pattern.compile("%([\\-\\+ 0\\,\\(]*)?(\\d+)?(?:(message|msg|m)|(level|p)|(thread|t)|(?:date|d)\\{(.*?)\\}|(server|srv)|(serverid|sid)|(n))");
 	
 	public String getFormatted(String format)
 	{
@@ -110,20 +110,36 @@ public class Message
 		StringBuffer buffer = new StringBuffer();
 		while(matcher.find())
 		{
-			if(matcher.group(1) != null) // Message
-				matcher.appendReplacement(buffer, Matcher.quoteReplacement(mMessage));
-			else if(matcher.group(2) != null) // Level
-				matcher.appendReplacement(buffer, Matcher.quoteReplacement(mLevel.getLocalizedName()));
-			else if(matcher.group(3) != null) // Thread
-				matcher.appendReplacement(buffer, Matcher.quoteReplacement(getOrEmpty(mThread)));
-			else if(matcher.group(4) != null) // Date
-				matcher.appendReplacement(buffer, Matcher.quoteReplacement(new SimpleDateFormat(matcher.group(4)).format(mTime)));
-			else if(matcher.group(5) != null) // ServerName
-				matcher.appendReplacement(buffer, Matcher.quoteReplacement(getOrEmpty(mServerName)));
-			else if(matcher.group(6) != null) // ServerId
-				matcher.appendReplacement(buffer, Matcher.quoteReplacement(getOrEmpty(mServerId)));
-			else if(matcher.group(7) != null) // Newline
-				matcher.appendReplacement(buffer, ""); // Ignoring as newline is already present
+			Object replacement = null;
+			// Get the message part
+			if(matcher.group(3) != null) // Message
+				replacement = mMessage;
+			else if(matcher.group(4) != null) // Level
+				replacement = mLevel.getLocalizedName();
+			else if(matcher.group(5) != null) // Thread
+				replacement = getOrEmpty(mThread);
+			else if(matcher.group(6) != null) // Date
+				replacement = new SimpleDateFormat(matcher.group(6)).format(mTime);
+			else if(matcher.group(7) != null) // ServerName
+				replacement = getOrEmpty(mServerName);
+			else if(matcher.group(8) != null) // ServerId
+				replacement = getOrEmpty(mServerId);
+			else if(matcher.group(9) != null) // Newline
+				replacement = ""; // Ignoring as newline is already present
+			
+			// Apply any formatting to the message (padding, alignment, etc)
+			StringBuilder finalFormat = new StringBuilder();
+			finalFormat.append("%");
+			// Flags
+			if (matcher.group(1) != null)
+				finalFormat.append(matcher.group(1));
+			// Width
+			if (matcher.group(2) != null)
+				finalFormat.append(matcher.group(2));
+			
+			finalFormat.append('s');
+			
+			matcher.appendReplacement(buffer, Matcher.quoteReplacement(String.format(finalFormat.toString(), replacement)));
 		}
 		
 		matcher.appendTail(buffer);
