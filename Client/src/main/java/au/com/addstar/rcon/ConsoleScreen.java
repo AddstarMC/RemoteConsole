@@ -14,6 +14,7 @@ public class ConsoleScreen extends Thread
 {
 	private ConsoleReader mConsole;
 	private String mPromptText;
+	private boolean mDebug = false;
 	
 	public ConsoleScreen()
 	{
@@ -99,7 +100,21 @@ public class ConsoleScreen extends Thread
 			
 			buffer.append(string);
 			buffer.append(Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT));
-            AnsiConsole.out.println(buffer.toString());
+			
+			if (mDebug)
+			{
+				for (int i = 0; i < buffer.length(); ++i)
+				{
+					if (!Character.isAlphabetic(buffer.charAt(i)) && !Character.isWhitespace(buffer.charAt(i)) && !Character.isDigit(buffer.charAt(i)))
+					{
+						String insert = String.format("\\%x", (int)buffer.charAt(i));
+						buffer.replace(i, i, insert);
+						i += insert.length();
+					}
+				}
+			}
+			
+			AnsiConsole.out.println(buffer.toString());
 			
 			mConsole.redrawLine();
 			mConsole.flush();
@@ -129,7 +144,21 @@ public class ConsoleScreen extends Thread
 			
 			buffer.append(string);
 			buffer.append(Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT));
-            AnsiConsole.err.println(buffer.toString());
+
+			if (mDebug)
+			{
+				for (int i = 0; i < buffer.length(); ++i)
+				{
+					if (Character.isISOControl(buffer.charAt(i)))
+					{
+						String insert = String.format("\\%x", (int)buffer.charAt(i));
+						buffer.replace(i, i, insert);
+						i += insert.length();
+					}
+				}
+			}
+			
+			AnsiConsole.err.println(buffer.toString());
 			
 			mConsole.redrawLine();
 			mConsole.flush();

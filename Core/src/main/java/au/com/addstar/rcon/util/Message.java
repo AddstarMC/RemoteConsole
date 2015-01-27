@@ -5,6 +5,8 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.fusesource.jansi.AnsiString;
+
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 
 public class Message
@@ -43,6 +45,11 @@ public class Message
 	public String getMessage()
 	{
 		return mMessage;
+	}
+	
+	public String getPlainMessage()
+	{
+		return new AnsiString(mMessage).getPlain().toString();
 	}
 	
 	public void setMessage(String message)
@@ -98,7 +105,7 @@ public class Message
 	
 	public boolean isRoughDuplicate(Message message)
 	{
-		return message.mLevel.equals(mLevel) && message.mMessage.equals(mMessage); 
+		return message.mLevel.equals(mLevel) && message.getPlainMessage().equals(getPlainMessage()); 
 	}
 	
 	private static Pattern mPattern = Pattern.compile("%([\\-\\+ 0\\,\\(]*)?(\\d+)?(?:(message|msg|m)|(level|p)|(thread|t)|(?:date|d)\\{(.*?)\\}|(server|srv)|(serverid|sid)|(n))");
