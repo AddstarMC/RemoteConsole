@@ -342,7 +342,7 @@ public class ConnectionManager
 		}
 	}
 	
-	private class ConnectionThread implements GenericFutureListener<Future<? super Void>>, Runnable
+	private class ConnectionThread implements Runnable
 	{
 		private ClientConnection mConnection;
 		private boolean mSilent;
@@ -359,24 +359,24 @@ public class ConnectionManager
 			try
 			{
 				mConnection.connect(mHandlerCreator);
-				mConnection.addTerminationListener(this);
-				
 				mConnection.startLogin(mUsername, mPassword);
 				
-				mConnection.waitForLogin();
-				mConnection.removeTerminationListener(this);
-				onConnectionEstabolished(mConnection);
+				if (mConnection.waitForLogin())
+					onConnectionEstabolished(mConnection);
+				else
+				{
+					mConnectingConnections.remove(mConnection);
+					if(mConnection.getManager().getDisconnectReason() != null)
+					{
+						if (mConnection.getManager().getDisconnectReason().equals("Server is starting up"))
+							scheduleReconnect(mConnection);
+						else
+							ClientMain.getViewManager().addSystemMessage(String.format("Disconnected from %s: %s", mConnection, mConnection.getManager().getDisconnectReason()));
+					}
+				}
 			}
 			catch ( InterruptedException e )
 			{
-				mConnectingConnections.remove(mConnection);
-				if(mConnection.getManager().getDisconnectReason() != null)
-				{
-					if (mConnection.getManager().getDisconnectReason().equals("Server is starting up"))
-						scheduleReconnect(mConnection);
-					else
-						ClientMain.getViewManager().addSystemMessage(String.format("Disconnected from %s: %s", mConnection, mConnection.getManager().getDisconnectReason()));
-				}
 			}
 			catch(ConnectException e)
 			{
@@ -388,13 +388,6 @@ public class ConnectionManager
 				if(mConnection.shouldReconnect())
 					scheduleReconnect(mConnection);
 			}
-		}
-		
-		@Override
-		public void operationComplete( Future<? super Void> future ) throws Exception
-		{
-			Thread.currentThread().interrupt();
-			mConnection.shutdown();
 		}
 	}
 	

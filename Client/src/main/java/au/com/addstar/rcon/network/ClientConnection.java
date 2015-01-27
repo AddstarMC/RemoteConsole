@@ -34,6 +34,7 @@ public class ClientConnection
 	private ArrayList<NetworkManager> mManagers;
 	private MessageBuffer mBuffer;
 	
+	private boolean mLoginSuccess;
 	private CountDownLatch mLoginLatch;
 	
 	public ClientConnection(String host, int port)
@@ -73,15 +74,36 @@ public class ClientConnection
 	
 	public void startLogin(String username, String password)
 	{
+		mLoginSuccess = true;
 		((ClientLoginHandler)getManager().getNetHandler()).setLoginInfo(username, password);
 		((ClientLoginHandler)getManager().getNetHandler()).setClientConnection(this);
 		mLoginLatch = new CountDownLatch(1);
 		sendPacket(new PacketInLoginBegin());
 	}
 	
-	public void waitForLogin() throws InterruptedException
+	public boolean waitForLogin() throws InterruptedException
 	{
-		mLoginLatch.await();
+		GenericFutureListener<Future<? super Void>> listener = new GenericFutureListener<Future<? super Void>>()
+		{
+			@Override
+			public void operationComplete( Future<? super Void> future ) throws Exception
+			{
+				mLoginSuccess = false;
+				mLoginLatch.countDown();
+				shutdown();
+			}
+		};
+		
+		mChannel.closeFuture().addListener(listener);
+		try
+		{
+			mLoginLatch.await();
+			return mLoginSuccess;
+		}
+		finally
+		{
+			mChannel.closeFuture().removeListener(listener);
+		}
 	}
 	
 	void onLoginComplete(PacketOutLoginDone packet)
