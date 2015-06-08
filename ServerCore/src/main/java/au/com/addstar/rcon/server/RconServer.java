@@ -190,7 +190,10 @@ public abstract class RconServer
 		String username;
 		
 		if(manager.getUser() != null)
+		{
 			username = manager.getUser().getName();
+			mUsers.remove(manager.getUser().getName());
+		}
 		else
 			username = manager.getAddress().toString();
 		
