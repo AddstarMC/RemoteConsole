@@ -9,10 +9,10 @@ import au.com.addstar.rcon.network.packets.login.PacketOutEncryptStart;
 import au.com.addstar.rcon.network.packets.login.PacketOutLoginDone;
 import au.com.addstar.rcon.network.packets.login.PacketOutLoginReady;
 import au.com.addstar.rcon.network.packets.main.PacketInCommand;
+import au.com.addstar.rcon.network.packets.main.PacketInPassword;
 import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
 import au.com.addstar.rcon.network.packets.main.PacketOutTabComplete;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.util.CharsetUtil;
 
@@ -69,6 +69,7 @@ public abstract class RconPacket
 		ConnectionState.Main.addPacketType(11, PacketOutMessage.class);
 		ConnectionState.Main.addPacketType(12, PacketInTabComplete.class);
 		ConnectionState.Main.addPacketType(13, PacketOutTabComplete.class);
+		ConnectionState.Main.addPacketType(14, PacketInPassword.class);
 		
 		ConnectionState.Login.addPacketType(255, PacketOutDisconnect.class);
 		ConnectionState.Main.addPacketType(255, PacketOutDisconnect.class);

@@ -23,6 +23,7 @@ import au.com.addstar.rcon.command.CreateViewCommand;
 import au.com.addstar.rcon.command.DisconnectCommand;
 import au.com.addstar.rcon.command.ExitCommand;
 import au.com.addstar.rcon.command.FilterCommand;
+import au.com.addstar.rcon.command.PasswordCommand;
 import au.com.addstar.rcon.command.RemoveViewCommand;
 import au.com.addstar.rcon.command.ServersCommand;
 import au.com.addstar.rcon.command.SwitchCommand;
@@ -235,6 +236,7 @@ public class ClientMain
 		mDispatcher.registerCommand(new ViewCommand());
 		mDispatcher.registerCommand(new ViewsCommand());
 		mDispatcher.registerCommand(new FilterCommand());
+		mDispatcher.registerCommand(new PasswordCommand());
 	}
 	
 	public static ConnectionManager getConnectionManager()
