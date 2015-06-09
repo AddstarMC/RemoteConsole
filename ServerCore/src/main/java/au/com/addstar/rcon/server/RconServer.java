@@ -33,6 +33,8 @@ public abstract class RconServer
 	private HashMap<String, User> mUsers;
 	private boolean mCanConnect = false;
 	
+	private Whitelist mWhitelist;
+	
 	public static RconServer instance;
 	
 	public RconServer(int port, String name, IUserStore storage)
@@ -43,6 +45,7 @@ public abstract class RconServer
 		mUserStore = storage;
 		mUsers = new HashMap<String, User>();
 		mName = name;
+		mWhitelist = new Whitelist();
 		
 		mServerKey = CryptHelper.generateKey();
 		RconPacket.initialize();
@@ -138,7 +141,7 @@ public abstract class RconServer
 		}
 	}
 	
-	public abstract boolean createUser(String name, StoredPassword password);
+	public abstract boolean createUser(String name, StoredPassword password, boolean restircted);
 	
 	protected boolean addUser(User user)
 	{
@@ -183,6 +186,11 @@ public abstract class RconServer
 	}
 	
 	public abstract String getConsoleFormat();
+	
+	public Whitelist getWhitelist()
+	{
+		return mWhitelist;
+	}
 
 	void connectionClose( ServerNetworkManager manager, String reason )
 	{

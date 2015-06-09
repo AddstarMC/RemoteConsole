@@ -19,10 +19,11 @@ public class BungeeRconServer extends RconServer
 	}
 	
 	@Override
-	public boolean createUser( String name, StoredPassword password )
+	public boolean createUser( String name, StoredPassword password, boolean restricted )
 	{
 		BungeeUser user = createUser(name);
 		user.setPassword(password);
+		user.setIsRestricted(restricted);
 		return addUser(user);
 	}
 	

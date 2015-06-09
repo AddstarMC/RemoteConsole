@@ -44,9 +44,9 @@ public class MySQLUserStore implements IUserStore
 			ensureTable();
 			
 			// Prepare the statements
-			mLoadUser = mConnection.prepareStatement("SELECT `Password`,`Salt` FROM `RconAccounts` WHERE `Name`=?");
-			mSaveUser = mConnection.prepareStatement("UPDATE `RconAccounts` SET `Password`=?,`Salt`=? WHERE `Name`=?");
-			mAddUser = mConnection.prepareStatement("INSERT `RconAccounts` VALUES(?,?,?)");
+			mLoadUser = mConnection.prepareStatement("SELECT `Password`,`Salt`,`Restricted` FROM `RconAccounts` WHERE `Name`=?");
+			mSaveUser = mConnection.prepareStatement("UPDATE `RconAccounts` SET `Password`=?,`Salt`=?,`Restricted`=? WHERE `Name`=?");
+			mAddUser = mConnection.prepareStatement("INSERT `RconAccounts` VALUES(?,?,?,?)");
 			mRemoveUser = mConnection.prepareStatement("DELETE FROM `RconAccounts` WHERE `Name`=?");
 		}
 		catch (ClassNotFoundException e)
@@ -94,7 +94,7 @@ public class MySQLUserStore implements IUserStore
 			// Table does not exist
 		}
 		
-		statement.executeUpdate("CREATE TABLE `RconAccounts` (`Name` VARCHAR(30) PRIMARY KEY, `Password` VARCHAR(128) NOT NULL, `Salt` VARCHAR(32) NOT NULL)");
+		statement.executeUpdate("CREATE TABLE `RconAccounts` (`Name` VARCHAR(30) PRIMARY KEY, `Password` VARCHAR(128) NOT NULL, `Salt` VARCHAR(32) NOT NULL, `Restricted` TINYINT(1) DEFAULT 1 NOT NULL)");
 	}
 
 	@Override
@@ -111,6 +111,7 @@ public class MySQLUserStore implements IUserStore
 			{
 				StoredPassword password = new StoredPassword(result.getString(1), result.getString(2));
 				user.setPassword(password);
+				user.setIsRestricted(result.getBoolean(3));
 				
 				result.close();
 				return true;
@@ -136,7 +137,8 @@ public class MySQLUserStore implements IUserStore
 			
 			mSaveUser.setString(1, user.getPassword().getHash());
 			mSaveUser.setString(2, user.getPassword().getSalt());
-			mSaveUser.setString(3, user.getName());
+			mSaveUser.setBoolean(3, user.isRestricted());
+			mSaveUser.setString(4, user.getName());
 			mSaveUser.executeUpdate();
 		}
 		catch(SQLException e)
@@ -155,6 +157,7 @@ public class MySQLUserStore implements IUserStore
 			mAddUser.setString(1, user.getName());
 			mAddUser.setString(2, user.getPassword().getHash());
 			mAddUser.setString(3, user.getPassword().getSalt());
+			mAddUser.setBoolean(4, user.isRestricted());
 			mAddUser.executeUpdate();
 		}
 		catch(SQLException e)

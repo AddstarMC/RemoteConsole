@@ -76,6 +76,8 @@ public class RemoteConsolePlugin extends JavaPlugin
 		
 		mServer = new BukkitRconServer(mConfig.port, serverName, userstore);
 		
+		loadWhitelist();
+		
 		try
 		{
 			getLogger().info("Starting RconServer on port " + mConfig.port);
@@ -142,6 +144,25 @@ public class RemoteConsolePlugin extends JavaPlugin
 		mAppender.start();
 		log.addAppender(mAppender);
 		
+		return true;
+	}
+	
+	public boolean loadWhitelist()
+	{
+		File whitelist = new File(getDataFolder(), "whitelist.txt");
+		if (whitelist.exists())
+		{
+			try
+			{
+				mServer.getWhitelist().load(whitelist);
+			}
+			catch (IOException e)
+			{
+				getLogger().severe("Failed to load whitelist:");
+				e.printStackTrace();
+				return false;
+			}
+		}
 		return true;
 	}
 	

@@ -4,10 +4,10 @@ import java.util.EnumSet;
 import java.util.List;
 
 import net.md_5.bungee.api.CommandSender;
-
 import au.com.addstar.rcon.commands.account.AddCommand;
 import au.com.addstar.rcon.commands.account.PasswordCommand;
 import au.com.addstar.rcon.commands.account.RemoveCommand;
+import au.com.addstar.rcon.commands.account.SetRestrictedCommand;
 
 public class AccountCommand extends CommandDispatcher implements ICommand
 {
@@ -18,6 +18,7 @@ public class AccountCommand extends CommandDispatcher implements ICommand
 		registerCommand(new AddCommand());
 		registerCommand(new PasswordCommand());
 		registerCommand(new RemoveCommand());
+		registerCommand(new SetRestrictedCommand());
 	}
 	
 	@Override

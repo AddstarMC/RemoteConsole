@@ -1,6 +1,8 @@
 
 package au.com.addstar.rcon;
 
+import java.util.Collections;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -35,6 +37,16 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 			public void run()
 			{
 				BukkitUser user = (BukkitUser)((ServerNetworkManager)getManager()).getUser();
+				
+				if (user.isRestricted())
+				{
+					if (!RconServer.instance.getWhitelist().isWhitelisted(packet.command))
+					{
+						user.asCommandSender().sendMessage(ChatColor.RED + "You are not permitted to use that command");
+						return;
+					}
+				}
+				
 				ServerCommandEvent event = new ServerCommandEvent(user.asCommandSender(), packet.command);
 				Bukkit.getPluginManager().callEvent(event);
 				
@@ -56,6 +68,16 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 			public void run()
 			{
 				BukkitUser user = (BukkitUser)((ServerNetworkManager)getManager()).getUser();
+				
+				if (user.isRestricted())
+				{
+					if (!RconServer.instance.getWhitelist().isWhitelisted(packet.message))
+					{
+						getManager().sendPacket(new PacketOutTabComplete(Collections.<String>emptyList()));
+						return;
+					}
+				}
+				
 				getManager().sendPacket(new PacketOutTabComplete(RemoteConsolePlugin.getCommandMap().tabComplete(user.asCommandSender(), packet.message)));
 			}
 		});

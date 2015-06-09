@@ -1,6 +1,7 @@
 package au.com.addstar.rcon.commands;
 
 import au.com.addstar.rcon.commands.misc.KickCommand;
+import au.com.addstar.rcon.commands.misc.ReloadCommand;
 import au.com.addstar.rcon.commands.misc.WhoCommand;
 
 public class RconCommand extends RootCommandDispatcher
@@ -12,5 +13,6 @@ public class RconCommand extends RootCommandDispatcher
 		registerCommand(new AccountCommand());
 		registerCommand(new WhoCommand());
 		registerCommand(new KickCommand());
+		registerCommand(new ReloadCommand());
 	}
 }

@@ -1,6 +1,7 @@
 package au.com.addstar.rcon.commands;
 
 import au.com.addstar.rcon.commands.misc.KickCommand;
+import au.com.addstar.rcon.commands.misc.ReloadCommand;
 import au.com.addstar.rcon.commands.misc.WhoCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
@@ -17,6 +18,7 @@ public class RconCommand extends Command implements TabExecutor
 		mDispatcher.registerCommand(new AccountCommand());
 		mDispatcher.registerCommand(new WhoCommand());
 		mDispatcher.registerCommand(new KickCommand());
+		mDispatcher.registerCommand(new ReloadCommand());
 	}
 	
 	@Override

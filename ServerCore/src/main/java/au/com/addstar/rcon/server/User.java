@@ -8,6 +8,7 @@ public abstract class User
 	private NetworkManager mManager;
 	private String mName;
 	private StoredPassword mPassword;
+	private boolean mIsRestricted;
 	
 	public User(String name)
 	{
@@ -39,5 +40,13 @@ public abstract class User
 		mPassword = password;
 	}
 	
+	public boolean isRestricted()
+	{
+		return mIsRestricted;
+	}
 	
+	public void setIsRestricted(boolean isRestricted)
+	{
+		mIsRestricted = isRestricted;
+	}
 }

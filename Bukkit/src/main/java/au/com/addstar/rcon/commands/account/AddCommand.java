@@ -37,7 +37,7 @@ public class AddCommand implements ICommand
 	@Override
 	public String getUsageString( String label, CommandSender sender )
 	{
-		return label + " <accountName> <password>";
+		return label + " <accountName> <password> [restricted]";
 	}
 
 	@Override
@@ -67,7 +67,16 @@ public class AddCommand implements ICommand
 		
 		String password = args[1];
 		
-		if(server.createUser(args[0], StoredPassword.generate(password)))
+		boolean restricted = false;
+		if (args.length == 3)
+		{
+			if (args[2].equalsIgnoreCase("restricted"))
+				restricted = true;
+			else
+				throw new BadArgumentException(2, "Expected 'restricted' or nothing");
+		}
+		
+		if(server.createUser(args[0], StoredPassword.generate(password), restricted))
 			sender.sendMessage(ChatColor.GREEN + "Account " + args[0] + " was successfully created.");
 		else
 			sender.sendMessage(ChatColor.RED + "An error occured while saving the new account.");

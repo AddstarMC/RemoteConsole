@@ -1,6 +1,7 @@
 package au.com.addstar.rcon;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import net.md_5.bungee.api.ChatColor;
@@ -36,6 +37,15 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 			public void run()
 			{
 				BungeeUser user = (BungeeUser)((ServerNetworkManager)getManager()).getUser();
+				
+				if (user.isRestricted())
+				{
+					if (!RconServer.instance.getWhitelist().isWhitelisted(packet.command))
+					{
+						user.asCommandSender().sendMessage(ChatColor.RED + "You are not permitted to use that command");
+						return;
+					}
+				}
 
 				if(!ProxyServer.getInstance().getPluginManager().dispatchCommand(user.asCommandSender(), packet.command))
 					user.asCommandSender().sendMessage(ChatColor.RED + "Command not found");
@@ -52,6 +62,16 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 			public void run()
 			{
 				BungeeUser user = (BungeeUser)((ServerNetworkManager)getManager()).getUser();
+				
+				if (user.isRestricted())
+				{
+					if (!RconServer.instance.getWhitelist().isWhitelisted(packet.message))
+					{
+						getManager().sendPacket(new PacketOutTabComplete(Collections.<String>emptyList()));
+						return;
+					}
+				}
+				
 				ArrayList<String> results = new ArrayList<String>();
 
 				ProxyServer.getInstance().getPluginManager().dispatchCommand(user.asCommandSender(), packet.message, results);
