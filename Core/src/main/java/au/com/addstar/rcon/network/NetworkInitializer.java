@@ -3,6 +3,7 @@ package au.com.addstar.rcon.network;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
@@ -57,5 +58,13 @@ public class NetworkInitializer<T extends NetworkManager> extends ChannelInitial
 		
 		channel.pipeline().addLast("handler", manager);
 		manager.setNetHandler(mCreator.newHandlerLogin(manager));
+	}
+	
+	@Override
+	public void exceptionCaught( ChannelHandlerContext ctx, Throwable cause ) throws Exception
+	{
+		System.out.println("Exception caught " + cause);
+		// TODO Auto-generated method stub
+		super.exceptionCaught(ctx, cause);
 	}
 }

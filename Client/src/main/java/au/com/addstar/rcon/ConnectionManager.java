@@ -4,6 +4,8 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.net.ConnectException;
+import java.net.NoRouteToHostException;
+import java.net.SocketException;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -387,6 +389,22 @@ public class ConnectionManager
 				mConnection.shutdown();
 				if(mConnection.shouldReconnect())
 					scheduleReconnect(mConnection);
+			}
+			catch(UnresolvedAddressException e)
+			{
+				mConnectingConnections.remove(mConnection);
+				if(!mSilent)
+					ClientMain.getViewManager().addSystemMessage("Failed to connect to " + mConnection.toString() + " unknown host");
+				
+				mConnection.shutdown();
+			}
+			catch(SocketException e)
+			{
+				mConnectingConnections.remove(mConnection);
+				if(!mSilent)
+					ClientMain.getViewManager().addSystemMessage("Failed to connect to " + mConnection.toString() + " " + e.getMessage());
+				
+				mConnection.shutdown();
 			}
 		}
 	}

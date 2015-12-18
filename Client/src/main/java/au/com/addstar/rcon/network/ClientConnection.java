@@ -1,6 +1,7 @@
 package au.com.addstar.rcon.network;
 
 import java.net.ConnectException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
@@ -56,7 +57,7 @@ public class ClientConnection
 		RconPacket.initialize();
 	}
 	
-	public void connect(HandlerCreator handlerCreator) throws ConnectException, InterruptedException
+	public void connect(HandlerCreator handlerCreator) throws ConnectException, SocketException, InterruptedException
 	{
 		mManagers.clear();
 		mWorker = new NioEventLoopGroup();
