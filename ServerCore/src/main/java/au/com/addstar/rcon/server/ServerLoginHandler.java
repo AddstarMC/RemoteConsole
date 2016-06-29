@@ -115,7 +115,7 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		
 		if(user.getManager() != null)
 		{
-			disconnect("Already logged in");
+			user.getManager().close("Logged in again");
 			return;
 		}
 		
