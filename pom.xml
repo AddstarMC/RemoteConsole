@@ -2,14 +2,45 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>au.com.addstar</groupId>
   <artifactId>RemoteConsole</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
   <name>RemoteConsole</name>
   <packaging>pom</packaging>
 
   <properties>
-  	<pluginversion>${project.version}-${env.BUILD_NUMBER}</pluginversion>
+    <build.number />
+    <plugin.version>${project.version}-${build.number}</plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
+  <scm>
+    <connection>scm:git:git@github.com:AddstarMC/RemoteConsole.git</connection>
+    <developerConnection>scm:git:git@github.com:AddstarMC/RemoteConsole.git</developerConnection>
+    <url>https://github.com/AddstarMC/RemoteConsole</url>
+    <tag>HEAD</tag>
+  </scm>
+  <developers>
+    <developer>
+      <id>AddstarMC</id>
+      <name>AddstarMC</name>
+      <url>http://github.com/AddstarMC</url>
+      <roles>
+        <role>developer</role>
+        <role>maintainer</role>
+      </roles>
+      <timezone>10</timezone>
+    </developer>
+  </developers>
+  <distributionManagement>
+    <repository>
+      <id>maven.addstar.com.au</id>
+      <name>maven.addstar.com.au-releases</name>
+      <url>http://maven.addstar.com.au/artifactory/ext-release-local</url>
+    </repository>
+    <snapshotRepository>
+      <id>maven.addstar.com.au</id>
+      <name>maven.addstar.com.au-snapshots</name>
+      <url>http://maven.addstar.com.au/artifactory/ext-snapshot-local</url>
+    </snapshotRepository>
+  </distributionManagement>
   <modules>
     <module>Client</module>
     <module>Bukkit</module>
@@ -23,6 +54,11 @@
       <id>maven-central</id>
       <url>http://repo1.maven.org/maven2/</url>
     </repository>
+      <repository>
+          <id>maven.addstar.com.au</id>
+          <name>maven.addstar.com.au-snapshots</name>
+          <url>http://maven.addstar.com.au/artifactory/ext-snapshot-local</url>
+      </repository>
   </repositories>
 
   <dependencies>
@@ -42,11 +78,34 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.3.2</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>1.8</source>
+            <target>1.8</target>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>1.4</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+              <configuration>
+                <minimizeJar>true</minimizeJar>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.1</version>
+      </plugin>
+    </plugins>
   </build>
 </project>

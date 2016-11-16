@@ -3,7 +3,7 @@
   <parent>
     <groupId>au.com.addstar</groupId>
     <artifactId>RemoteConsole</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   
@@ -35,7 +35,7 @@
     <dependency>
         <groupId>net.md-5</groupId>
         <artifactId>bungeecord-api</artifactId>
-        <version>1.7-SNAPSHOT</version>
+        <version>1.11-SNAPSHOT</version>
         <scope>provided</scope>
         <optional>true</optional>
   	</dependency>
@@ -50,7 +50,7 @@
   	<dependency>
   		<groupId>au.com.addstar</groupId>
   		<artifactId>RemoteConsole-ServerCore</artifactId>
-  		<version>1.0.0-SNAPSHOT</version>
+  		<version>${project.version}</version>
   		<scope>compile</scope>
   	</dependency>
   </dependencies>
@@ -70,7 +70,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>1.4</version>
         <executions>
           <execution>
             <phase>package</phase>
