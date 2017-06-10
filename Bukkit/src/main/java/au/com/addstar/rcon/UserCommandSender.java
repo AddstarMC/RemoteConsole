@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -17,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 import au.com.addstar.rcon.util.Message;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class UserCommandSender implements ConsoleCommandSender
 {
@@ -35,7 +37,12 @@ public class UserCommandSender implements ConsoleCommandSender
 	{
 		return mUser.getName();
 	}
-	
+
+	@Override
+	public Spigot spigot() {
+		throw new NotImplementedException();
+	}
+
 	@Override
 	public Server getServer()
 	{
