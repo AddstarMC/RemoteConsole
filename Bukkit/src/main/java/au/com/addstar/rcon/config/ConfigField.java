@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigField
 {
-	public String name() default "";
-	public String comment() default "";
-	public String category() default "";
+	String name() default "";
+	String comment() default "";
+	String category() default "";
 	
 }

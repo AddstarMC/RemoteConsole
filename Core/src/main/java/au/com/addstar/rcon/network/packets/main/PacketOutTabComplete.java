@@ -27,7 +27,7 @@ public class PacketOutTabComplete extends RconPacket
 			results = null;
 		else
 		{
-			results = new ArrayList<String>(size);
+			results = new ArrayList<>(size);
 			for(int i = 0; i < size; ++i)
 				results.add(readString(packet));
 		}

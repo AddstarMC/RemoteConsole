@@ -6,9 +6,9 @@ import au.com.addstar.rcon.network.packets.login.PacketOutLoginReady;
 
 public interface INetworkLoginHandlerClient extends INetworkHandler
 {
-	public void handleEncryptStart(PacketOutEncryptStart packet);
+	void handleEncryptStart(PacketOutEncryptStart packet);
 	
-	public void handleLoginReady(PacketOutLoginReady packet);
+	void handleLoginReady(PacketOutLoginReady packet);
 	
-	public void handleLoginDone(PacketOutLoginDone packet);
+	void handleLoginDone(PacketOutLoginDone packet);
 }

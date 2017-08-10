@@ -6,9 +6,9 @@ import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
 
 public interface INetworkMainHandlerServer extends INetworkHandler
 {
-	public void handleCommand(PacketInCommand packet);
+	void handleCommand(PacketInCommand packet);
 	
-	public void handleTabComplete(PacketInTabComplete packet);
+	void handleTabComplete(PacketInTabComplete packet);
 	
-	public void handlePassword(PacketInPassword packet);
+	void handlePassword(PacketInPassword packet);
 }

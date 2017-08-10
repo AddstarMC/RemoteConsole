@@ -17,50 +17,37 @@ public class UserSettings
 	
 	public void load(File file) throws IOException
 	{
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		
-		try
-		{
-			while(reader.ready())
-			{
-				String line = reader.readLine().trim();
-				if(line.startsWith("#"))
-					continue;
-				
-				String command;
-				String args = null;
-				
-				if(line.contains(" "))
-				{
-					int pos = line.indexOf(' ');
-					command = line.substring(0,pos);
-					args = line.substring(pos+1).trim();
-				}
-				else
-					command = line;
-				
-				if(command.equals("username"))
-				{
-					if(args == null)
-						throw new IllegalArgumentException(file.getName() + " username missing value");
-					
-					username = args;
-				}
-				else if(command.equals("password"))
-				{
-					if(args == null)
-						throw new IllegalArgumentException(file.getName() + " password missing value");
-					
-					password = args;
-				}
-				else
-					throw new IllegalArgumentException(file.getName() + " unknown property " + command);
-			}
-		}
-		finally
-		{
-			reader.close();
-		}
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            while (reader.ready()) {
+                String line = reader.readLine().trim();
+                if (line.startsWith("#"))
+                    continue;
+
+                String command;
+                String args = null;
+
+                if (line.contains(" ")) {
+                    int pos = line.indexOf(' ');
+                    command = line.substring(0, pos);
+                    args = line.substring(pos + 1).trim();
+                } else
+                    command = line;
+
+                if (command.equals("username")) {
+                    if (args == null)
+                        throw new IllegalArgumentException(file.getName() + " username missing value");
+
+                    username = args;
+                } else if (command.equals("password")) {
+                    if (args == null)
+                        throw new IllegalArgumentException(file.getName() + " password missing value");
+
+                    password = args;
+                } else
+                    throw new IllegalArgumentException(file.getName() + " unknown property " + command);
+            }
+        }
 	}
 	
 	public static UserSettings load()

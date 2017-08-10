@@ -17,8 +17,8 @@ import au.com.addstar.rcon.server.auth.StoredPassword;
 
 public class PasswordCommand implements ICommand
 {
-	private WeakHashMap<CommandSender, BungeeUser> mLastUser = new WeakHashMap<CommandSender, BungeeUser>();
-	private WeakHashMap<CommandSender, String> mLastPasswords = new WeakHashMap<CommandSender, String>();
+	private WeakHashMap<CommandSender, BungeeUser> mLastUser = new WeakHashMap<>();
+	private WeakHashMap<CommandSender, String> mLastPasswords = new WeakHashMap<>();
 	
 	@Override
 	public String getName()

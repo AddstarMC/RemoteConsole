@@ -5,6 +5,6 @@ import au.com.addstar.rcon.network.handlers.INetworkHandler;
 
 public interface HandlerCreator
 {
-	public INetworkHandler newHandlerLogin(NetworkManager manager);
-	public INetworkHandler newHandlerMain(NetworkManager manager);
+	INetworkHandler newHandlerLogin(NetworkManager manager);
+	INetworkHandler newHandlerMain(NetworkManager manager);
 }

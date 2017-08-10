@@ -11,8 +11,8 @@ import au.com.addstar.rcon.util.Message;
 
 public class ConfigConsoleView extends CombinedConsoleView implements IConnectionListener
 {
-	private ArrayList<String> mWhitelistServers = new ArrayList<String>();
-	private ArrayList<String> mBlacklistServers = new ArrayList<String>();
+	private ArrayList<String> mWhitelistServers = new ArrayList<>();
+	private ArrayList<String> mBlacklistServers = new ArrayList<>();
 	
 	private MessageProcessor mProcessor = new MessageProcessor();
 	

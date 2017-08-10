@@ -14,7 +14,7 @@ public class CombinedConsoleView extends ConsoleView
 	public CombinedConsoleView()
 	{
 		super(new MessageBuffer(ClientMain.maxConsoleLines));
-		mConnections = new HashSet<ClientConnection>();
+		mConnections = new HashSet<>();
 	}
 	
 	public void addConnection(ClientConnection connection)

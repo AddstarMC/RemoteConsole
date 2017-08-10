@@ -12,10 +12,10 @@ public enum ConnectionState
 	private HashMap<Byte, Class<? extends RconPacket>> mRegistrations;
 	private HashMap<Class<? extends RconPacket>, Byte> mReverseRegistrations;
 	
-	private ConnectionState()
+	ConnectionState()
 	{
-		mRegistrations = new HashMap<Byte, Class<? extends RconPacket>>();
-		mReverseRegistrations = new HashMap<Class<? extends RconPacket>, Byte>();
+		mRegistrations = new HashMap<>();
+		mReverseRegistrations = new HashMap<>();
 	}
 	
 	public void addPacketType(int id, Class<? extends RconPacket> packetClass)

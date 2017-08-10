@@ -72,7 +72,7 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 					}
 				}
 				
-				ArrayList<String> results = new ArrayList<String>();
+				ArrayList<String> results = new ArrayList<>();
 
 				ProxyServer.getInstance().getPluginManager().dispatchCommand(user.asCommandSender(), packet.message, results);
 				getManager().sendPacket(new PacketOutTabComplete(results));

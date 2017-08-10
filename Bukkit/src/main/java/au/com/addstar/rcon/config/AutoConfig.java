@@ -61,7 +61,7 @@ public abstract class AutoConfig
 	protected AutoConfig(File file)
 	{
 		mFile = file;
-		mCategoryComments = new HashMap<String, String>();
+		mCategoryComments = new HashMap<>();
 	}
 	
 	protected void setCategoryComment(String category, String comment)
@@ -279,22 +279,7 @@ public abstract class AutoConfig
 			
 			return true;
 		}
-		catch( IOException e )
-		{
-			e.printStackTrace();
-			return false;
-		}
-		catch ( InvalidConfigurationException e )
-		{
-			e.printStackTrace();
-			return false;
-		}
-		catch ( IllegalArgumentException e )
-		{
-			e.printStackTrace();
-			return false;
-		}
-		catch ( IllegalAccessException e )
+		catch( IOException | IllegalAccessException | IllegalArgumentException | InvalidConfigurationException e )
 		{
 			e.printStackTrace();
 			return false;
@@ -308,7 +293,7 @@ public abstract class AutoConfig
 			onPreSave();
 			
 			YamlConfiguration config = new YamlConfiguration();
-			Map<String, String> comments = new HashMap<String, String>();
+			Map<String, String> comments = new HashMap<>();
 			
 			// Add all the category comments
 			comments.putAll(mCategoryComments);
@@ -444,7 +429,7 @@ public abstract class AutoConfig
 			
 			// Apply comments
 			String category = ""; //$NON-NLS-1$
-			List<String> lines = new ArrayList<String>(Arrays.asList(output.split("\n"))); //$NON-NLS-1$
+			List<String> lines = new ArrayList<>(Arrays.asList(output.split("\n"))); //$NON-NLS-1$
 			for(int l = 0; l < lines.size(); l++)
 			{
 				String line = lines.get(l);
@@ -499,15 +484,7 @@ public abstract class AutoConfig
 			writer.close();
 			return true;
 		}
-		catch ( IllegalArgumentException e )
-		{
-			e.printStackTrace();
-		}
-		catch ( IllegalAccessException e )
-		{
-			e.printStackTrace();
-		}
-		catch ( IOException e )
+		catch ( IllegalArgumentException | IOException | IllegalAccessException e )
 		{
 			e.printStackTrace();
 		}

@@ -67,15 +67,11 @@ public class StoredPassword
 			
 			return new StoredPassword(bytesToHex(result), salt);
 		}
-		catch(NoSuchAlgorithmException e)
+		catch(NoSuchAlgorithmException | UnsupportedEncodingException e)
 		{
 			throw new UnsupportedOperationException();
 		}
-		catch ( UnsupportedEncodingException e )
-		{
-			throw new UnsupportedOperationException();
-		}
-	}
+    }
 	
 	private static String genSalt() throws NoSuchAlgorithmException
 	{
@@ -88,8 +84,7 @@ public class StoredPassword
 	private static String bytesToHex(byte[] data)
 	{
 		StringBuilder b = new StringBuilder();
-		for(int i = 0; i < data.length; ++i)
-			b.append(Integer.toHexString(data[i] + 0x100).substring(1));
+		for (byte aData : data) b.append(Integer.toHexString(aData + 0x100).substring(1));
 		
 		return b.toString();
 	}

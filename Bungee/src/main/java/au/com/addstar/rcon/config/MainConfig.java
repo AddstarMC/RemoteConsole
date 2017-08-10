@@ -2,11 +2,11 @@ package au.com.addstar.rcon.config;
 
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Comments;
-import net.cubespace.Yamler.Config.Config;
+import net.cubespace.Yamler.Config.YamlConfig;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.cubespace.Yamler.Config.Path;
 
-public class MainConfig extends Config
+public class MainConfig extends YamlConfig
 {
 	public int port = 22050;
 	

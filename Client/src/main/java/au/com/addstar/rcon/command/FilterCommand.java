@@ -55,24 +55,21 @@ public class FilterCommand implements ICommand
 		else
 		{
 			EnumSet<MessageType> filters = EnumSet.noneOf(MessageType.class);
-			
-			for(int i = 0; i < args.length; ++i)
-			{
+
+			for (String arg : args) {
 				MessageType selected = null;
-				for(MessageType type : MessageType.values())
-				{
-					if(args[i].equalsIgnoreCase(type.name()))
-					{
+				for (MessageType type : MessageType.values()) {
+					if (arg.equalsIgnoreCase(type.name())) {
 						selected = type;
 						break;
 					}
 				}
-				if(selected == null)
-					throw new IllegalArgumentException("Unknown filter " + args[i]);
-				
-				if(filters.contains(selected))
-					throw new IllegalArgumentException("Filter " + args[i] + " has already been specified");
-				
+				if (selected == null)
+					throw new IllegalArgumentException("Unknown filter " + arg);
+
+				if (filters.contains(selected))
+					throw new IllegalArgumentException("Filter " + arg + " has already been specified");
+
 				filters.add(selected);
 			}
 			
@@ -86,7 +83,7 @@ public class FilterCommand implements ICommand
 	@Override
 	public List<String> tabComplete( ConsoleScreen screen, String label, String[] args )
 	{
-		ArrayList<String> results = new ArrayList<String>();
+		ArrayList<String> results = new ArrayList<>();
 		
 		String part = args[args.length-1].toLowerCase();
 		for(MessageType type : MessageType.values())

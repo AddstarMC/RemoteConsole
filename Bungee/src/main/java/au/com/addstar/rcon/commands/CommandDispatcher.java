@@ -31,7 +31,7 @@ public class CommandDispatcher
 	
 	public CommandDispatcher(String description)
 	{
-		mCommands = new HashMap<String, ICommand>();
+		mCommands = new HashMap<>();
 		
 		mRootCommandDescription = description;
 		
@@ -148,15 +148,11 @@ public class CommandDispatcher
 			for(String line : e.getInfoLines())
 				sender.sendMessage(ChatColor.GRAY + " " + line);
 		}
-		catch(IllegalArgumentException e)
+		catch(IllegalArgumentException | IllegalStateException e)
 		{
 			sender.sendMessage(ChatColor.RED + e.getMessage());
 		}
-		catch(IllegalStateException e)
-		{
-			sender.sendMessage(ChatColor.RED + e.getMessage());
-		}
-		
+
 		return true;
 	}
 	private void displayUsage(CommandSender sender, String parent, String label, String subcommand)
@@ -210,7 +206,7 @@ public class CommandDispatcher
 	{
 		parent += label + " ";
 		
-		List<String> results = new ArrayList<String>();
+		List<String> results = new ArrayList<>();
 		if(args.length == 1) // Tab completing the sub command
 		{
 			for(ICommand registeredCommand : mCommands.values())
@@ -276,7 +272,7 @@ public class CommandDispatcher
 			
 			results = com.onTabComplete(sender, parent, subCommand, subArgs);
 			if(results == null)
-				return new ArrayList<String>();
+				return new ArrayList<>();
 		}
 		return results;
 	}

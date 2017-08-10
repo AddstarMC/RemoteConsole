@@ -17,7 +17,7 @@ public class ConversationTracker
 	{
 	}
 
-	private LinkedList<Conversation> conversationQueue = new LinkedList<Conversation>();
+	private LinkedList<Conversation> conversationQueue = new LinkedList<>();
 
 	public synchronized boolean beginConversation( Conversation conversation )
 	{
@@ -56,7 +56,7 @@ public class ConversationTracker
 	public synchronized void abandonAllConversations()
 	{
 		LinkedList<Conversation> oldQueue = conversationQueue;
-		conversationQueue = new LinkedList<Conversation>();
+		conversationQueue = new LinkedList<>();
 		for (Conversation conversation : oldQueue)
 		{
 			try

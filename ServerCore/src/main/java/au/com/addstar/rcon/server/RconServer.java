@@ -41,9 +41,9 @@ public abstract class RconServer
 	{
 		instance = this;
 		mPort = port;
-		mManagers = new ArrayList<ServerNetworkManager>();
+		mManagers = new ArrayList<>();
 		mUserStore = storage;
-		mUsers = new HashMap<String, User>();
+		mUsers = new HashMap<>();
 		mName = name;
 		mWhitelist = new Whitelist();
 		
@@ -61,7 +61,7 @@ public abstract class RconServer
 		ServerBootstrap builder = new ServerBootstrap();
 		builder.group(mBoss, mWorker)
 			.channel(NioServerSocketChannel.class)
-			.childHandler(new NetworkInitializer<ServerNetworkManager>(handlerCreator, ServerNetworkManager.class, mManagers))
+			.childHandler(new NetworkInitializer<>(handlerCreator, ServerNetworkManager.class, mManagers))
 			.option(ChannelOption.SO_BACKLOG, 128)
 			.childOption(ChannelOption.SO_KEEPALIVE, true);
 		

@@ -16,7 +16,7 @@ public class MessageBuffer
 	
 	public MessageBuffer(int maxLines)
 	{
-		mLines = new ArrayList<Message>();
+		mLines = new ArrayList<>();
 		mMaxLines = maxLines;
 	}
 	

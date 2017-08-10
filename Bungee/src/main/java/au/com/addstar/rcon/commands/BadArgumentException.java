@@ -35,7 +35,7 @@ public class BadArgumentException extends RuntimeException
 	public BadArgumentException addInfo(String line)
 	{
 		if(mInfoLines == null)
-			mInfoLines = new ArrayList<String>();
+			mInfoLines = new ArrayList<>();
 		mInfoLines.add(line);
 		
 		return this;
@@ -43,7 +43,7 @@ public class BadArgumentException extends RuntimeException
 	public BadArgumentException addInfo(Collection<String> lines)
 	{
 		if(mInfoLines == null)
-			mInfoLines = new ArrayList<String>();
+			mInfoLines = new ArrayList<>();
 		mInfoLines.addAll(lines);
 		
 		return this;

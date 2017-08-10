@@ -15,7 +15,7 @@ public class MessageProcessor
 	
 	public MessageProcessor()
 	{
-		mProcessors = new ArrayList<Process>();
+		mProcessors = new ArrayList<>();
 	}
 	
 	public MessageProcessor drop(String pattern) throws IllegalArgumentException
@@ -111,7 +111,7 @@ public class MessageProcessor
 	
 	private interface Process
 	{
-		public Message process(Message message);
+		Message process(Message message);
 	}
 	
 	private static class DropProcess implements Process

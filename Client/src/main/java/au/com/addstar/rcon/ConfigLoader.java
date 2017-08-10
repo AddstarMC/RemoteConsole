@@ -51,15 +51,11 @@ public class ConfigLoader
 			
 			parseAll(doc);
 		}
-		catch (SAXException e)
+		catch (SAXException | ParserConfigurationException e)
 		{
 			throw new IOException(e);
 		}
-		catch (ParserConfigurationException e)
-		{
-			throw new IOException(e);
-		}
-	}
+    }
 	
 	private static void parseAll(Document doc) throws SAXException
 	{

@@ -6,15 +6,15 @@ import au.com.addstar.rcon.ConsoleScreen;
 
 public interface ICommand
 {
-	public String getName();
+	String getName();
 	
-	public String[] getAliases();
+	String[] getAliases();
 	
-	public String getUsage();
+	String getUsage();
 	
-	public String getDescription();
+	String getDescription();
 	
-	public boolean onCommand(ConsoleScreen screen, String label, String[] args);
+	boolean onCommand(ConsoleScreen screen, String label, String[] args);
 	
-	public List<String> tabComplete(ConsoleScreen screen, String label, String[] args);
+	List<String> tabComplete(ConsoleScreen screen, String label, String[] args);
 }

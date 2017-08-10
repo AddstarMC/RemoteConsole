@@ -49,13 +49,13 @@ public class ConnectionManager
 	{
 		mUsername = username;
 		mPassword = password;
-		mAllConnections = new ArrayList<ClientConnection>();
-		mIdConnections = new HashMap<String, ClientConnection>();
-		mAliases = new HashMap<String, String>();
+		mAllConnections = new ArrayList<>();
+		mIdConnections = new HashMap<>();
+		mAliases = new HashMap<>();
 		
-		mPendingConnections = new ArrayDeque<ClientConnection>();
-		mConnectingConnections = new HashSet<ClientConnection>();
-		mReconnectConnections = new ArrayList<ClientConnection>();
+		mPendingConnections = new ArrayDeque<>();
+		mConnectingConnections = new HashSet<>();
+		mReconnectConnections = new ArrayList<>();
 		
 		mHandlerCreator = new HandlerCreator()
 		{
@@ -289,7 +289,7 @@ public class ConnectionManager
 	{
 		synchronized(mIdConnections)
 		{
-			return new HashSet<String>(mIdConnections.keySet());
+			return new HashSet<>(mIdConnections.keySet());
 		}
 	}
 	
@@ -311,7 +311,7 @@ public class ConnectionManager
 		if(mReconnectThread != null)
 			mReconnectThread.interrupt();
 		
-		ArrayList<ClientConnection> connections = new ArrayList<ClientConnection>(mAllConnections);
+		ArrayList<ClientConnection> connections = new ArrayList<>(mAllConnections);
 		for(ClientConnection connection : connections)
 		{
 			connection.setShouldReconnect(false);

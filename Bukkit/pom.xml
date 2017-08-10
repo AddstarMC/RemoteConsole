@@ -11,21 +11,17 @@
   <name>RemoteConsole-Bukkit</name>
 
   <repositories>
-    <!-- Spigot repo -->
+      <!-- Spigot repo -->
     <repository>
-      <id>spigot-repo</id>
-      <url>https://hub.spigotmc.org/nexus/content/groups/public</url>
+        <id>spigot-repo</id>
+        <url>https://hub.spigotmc.org/nexus/content/groups/public</url>
     </repository>
+
     <!-- Addstar repo -->
     <repository>
-      <id>addstar-release</id>
-        <name>all-release</name>
-        <url>http://maven.addstar.com.au/artifactory/all-release</url>
+      <id>addstar-repo</id>
+      <url>http://maven.addstar.com.au/artifactory/all-release</url>
     </repository>
-      <repository>
-          <id>maven-central</id>
-          <url>http://repo1.maven.org/maven2/</url>
-      </repository>
   </repositories>
 
   <dependencies>

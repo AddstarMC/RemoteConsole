@@ -10,17 +10,6 @@
   <artifactId>RemoteConsole-Client</artifactId>
   <name>RemoteConsole-Client</name>
 
-  <repositories>
-    <!-- Addstar repo -->
-    <repository>
-      <id>addstar-repo</id>
-      <url>http://maven.addstar.com.au/artifactory/ext-release-local</url>
-      <snapshots>
-      	<enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>au.com.addstar</groupId>

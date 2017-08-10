@@ -16,7 +16,7 @@ public class CommandDispatcher
 	
 	public CommandDispatcher()
 	{
-		mCommands = new HashMap<String, ICommand>();
+		mCommands = new HashMap<>();
 	}
 	
 	public void registerCommand(ICommand command)
@@ -63,7 +63,7 @@ public class CommandDispatcher
 
 		if(parts.length == 1)
 		{
-			ArrayList<String> commands = new ArrayList<String>();
+			ArrayList<String> commands = new ArrayList<>();
 			for(String name : mCommands.keySet())
 			{
 				if(name.startsWith(parts[0].toLowerCase()))

@@ -26,9 +26,8 @@ public class CryptHelper
             KeyFactory keyfactory = KeyFactory.getInstance("RSA");
             return keyfactory.generatePublic(x509encodedkeyspec);
         }
-        catch (NoSuchAlgorithmException e) {}
-        catch (InvalidKeySpecException e) {}
-        
+        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {}
+
         System.err.println("Public key reconstitute failed!");
         return null;
 	}

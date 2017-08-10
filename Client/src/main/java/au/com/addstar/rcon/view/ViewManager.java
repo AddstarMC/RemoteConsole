@@ -18,7 +18,7 @@ public class ViewManager
 	
 	public ViewManager()
 	{
-		mViews = new HashMap<String, ConsoleView>();
+		mViews = new HashMap<>();
 		mActiveView = systemView;
 	}
 	

@@ -36,15 +36,15 @@ public enum ChatColor
 	public static final char COLORCHAR = '\u00A7';
 	private static final String SOFT_RESET = Ansi.ansi().a(Attribute.RESET).toString();
 	
-	private static HashMap<Character, ChatColor> mMap = new HashMap<Character, ChatColor>();
-	private static HashMap<String, ChatColor> mNameMap = new HashMap<String, ChatColor>();
+	private static HashMap<Character, ChatColor> mMap = new HashMap<>();
+	private static HashMap<String, ChatColor> mNameMap = new HashMap<>();
 	
 	private final char mChar;
 	private final String mAnsi;
 	private final String[] mNames;
 	private final boolean mIsFormat;
 	
-	private ChatColor(char c, String ansi, boolean isFormat, String... names)
+	ChatColor(char c, String ansi, boolean isFormat, String... names)
 	{
 		mChar = c;
 		mAnsi = ansi;

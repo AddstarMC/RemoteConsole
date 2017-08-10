@@ -50,7 +50,7 @@ public class SwitchCommand implements ICommand
 	{
 		if(args.length == 1)
 		{
-			ArrayList<String> matches = new ArrayList<String>();
+			ArrayList<String> matches = new ArrayList<>();
 			for(String name : ClientMain.getConnectionManager().getConnectionNames())
 			{
 				if(name.toLowerCase().startsWith(args[0].toLowerCase()))

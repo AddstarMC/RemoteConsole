@@ -215,10 +215,10 @@ public class ClientMain
 		mManager = new ConnectionManager(username, password);
 		mConsole = screen;
 		
-		mEventQueue = new LinkedBlockingQueue<Event>();
+		mEventQueue = new LinkedBlockingQueue<>();
 		mDispatcher = new CommandDispatcher();
 		mViewManager = new ViewManager();
-		mConnectionListeners = new ArrayList<IConnectionListener>();
+		mConnectionListeners = new ArrayList<>();
 		registerCommands();
 	}
 	

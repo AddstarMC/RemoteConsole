@@ -14,24 +14,17 @@ public class Whitelist
 	
 	public void load(File file) throws IOException
 	{
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		try
-		{
-			mWhitelist = new ArrayList<String>();
-			
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+			mWhitelist = new ArrayList<>();
+
 			String line;
-			while((line = reader.readLine()) != null)
-			{
+			while ((line = reader.readLine()) != null) {
 				// Ignore comments and empty lines
 				if (line.startsWith("#") || line.trim().isEmpty())
 					continue;
-				
+
 				mWhitelist.add(line.trim().toLowerCase());
 			}
-		}
-		finally
-		{
-			reader.close();
 		}
 	}
 	

@@ -5,7 +5,7 @@ import au.com.addstar.rcon.network.packets.main.PacketOutTabComplete;
 
 public interface INetworkMainHandlerClient extends INetworkHandler
 {
-	public void handleMessage(PacketOutMessage packet);
+	void handleMessage(PacketOutMessage packet);
 	
-	public void handleTabComplete(PacketOutTabComplete packet);
+	void handleTabComplete(PacketOutTabComplete packet);
 }

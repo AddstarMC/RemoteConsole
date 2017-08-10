@@ -30,12 +30,7 @@ public class ConsoleScreen extends Thread
 			mConsole.addCompleter(new TabCompleter(this));
 			mConsole.setHandleUserInterrupt(true);
 			mConsole.getTerminal().init();
-		}
-		catch(IOException e)
-		{
-			throw new UnsupportedOperationException("No console available");
-		}
-		catch ( Exception e )
+		} catch ( Exception e )
 		{
 			throw new UnsupportedOperationException("No console available");
 		}

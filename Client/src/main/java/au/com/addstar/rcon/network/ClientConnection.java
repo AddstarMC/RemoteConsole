@@ -50,7 +50,7 @@ public class ClientConnection
 		mReconnect = reconnect;
 		mAlias = alias;
 		
-		mManagers = new ArrayList<NetworkManager>();
+		mManagers = new ArrayList<>();
 		mServerName = "Unknown Server";
 		mBuffer = new MessageBuffer(ClientMain.maxConsoleLines);
 		
@@ -66,7 +66,7 @@ public class ClientConnection
 		builder.group(mWorker)
 			.channel(NioSocketChannel.class)
 			.option(ChannelOption.SO_KEEPALIVE, true)
-			.handler(new NetworkInitializer<NetworkManager>(handlerCreator, NetworkManager.class, mManagers));
+			.handler(new NetworkInitializer<>(handlerCreator, NetworkManager.class, mManagers));
 		
 		mChannel = builder.connect(mHost, mPort).sync().channel();
 		
