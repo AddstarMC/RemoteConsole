@@ -24,6 +24,12 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	private INetworkHandler mHandler;
 	private HandlerCreator mCreator;
 	private Channel mChannel;
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	private boolean debug = false;
 	
 	private ConnectionState mState;
 	private CountDownLatch mActiveWaiter = new CountDownLatch(1);
@@ -32,8 +38,14 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	
 	public NetworkManager(HandlerCreator creator)
 	{
+		this(creator,false);
+	}
+
+	public NetworkManager(HandlerCreator creator, boolean debug)
+	{
 		mCreator = creator;
 		mState = ConnectionState.Login;
+		this.debug = debug;
 	}
 	
 	public void setNetHandler(INetworkHandler handler)

@@ -18,7 +18,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class CryptHelper
 {
-	public static PublicKey decode(byte[] data)
+    public static PublicKey decode(byte[] data){
+        return decode(data,false);
+    }
+
+	public static PublicKey decode(byte[] data, boolean debug)
 	{
 		try
         {
@@ -26,7 +30,9 @@ public class CryptHelper
             KeyFactory keyfactory = KeyFactory.getInstance("RSA");
             return keyfactory.generatePublic(x509encodedkeyspec);
         }
-        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {}
+        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			if(debug)e.printStackTrace();
+		}
 
         System.err.println("Public key reconstitute failed!");
         return null;
@@ -53,8 +59,9 @@ public class CryptHelper
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
-			return null;
+                e.printStackTrace();
+                return null;
+
 		}
 	}
 	

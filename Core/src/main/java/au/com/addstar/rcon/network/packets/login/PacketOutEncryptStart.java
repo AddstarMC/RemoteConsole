@@ -11,14 +11,21 @@ import au.com.addstar.rcon.util.CryptHelper;
 public class PacketOutEncryptStart extends RconPacket
 {
 	public PublicKey key;
+	public boolean debug = false;
 	public byte[] randomBlob;
 	
 	public PacketOutEncryptStart() {}
-	
-	public PacketOutEncryptStart(PublicKey key, byte[] randomBlob)
+
+	public PacketOutEncryptStart(PublicKey key, byte[] randomBlob, boolean debug)
 	{
 		this.key = key;
 		this.randomBlob = randomBlob;
+		this.debug=debug;
+	}
+
+	public PacketOutEncryptStart(PublicKey key, byte[] randomBlob)
+	{
+		this(key,randomBlob,false);
 	}
 	
 	@Override
