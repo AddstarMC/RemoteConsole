@@ -7,9 +7,14 @@
   <packaging>pom</packaging>
 
   <properties>
-    <build.number />
-    <plugin.version>${project.version}-${build.number}</plugin.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <build.number />
+      <plugin.version>${project.version}-${build.number}</plugin.version>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <netty.version>4.1.19.Final</netty.version>
+      <spigot.version>1.12.2-R0.1-SNAPSHOT</spigot.version>
+      <bungee.version>1.12-SNAPSHOT</bungee.version>
+      <jansi.version>1.11</jansi.version>
+      <yamler.version>2.4.0-SNAPSHOT</yamler.version>
   </properties>
   <scm>
     <connection>scm:git:git@github.com:AddstarMC/RemoteConsole.git</connection>
@@ -33,22 +38,21 @@
     <repository>
       <id>maven.addstar.com.au</id>
       <name>maven.addstar.com.au-releases</name>
-      <url>http://maven.addstar.com.au/artifactory/ext-release-local</url>
+      <url>https://maven.addstar.com.au/artifactory/ext-release-local</url>
     </repository>
     <snapshotRepository>
       <id>maven.addstar.com.au</id>
       <name>maven.addstar.com.au-snapshots</name>
-      <url>http://maven.addstar.com.au/artifactory/ext-snapshot-local</url>
+      <url>https://maven.addstar.com.au/artifactory/ext-snapshot-local</url>
     </snapshotRepository>
   </distributionManagement>
   <modules>
-    <module>Client</module>
-    <module>Bukkit</module>
-    <module>Bungee</module>
-    <module>Core</module>
-    <module>ServerCore</module>
+      <module>Core</module>
+      <module>ServerCore</module>
+      <module>Client</module>
+      <module>Bukkit</module>
+      <module>Bungee</module>
   </modules>
-  
   <repositories>
     <repository>
       <id>maven-central</id>
@@ -60,13 +64,13 @@
       </snapshots>
       <id>central</id>
       <name>all-release</name>
-      <url>http://maven.addstar.com.au/artifactory/all-release</url>
+      <url>https://maven.addstar.com.au/artifactory/all-release</url>
     </repository>
     <repository>
       <snapshots />
       <id>snapshots</id>
       <name>all-snapshot</name>
-      <url>http://maven.addstar.com.au/artifactory/all-snapshot</url>
+      <url>https://maven.addstar.com.au/artifactory/all-snapshot</url>
     </repository>
   </repositories>
 
@@ -74,7 +78,7 @@
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId> <!-- Use 'netty-all' for 4.0 or above -->
-      <version>4.0.19.Final</version>
+      <version>${netty.version}</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

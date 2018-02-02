@@ -32,7 +32,6 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 	{
 		ProxyServer.getInstance().getScheduler().schedule(RemoteConsolePlugin.instance, new Runnable()
 		{
-			@SuppressWarnings( "deprecation" )
 			@Override
 			public void run()
 			{
