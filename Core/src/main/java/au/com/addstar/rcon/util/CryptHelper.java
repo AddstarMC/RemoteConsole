@@ -9,6 +9,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.text.StringCharacterIterator;
+import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -18,11 +20,14 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class CryptHelper
 {
-    public static PublicKey decode(byte[] data){
-        return decode(data,false);
-    }
+	public static void setDebug(boolean debug) {
+		CryptHelper.debug = debug;
+	}
 
-	public static PublicKey decode(byte[] data, boolean debug)
+	private static boolean debug;
+
+
+	public static PublicKey decode(byte[] data)
 	{
 		try
         {
@@ -31,11 +36,13 @@ public class CryptHelper
             return keyfactory.generatePublic(x509encodedkeyspec);
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			if(debug)e.printStackTrace();
+			if(debug){
+				System.out.println("data: "+ Arrays.toString(data));
+				e.printStackTrace();
+			}
+			System.err.println("Public key reconstitute failed!");
+			return null;
 		}
-
-        System.err.println("Public key reconstitute failed!");
-        return null;
 	}
 	
 	public static byte[] encrypt(Key key, byte[] data)
@@ -59,6 +66,11 @@ public class CryptHelper
 		}
 		catch(Exception e)
 		{
+			if(debug){
+				System.out.println("Op: " +op);
+				System.out.println("Key: " +key.toString());
+				System.out.println("data: "+ Arrays.toString(data));
+			}
                 e.printStackTrace();
                 return null;
 
@@ -75,6 +87,10 @@ public class CryptHelper
 		}
 		catch(GeneralSecurityException e)
 		{
+			if(debug){
+				System.out.println("Op: " +op);
+				System.out.println("Key: " +key.toString());
+			}
 			e.printStackTrace();
 			return null;
 		}

@@ -9,10 +9,12 @@ import au.com.addstar.rcon.network.packets.PacketOutDisconnect;
 public abstract class AbstractNetworkHandler implements INetworkHandler
 {
 	private NetworkManager mManager;
+	protected boolean debug;
 	
 	public AbstractNetworkHandler(NetworkManager manager)
 	{
 		mManager = manager;
+		this.debug = manager.isDebug();
 	}
 	
 	public final NetworkManager getManager()

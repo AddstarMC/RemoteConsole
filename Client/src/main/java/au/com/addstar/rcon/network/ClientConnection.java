@@ -63,11 +63,12 @@ public class ClientConnection
 		mWorker = new NioEventLoopGroup();
 		
 		Bootstrap builder = new Bootstrap();
+		NetworkInitializer networkInit = new NetworkInitializer<>(handlerCreator,NetworkManager.class, mManagers);
 		builder.group(mWorker)
 			.channel(NioSocketChannel.class)
 			.option(ChannelOption.SO_KEEPALIVE, true)
-			.handler(new NetworkInitializer<>(handlerCreator, NetworkManager.class, mManagers));
-		
+			.handler(networkInit);
+
 		mChannel = builder.connect(mHost, mPort).sync().channel();
 		
 		getManager().waitForActive();

@@ -59,12 +59,14 @@ public class RemoteConsolePlugin extends Plugin
 			@Override
 			public INetworkHandler newHandlerLogin( NetworkManager manager )
 			{
+				manager.setDebug(mConfig.debug);
 				return new ServerLoginHandler(manager);
 			}
 			
 			@Override
 			public INetworkHandler newHandlerMain( NetworkManager manager )
 			{
+				manager.setDebug(mConfig.debug);
 				return new NetHandler(manager);
 			}
 		};

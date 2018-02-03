@@ -42,37 +42,45 @@ public class ConnectionManager
 	
 	private String mUsername;
 	private String mPassword;
+	private boolean debug;
 	
 	private ExecutorService mConnectionExecutor;
-	
-	public ConnectionManager(String username, String password)
-	{
+
+	public ConnectionManager(String username, String password, boolean debug) {
 		mUsername = username;
 		mPassword = password;
 		mAllConnections = new ArrayList<>();
 		mIdConnections = new HashMap<>();
 		mAliases = new HashMap<>();
-		
+		this.debug = debug;
 		mPendingConnections = new ArrayDeque<>();
 		mConnectingConnections = new HashSet<>();
 		mReconnectConnections = new ArrayList<>();
-		
+
 		mHandlerCreator = new HandlerCreator()
 		{
 			@Override
 			public INetworkHandler newHandlerLogin( NetworkManager manager )
 			{
+				manager.setDebug(debug);
 				return new ClientLoginHandler(manager);
 			}
-			
+
 			@Override
 			public INetworkHandler newHandlerMain( NetworkManager manager )
 			{
+				manager.setDebug(debug);
 				return new NetHandler(manager);
 			}
 		};
-		
+
 		mConnectionExecutor = Executors.newCachedThreadPool();
+	}
+
+	@Deprecated
+	public ConnectionManager(String username, String password)
+	{
+		this(username,password,false);
 	}
 	
 	/**

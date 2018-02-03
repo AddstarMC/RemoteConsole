@@ -29,6 +29,10 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 		return debug;
 	}
 
+	public void setDebug(boolean debug){
+		this.debug = debug;
+	}
+
 	private boolean debug = false;
 	
 	private ConnectionState mState;

@@ -9,9 +9,14 @@ import au.com.addstar.rcon.network.NetworkManager;
 public class ServerNetworkManager extends NetworkManager implements GenericFutureListener<Future<? super Void>>
 {
 	private User mUser;
+
+	public ServerNetworkManager(HandlerCreator creator, boolean debug) {
+		super(creator, debug);
+	}
+
 	public ServerNetworkManager(HandlerCreator creator)
 	{
-		super(creator);
+		this(creator,false);
 	}
 	
 	public void setUser(User user)

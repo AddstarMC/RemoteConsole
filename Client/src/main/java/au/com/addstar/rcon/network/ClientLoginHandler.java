@@ -36,6 +36,7 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 	public ClientLoginHandler(NetworkManager manager)
 	{
 		super(manager);
+		this.debug = manager.isDebug();
 	}
 	
 	public void setClientConnection(ClientConnection connection)

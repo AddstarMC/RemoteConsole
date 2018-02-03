@@ -64,7 +64,7 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 			disconnect("Packet sent out of sequence");
 			return;
 		}
-		
+		CryptHelper.setDebug(getManager().isDebug());
 		byte[] blob = CryptHelper.decrypt(RconServer.instance.getServerKey().getPrivate(), packet.randomBlob);
 		
 		if(!Arrays.equals(mBlob, blob))

@@ -15,7 +15,10 @@ public class MainConfig extends YamlConfig
 	
 	@Comment("The server name to display to the client.")
 	public String serverName = "Proxy";
-	
+
+	@Comment("Set True to enable dubug mode")
+	public boolean debug = false;
+
 	@Path("database.host")
 	public String databaseHost = "localhost:3306";
 	@Path("database.database")

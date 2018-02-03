@@ -51,12 +51,14 @@ public class RemoteConsolePlugin extends JavaPlugin
 			@Override
 			public INetworkHandler newHandlerLogin( NetworkManager manager )
 			{
+				manager.setDebug(mConfig.debug);
 				return new ServerLoginHandler(manager);
 			}
 			
 			@Override
 			public INetworkHandler newHandlerMain( NetworkManager manager )
 			{
+				manager.setDebug(mConfig.debug);
 				return new NetHandler(manager);
 			}
 		};
@@ -86,7 +88,7 @@ public class RemoteConsolePlugin extends JavaPlugin
 		catch(IOException e)
 		{
 			System.err.println("[RCON] Unable to start RconServer:");
-			e.printStackTrace();
+			if(mConfig.debug)e.printStackTrace();
 			mServer = null;
 			
 			return;
@@ -122,7 +124,7 @@ public class RemoteConsolePlugin extends JavaPlugin
 		catch(IOException e)
 		{
 			System.err.println("[RCON] An error occured while shutting down RconServer:");
-			e.printStackTrace();
+			if(mConfig.debug)e.printStackTrace();
 		}
 	}
 	
@@ -159,7 +161,7 @@ public class RemoteConsolePlugin extends JavaPlugin
 			catch (IOException e)
 			{
 				getLogger().severe("Failed to load whitelist:");
-				e.printStackTrace();
+				if(mConfig.debug)e.printStackTrace();
 				return false;
 			}
 		}

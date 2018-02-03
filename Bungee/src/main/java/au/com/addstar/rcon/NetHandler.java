@@ -19,6 +19,8 @@ import au.com.addstar.rcon.server.RconServer;
 import au.com.addstar.rcon.server.ServerNetworkManager;
 import au.com.addstar.rcon.server.auth.StoredPassword;
 import au.com.addstar.rcon.util.Message;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class NetHandler extends AbstractNetworkHandler implements INetworkMainHandlerServer
 {
@@ -41,13 +43,13 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 				{
 					if (!RconServer.instance.getWhitelist().isWhitelisted(packet.command))
 					{
-						user.asCommandSender().sendMessage(ChatColor.RED + "You are not permitted to use that command");
+						user.asCommandSender().sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "You are not permitted to use that command"));
 						return;
 					}
 				}
 
 				if(!ProxyServer.getInstance().getPluginManager().dispatchCommand(user.asCommandSender(), packet.command))
-					user.asCommandSender().sendMessage(ChatColor.RED + "Command not found");
+					user.asCommandSender().sendMessage(TextComponent.fromLegacyText(ChatColor.RED + "Command not found"));
 			}
 		}, 0, TimeUnit.MILLISECONDS);
 	}

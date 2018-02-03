@@ -74,7 +74,11 @@ public class ClientMain
 				.withDescription("Specifies a config file to load")
 				.withLongOpt("config")
 				.create('c'));
-		
+		options.addOption(OptionBuilder.withArgName("DEBUG")
+				.hasArg()
+				.withDescription("Enables Debugging")
+				.withLongOpt("debug")
+				.create('d'));
 		options.addOption("n", "no-prompt", false, "Disables the prompt, useful for piping the output");
 		
 		options.addOption(OptionBuilder.withArgName("COUNT")
@@ -94,7 +98,7 @@ public class ClientMain
 			// Load options
 			String username = null;
 			String password = null;
-			
+			boolean debug = false;
 			if(cl.hasOption('u'))
 				username = cl.getOptionValue('u');
 			if(cl.hasOption('p'))
@@ -109,7 +113,8 @@ public class ClientMain
 			
 			if(cl.hasOption('l'))
 				maxConsoleLines = (Integer)cl.getParsedOptionValue("l");
-			
+			if(cl.hasOption('d'))
+				debug = true;
 			ConsoleScreen screen = new ConsoleScreen();
 			
 			if(settings != null && username == null && password == null)
@@ -137,7 +142,7 @@ public class ClientMain
 			}
 			
 			// Init
-			mInstance = new ClientMain(screen, username, password);
+			mInstance = new ClientMain(screen, username, password,debug);
 			
 			// Load hosts
 			for(String fullHost : cl.getArgs())
@@ -203,18 +208,18 @@ public class ClientMain
 	private ConsoleScreen mConsole;
 	private ViewManager mViewManager;
 	private ArrayList<IConnectionListener> mConnectionListeners;
-	
+	private boolean debug;
 	private CountDownLatch mTabCompleteLatch; 
 	private List<String> mTabCompleteResults;
 	
 	private LinkedBlockingQueue<Event> mEventQueue;
 	private CommandDispatcher mDispatcher;
 	
-	public ClientMain(ConsoleScreen screen, String username, String password)
+	public ClientMain(ConsoleScreen screen, String username, String password, boolean debug)
 	{
-		mManager = new ConnectionManager(username, password);
+		mManager = new ConnectionManager(username, password,debug);
 		mConsole = screen;
-		
+		this.debug = debug;
 		mEventQueue = new LinkedBlockingQueue<>();
 		mDispatcher = new CommandDispatcher();
 		mViewManager = new ViewManager();
