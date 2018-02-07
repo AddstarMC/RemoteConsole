@@ -3,10 +3,9 @@
   <parent>
     <groupId>au.com.addstar</groupId>
     <artifactId>RemoteConsole</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
-  
   <artifactId>RemoteConsole-Client</artifactId>
   <name>RemoteConsole-Client</name>
 
@@ -39,6 +38,18 @@
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
+      <dependency>
+          <groupId>au.com.addstar</groupId>
+          <artifactId>RemoteConsole-Bungee</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>au.com.addstar</groupId>
+          <artifactId>bungeecord-api</artifactId>
+          <version>${bungee.version}</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 
   <build>

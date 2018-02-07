@@ -1,19 +1,23 @@
 package au.com.addstar.rcon;
 
-import java.io.IOException;
-
 import jline.console.ConsoleReader;
 import jline.console.UserInterruptException;
-
 import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.Ansi.Erase;
 import org.fusesource.jansi.AnsiConsole;
-import org.fusesource.jansi.Ansi.Attribute;
+
+import java.io.IOException;
 
 public class ConsoleScreen extends Thread
 {
-	private ConsoleReader mConsole;
+	protected ConsoleReader mConsole;
 	private String mPromptText;
+
+	public void setDebug(boolean mDebug) {
+		this.mDebug = mDebug;
+	}
+
 	private boolean mDebug = false;
 	
 	public ConsoleScreen()
@@ -68,7 +72,7 @@ public class ConsoleScreen extends Thread
 		}
 	}
 	
-	private int getCursorLines()
+	protected int getCursorLines()
 	{
 		int promptSize = (mConsole.getPrompt() != null ? mConsole.getPrompt().length() : 0);
 		int size = mConsole.getCursorBuffer().length() + promptSize + 1;

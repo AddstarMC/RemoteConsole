@@ -1,21 +1,15 @@
 package au.com.addstar.rcon.server;
 
-import java.util.Arrays;
-import java.util.Random;
-
-import javax.crypto.SecretKey;
-
 import au.com.addstar.rcon.network.ConnectionState;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.AbstractNetworkHandler;
 import au.com.addstar.rcon.network.handlers.INetworkLoginHandlerServer;
-import au.com.addstar.rcon.network.packets.login.PacketInEncryptGo;
-import au.com.addstar.rcon.network.packets.login.PacketInLogin;
-import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
-import au.com.addstar.rcon.network.packets.login.PacketOutEncryptStart;
-import au.com.addstar.rcon.network.packets.login.PacketOutLoginDone;
-import au.com.addstar.rcon.network.packets.login.PacketOutLoginReady;
+import au.com.addstar.rcon.network.packets.login.*;
 import au.com.addstar.rcon.util.CryptHelper;
+
+import javax.crypto.SecretKey;
+import java.util.Arrays;
+import java.util.Random;
 
 public class ServerLoginHandler extends AbstractNetworkHandler implements INetworkLoginHandlerServer
 {
@@ -52,6 +46,7 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		}
 		
 		mRand.nextBytes(mBlob);
+		if(debug)System.out.println("Sending PacketOutEncryptStart: Pub:" + RconServer.instance.getServerKey().getPublic().toString() +  " Blob:" + mBlob );
 		getManager().sendPacket(new PacketOutEncryptStart(RconServer.instance.getServerKey().getPublic(), mBlob,getManager().isDebug()));
 		mCurrentState = State.Encrypt;
 	}
@@ -66,19 +61,21 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		}
 		CryptHelper.setDebug(getManager().isDebug());
 		byte[] blob = CryptHelper.decrypt(RconServer.instance.getServerKey().getPrivate(), packet.randomBlob);
-		
+		if(debug)System.out.println("Checking Blob for match");
+
 		if(!Arrays.equals(mBlob, blob))
 		{
 			disconnect("Key did not match");
 			return;
 		}
-		
+		if(debug)System.out.println("Blob Matched");
+		if(debug)System.out.println("Decrypting Packet Key: "+ packet.secretKey.toString());
 		SecretKey key = CryptHelper.decodeSecretKey(CryptHelper.decrypt(RconServer.instance.getServerKey().getPrivate(), packet.secretKey));
 		
 		mCurrentState = State.Login;
 		
 		getManager().enableEncryption(key);
-		
+		if(debug)System.out.println("Sending PacketOutLoginReady");
 		getManager().sendPacket(new PacketOutLoginReady());
 	}
 	

@@ -3,13 +3,12 @@
   <parent>
     <groupId>au.com.addstar</groupId>
     <artifactId>RemoteConsole</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   
   <artifactId>RemoteConsole-ServerCore</artifactId>
   <name>RemoteConsole-ServerCore</name>
-
   <repositories>
   </repositories>
 

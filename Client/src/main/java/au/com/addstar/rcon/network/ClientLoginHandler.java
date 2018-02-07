@@ -1,21 +1,14 @@
 package au.com.addstar.rcon.network;
 
+import au.com.addstar.rcon.NetHandler;
+import au.com.addstar.rcon.network.handlers.AbstractNetworkHandler;
+import au.com.addstar.rcon.network.handlers.INetworkLoginHandlerClient;
+import au.com.addstar.rcon.network.packets.login.*;
+import au.com.addstar.rcon.util.CryptHelper;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import javax.crypto.SecretKey;
-
-import au.com.addstar.rcon.NetHandler;
-import au.com.addstar.rcon.network.ConnectionState;
-import au.com.addstar.rcon.network.NetworkManager;
-import au.com.addstar.rcon.network.handlers.AbstractNetworkHandler;
-import au.com.addstar.rcon.network.handlers.INetworkLoginHandlerClient;
-import au.com.addstar.rcon.network.packets.login.PacketInEncryptGo;
-import au.com.addstar.rcon.network.packets.login.PacketInLogin;
-import au.com.addstar.rcon.network.packets.login.PacketOutEncryptStart;
-import au.com.addstar.rcon.network.packets.login.PacketOutLoginDone;
-import au.com.addstar.rcon.network.packets.login.PacketOutLoginReady;
-import au.com.addstar.rcon.util.CryptHelper;
 
 public class ClientLoginHandler extends AbstractNetworkHandler implements INetworkLoginHandlerClient
 {
@@ -60,8 +53,12 @@ public class ClientLoginHandler extends AbstractNetworkHandler implements INetwo
 		}
 		
 		final SecretKey key = CryptHelper.generateSharedKey();
-		
+		if(key == null){
+			if(debug)System.out.println("Crpyto could not generate a shared Key..contact administration");
+			//throw new NullPointerException("Crpyto could not generate a shared Key..contact administration");
+		}
 		mState = State.Login;
+		if(debug)System.out.println("Sending PacketInEncryptGo: Priv:" + key.toString() + " Pub:" + packet.key.toString() + " Blob:" +packet.randomBlob );
 		getManager().sendPacket(new PacketInEncryptGo(key, packet.key, packet.randomBlob)).addListener(new GenericFutureListener<Future<? super Void>>()
 		{
 			@Override

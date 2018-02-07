@@ -1,10 +1,5 @@
 package au.com.addstar.rcon.network;
 
-import java.net.ConnectException;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
-
 import au.com.addstar.rcon.ClientMain;
 import au.com.addstar.rcon.MessageBuffer;
 import au.com.addstar.rcon.network.packets.RconPacket;
@@ -18,6 +13,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+
+import java.net.ConnectException;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
 public class ClientConnection
 {
@@ -68,9 +68,7 @@ public class ClientConnection
 			.channel(NioSocketChannel.class)
 			.option(ChannelOption.SO_KEEPALIVE, true)
 			.handler(networkInit);
-
 		mChannel = builder.connect(mHost, mPort).sync().channel();
-		
 		getManager().waitForActive();
 	}
 	

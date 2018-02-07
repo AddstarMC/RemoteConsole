@@ -1,5 +1,14 @@
 package au.com.addstar.rcon;
 
+import au.com.addstar.rcon.Event.EventType;
+import au.com.addstar.rcon.command.*;
+import au.com.addstar.rcon.network.ClientConnection;
+import au.com.addstar.rcon.network.packets.main.PacketInCommand;
+import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
+import au.com.addstar.rcon.view.SingleConsoleView;
+import au.com.addstar.rcon.view.ViewManager;
+import org.apache.commons.cli.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,33 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-
-import au.com.addstar.rcon.Event.EventType;
-import au.com.addstar.rcon.command.CommandDispatcher;
-import au.com.addstar.rcon.command.ConnectCommand;
-import au.com.addstar.rcon.command.CreateViewCommand;
-import au.com.addstar.rcon.command.DisconnectCommand;
-import au.com.addstar.rcon.command.ExitCommand;
-import au.com.addstar.rcon.command.FilterCommand;
-import au.com.addstar.rcon.command.PasswordCommand;
-import au.com.addstar.rcon.command.RemoveViewCommand;
-import au.com.addstar.rcon.command.ServersCommand;
-import au.com.addstar.rcon.command.SwitchCommand;
-import au.com.addstar.rcon.command.ViewCommand;
-import au.com.addstar.rcon.command.ViewsCommand;
-import au.com.addstar.rcon.command.WhoCommand;
-import au.com.addstar.rcon.network.ClientConnection;
-import au.com.addstar.rcon.network.packets.main.PacketInCommand;
-import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
-import au.com.addstar.rcon.view.SingleConsoleView;
-import au.com.addstar.rcon.view.ViewManager;
 
 public class ClientMain
 {
@@ -48,7 +30,7 @@ public class ClientMain
 		formatter.printHelp("rcon [OPTIONS]... [HOST]...", header, options, "", false);
 	}
 	
-	private static ClientMain mInstance;
+	protected static ClientMain mInstance;
 	public static int maxConsoleLines = 1000;
 	public static boolean showPrompt = true;
 	
@@ -115,8 +97,10 @@ public class ClientMain
 				maxConsoleLines = (Integer)cl.getParsedOptionValue("l");
 			if(cl.hasOption('d'))
 				debug = true;
+
 			ConsoleScreen screen = new ConsoleScreen();
-			
+			screen.setDebug(debug);
+
 			if(settings != null && username == null && password == null)
 			{
 				username = settings.username;
@@ -217,9 +201,9 @@ public class ClientMain
 	
 	public ClientMain(ConsoleScreen screen, String username, String password, boolean debug)
 	{
-		mManager = new ConnectionManager(username, password,debug);
-		mConsole = screen;
 		this.debug = debug;
+		mManager = new ConnectionManager(username, password,this.debug);
+		mConsole = screen;
 		mEventQueue = new LinkedBlockingQueue<>();
 		mDispatcher = new CommandDispatcher();
 		mViewManager = new ViewManager();

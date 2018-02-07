@@ -1,10 +1,13 @@
 package au.com.addstar.rcon;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.EnumSet;
-import java.util.logging.Level;
+import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
+import au.com.addstar.rcon.view.ConfigConsoleView;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -13,48 +16,46 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.EnumSet;
+import java.util.logging.Level;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
-import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
-import au.com.addstar.rcon.view.ConfigConsoleView;
-
-public class ConfigLoader
+public class  ConfigLoader
 {
-	public static void loadConfig(File file) throws IOException
-	{
-		try
-		{
+	public static void loadConfig(InputStream stream) throws IOException {
+		try {
 			// Load the schema for validation
 			InputStream schemaSource = ConfigLoader.class.getResourceAsStream("/config.xsd");
 			SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			
+
 			Schema schema = schemaFactory.newSchema(new StreamSource(schemaSource));
-			
+
 			// Load the config
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setSchema(schema);
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			
+
 			ConfigErrorHandler handler = new ConfigErrorHandler();
 			builder.setErrorHandler(handler);
-			
-			Document doc = builder.parse(file);
-			
-			if(handler.errored)
+
+			Document doc = builder.parse(stream);
+
+			if (handler.errored)
 				throw new IOException("Errors occured during parsing");
-			
+
 			parseAll(doc);
-		}
-		catch (SAXException | ParserConfigurationException e)
-		{
+		} catch (SAXException | ParserConfigurationException |IllegalArgumentException e) {
 			throw new IOException(e);
 		}
+	}
+
+	public static void loadConfig(File file) throws IOException
+	{
+		InputStream stream = new FileInputStream(file);
+		loadConfig(stream);
     }
 	
 	private static void parseAll(Document doc) throws SAXException

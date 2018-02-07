@@ -1,0 +1,40 @@
+<rcon>
+    <servers>
+        <server reconnect="true">localhost</server>
+        <server reconnect="true">localhost:22051</server>
+    </servers>
+
+    <views>
+        <default>chat</default>
+        <view name="chat">
+            <servers>
+                <excludes>
+                    <server>Proxy</server>
+                </excludes>
+                <includes>
+                    <server>survival</server>
+                </includes>
+            </servers>
+            <filters>
+            <directed/>
+            <chat/>
+            <exception/>
+            <system/>
+             </filters>
+            <filters
+                <directed/>
+                <chat/>
+                <exception/>
+                <system/>
+            </filters>
+        </view>
+        <filters>
+            <directed/>
+            <chat/>
+            <exception/>
+            <system/>
+        </filters>
+        <view name="log">
+        </view>
+    </views>
+</rcon>

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>au.com.addstar</groupId>
   <artifactId>RemoteConsole</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.2-SNAPSHOT</version>
   <name>RemoteConsole</name>
   <packaging>pom</packaging>
 
@@ -16,6 +16,7 @@
       <jansi.version>1.11</jansi.version>
       <yamler.version>2.4.0-SNAPSHOT</yamler.version>
   </properties>
+
   <scm>
     <connection>scm:git:git@github.com:AddstarMC/RemoteConsole.git</connection>
     <developerConnection>scm:git:git@github.com:AddstarMC/RemoteConsole.git</developerConnection>
@@ -49,9 +50,9 @@
   <modules>
       <module>Core</module>
       <module>ServerCore</module>
-      <module>Client</module>
       <module>Bukkit</module>
       <module>Bungee</module>
+      <module>Client</module>
   </modules>
   <repositories>
     <repository>
@@ -73,13 +74,22 @@
       <url>https://maven.addstar.com.au/artifactory/all-snapshot</url>
     </repository>
   </repositories>
-
   <dependencies>
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId> <!-- Use 'netty-all' for 4.0 or above -->
       <version>${netty.version}</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>RELEASE</version>
     </dependency>
   </dependencies>
 

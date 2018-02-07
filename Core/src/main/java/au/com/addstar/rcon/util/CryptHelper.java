@@ -1,22 +1,14 @@
 package au.com.addstar.rcon.util;
 
-import java.security.GeneralSecurityException;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.text.StringCharacterIterator;
-import java.util.Arrays;
-
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 public class CryptHelper
 {
@@ -61,7 +53,6 @@ public class CryptHelper
 		{
 			Cipher cipher = Cipher.getInstance(key.getAlgorithm());
 	        cipher.init(op, key);
-	        
 	        return cipher.doFinal(data);
 		}
 		catch(Exception e)

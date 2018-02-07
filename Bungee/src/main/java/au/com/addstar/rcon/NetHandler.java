@@ -1,26 +1,21 @@
 package au.com.addstar.rcon;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ProxyServer;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.AbstractNetworkHandler;
 import au.com.addstar.rcon.network.handlers.INetworkMainHandlerServer;
-import au.com.addstar.rcon.network.packets.main.PacketInCommand;
-import au.com.addstar.rcon.network.packets.main.PacketInPassword;
-import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
-import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
-import au.com.addstar.rcon.network.packets.main.PacketOutTabComplete;
+import au.com.addstar.rcon.network.packets.main.*;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 import au.com.addstar.rcon.server.RconServer;
 import au.com.addstar.rcon.server.ServerNetworkManager;
 import au.com.addstar.rcon.server.auth.StoredPassword;
 import au.com.addstar.rcon.util.Message;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 public class NetHandler extends AbstractNetworkHandler implements INetworkMainHandlerServer
 {

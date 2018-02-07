@@ -1,27 +1,20 @@
 package au.com.addstar.rcon;
 
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-
-import java.net.ConnectException;
-import java.net.NoRouteToHostException;
-import java.net.SocketException;
-import java.nio.channels.UnresolvedAddressException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import au.com.addstar.rcon.Event.EventType;
 import au.com.addstar.rcon.network.ClientConnection;
 import au.com.addstar.rcon.network.ClientLoginHandler;
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkManager;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+
+import java.net.ConnectException;
+import java.net.SocketException;
+import java.nio.channels.UnresolvedAddressException;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ConnectionManager
 {
@@ -134,8 +127,10 @@ public class ConnectionManager
 	{
 		try
 		{
-			if (mConnectingConnections.add(connection))
-				mConnectionExecutor.execute(new ConnectionThread(connection, silent));
+			if (mConnectingConnections.add(connection)) {
+				ConnectionThread thread = new ConnectionThread(connection, silent);
+				mConnectionExecutor.execute(thread);
+			}
 		}
 		catch(UnresolvedAddressException e)
 		{
@@ -380,39 +375,48 @@ public class ConnectionManager
 					{
 						if (mConnection.getManager().getDisconnectReason().equals("Server is starting up"))
 							scheduleReconnect(mConnection);
-						else
+						else {
+							if(debug)System.out.println(String.format("Disconnected from %s: %s", mConnection, mConnection.getManager().getDisconnectReason()));
 							ClientMain.getViewManager().addSystemMessage(String.format("Disconnected from %s: %s", mConnection, mConnection.getManager().getDisconnectReason()));
+						}
 					}
 				}
 			}
 			catch ( InterruptedException e )
 			{
+				e.printStackTrace();
 			}
 			catch(ConnectException e)
 			{
-				mConnectingConnections.remove(mConnection);
+                e.printStackTrace();
+                mConnectingConnections.remove(mConnection);
 				if(!mSilent)
 					ClientMain.getViewManager().addSystemMessage("Failed to connect to " + mConnection.toString());
-				
+				if(debug)System.out.println("Failed to connect to " + mConnection.toString());
 				mConnection.shutdown();
 				if(mConnection.shouldReconnect())
 					scheduleReconnect(mConnection);
 			}
 			catch(UnresolvedAddressException e)
 			{
+			    e.printStackTrace();
 				mConnectingConnections.remove(mConnection);
 				if(!mSilent)
 					ClientMain.getViewManager().addSystemMessage("Failed to connect to " + mConnection.toString() + " unknown host");
-				
+				if(debug)System.out.println("Failed to connect to " + mConnection.toString() + " unknown host");
 				mConnection.shutdown();
 			}
 			catch(SocketException e)
 			{
-				mConnectingConnections.remove(mConnection);
+                e.printStackTrace();
+                mConnectingConnections.remove(mConnection);
 				if(!mSilent)
 					ClientMain.getViewManager().addSystemMessage("Failed to connect to " + mConnection.toString() + " " + e.getMessage());
-				
+				if(debug)System.out.println("Failed to connect to " + mConnection.toString() + " " + e.getMessage());
 				mConnection.shutdown();
+			}
+			catch (Exception e){
+				e.printStackTrace();
 			}
 		}
 	}
@@ -445,7 +449,8 @@ public class ConnectionManager
 			}
 			catch(InterruptedException e)
 			{
-			}
+                e.printStackTrace();
+            }
 		}
 	}
 }
