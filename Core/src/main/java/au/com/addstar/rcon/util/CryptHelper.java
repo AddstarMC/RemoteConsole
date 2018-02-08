@@ -89,9 +89,14 @@ public class CryptHelper
 
 	public static KeyPair generateKey()
 	{
+		// As of Java 1.8.161 the default RSA key was 2046 not 1024 - this cause netty to require 2 packets to send the encryption
+		// which lead to some sort of byte count mismatch on decoding that meant the key was null resultin in a Primary key error.
+		//If we can work out the netty packet issue we can migrate to a large key size
+
 		try
 		{
 			KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+			gen.initialize(1024);
 			return gen.generateKeyPair();
 		}
 		catch(NoSuchAlgorithmException e)
