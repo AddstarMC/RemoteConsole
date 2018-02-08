@@ -1,12 +1,5 @@
 package au.com.addstar.rcon.network;
 
-import java.io.IOException;
-import java.net.SocketAddress;
-import java.util.concurrent.CountDownLatch;
-
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
 import au.com.addstar.rcon.network.packets.PacketOutDisconnect;
 import au.com.addstar.rcon.network.packets.RconPacket;
@@ -15,7 +8,15 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.AttributeKey;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import java.io.IOException;
+import java.net.SocketAddress;
+import java.util.concurrent.CountDownLatch;
 
 public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 {
@@ -104,6 +105,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	{
 		super.channelActive(ctx);
 		mChannel = ctx.channel();
+		if(debug)enableLogging();
 		mChannel.attr(NETWORK_MANAGER).set(this);
 		mActiveWaiter.countDown();
 	}
@@ -144,6 +146,11 @@ public class NetworkManager extends SimpleChannelInboundHandler<RconPacket>
 	public ChannelFuture sendPacket(RconPacket packet)
 	{
 		return mChannel.writeAndFlush(packet);
+	}
+
+	private void enableLogging(){
+		LoggingHandler logger = new LoggingHandler(NetworkManager.class, LogLevel.DEBUG);
+		mChannel.pipeline().addFirst("Logger",logger);
 	}
 	
 	public void enableEncryption(SecretKey key)

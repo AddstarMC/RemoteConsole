@@ -2,22 +2,16 @@ package au.com.addstar.rcon.network.packets;
 
 import au.com.addstar.rcon.network.ConnectionState;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
-import au.com.addstar.rcon.network.packets.login.PacketInEncryptGo;
-import au.com.addstar.rcon.network.packets.login.PacketInLogin;
-import au.com.addstar.rcon.network.packets.login.PacketInLoginBegin;
-import au.com.addstar.rcon.network.packets.login.PacketOutEncryptStart;
-import au.com.addstar.rcon.network.packets.login.PacketOutLoginDone;
-import au.com.addstar.rcon.network.packets.login.PacketOutLoginReady;
-import au.com.addstar.rcon.network.packets.main.PacketInCommand;
-import au.com.addstar.rcon.network.packets.main.PacketInPassword;
-import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
-import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
-import au.com.addstar.rcon.network.packets.main.PacketOutTabComplete;
+import au.com.addstar.rcon.network.packets.login.*;
+import au.com.addstar.rcon.network.packets.main.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.CharsetUtil;
 
+import java.util.Arrays;
+
 public abstract class RconPacket
 {
+	protected static boolean debug = false;
 	public abstract void read(ByteBuf packet);
 	public abstract void write(ByteBuf packet);
 	
@@ -43,16 +37,33 @@ public abstract class RconPacket
 	
 	public static void writeBlob(byte[] blob, ByteBuf buffer)
 	{
+		if(debug) {
+			//System.out.println("Buffer before writing:" + Arrays.toString(readBlob(buffer)));
+			System.out.println("Blob before writing: Size:"+ blob.length+ " Content:" + Arrays.toString(blob));
+		}
 		buffer.writeByte(blob.length);
 		buffer.writeBytes(blob);
+		if(debug){
+			//System.out.println("Buffer after Write: " + Arrays.toString(readBlob(buffer)));
+		}
+
 	}
 	
 	public static byte[] readBlob(ByteBuf buffer)
 	{
+		if(debug) {
+			//System.out.println("Buffer before writing:" + Arrays.toString(readBlob(buffer)));
+			System.out.println("Buffer ready to read" );
+		}
 		int length = buffer.readUnsignedByte();
 		byte[] data = new byte[length];
 		buffer.readBytes(data);
+		if(debug) {
+			//System.out.println("Buffer before writing:" + Arrays.toString(readBlob(buffer)));
+			System.out.println("Data : " + Arrays.toString(data));
+		}
 		return data;
+
 	}
 	
 	

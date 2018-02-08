@@ -46,7 +46,10 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		}
 		
 		mRand.nextBytes(mBlob);
-		if(debug)System.out.println("Sending PacketOutEncryptStart: Pub:" + RconServer.instance.getServerKey().getPublic().toString() +  " Blob:" + mBlob );
+		if(debug){
+			System.out.println("Sending PacketOutEncryptStart: Pub:" + RconServer.instance.getServerKey().getPublic().toString() +  " Blob:" + mBlob );
+			System.out.println("ServerKey: encoding:" + RconServer.instance.getServerKey().getPublic().getEncoded().toString() );
+		}
 		getManager().sendPacket(new PacketOutEncryptStart(RconServer.instance.getServerKey().getPublic(), mBlob,getManager().isDebug()));
 		mCurrentState = State.Encrypt;
 	}
@@ -120,8 +123,11 @@ public class ServerLoginHandler extends AbstractNetworkHandler implements INetwo
 		((ServerNetworkManager)getManager()).setUser(user);
 		
 		System.out.println("[RCON] " + packet.username + " logged in on " + getManager().getAddress());
+		if(debug)System.out.println("Sending PacketOutLoginDone: Name: " + RconServer.instance.getServerName() +"Console Format:"
+		+ RconServer.instance.getConsoleFormat());
 		getManager().sendPacket(new PacketOutLoginDone(RconServer.instance.getServerName(), RconServer.instance.getConsoleFormat()));
-		
 		getManager().transitionState(ConnectionState.Main);
+		if(debug)System.out.println("ServerManager is now set to Recieve MAIN packets");
+
 	}
 }

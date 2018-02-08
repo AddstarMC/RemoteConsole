@@ -1,11 +1,11 @@
 package au.com.addstar.rcon.network;
 
-import java.lang.reflect.Constructor;
-import java.util.List;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+
+import java.lang.reflect.Constructor;
+import java.util.List;
 
 public class NetworkInitializer<T extends NetworkManager> extends ChannelInitializer<SocketChannel>
 {

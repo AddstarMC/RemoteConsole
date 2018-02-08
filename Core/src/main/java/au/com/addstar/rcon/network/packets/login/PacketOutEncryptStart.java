@@ -1,17 +1,16 @@
 package au.com.addstar.rcon.network.packets.login;
 
-import java.security.PublicKey;
-
-import io.netty.buffer.ByteBuf;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
 import au.com.addstar.rcon.network.handlers.INetworkLoginHandlerClient;
 import au.com.addstar.rcon.network.packets.RconPacket;
 import au.com.addstar.rcon.util.CryptHelper;
+import io.netty.buffer.ByteBuf;
+
+import java.security.PublicKey;
 
 public class PacketOutEncryptStart extends RconPacket
 {
 	public PublicKey key;
-	public boolean debug = false;
 	public byte[] randomBlob;
 	
 	public PacketOutEncryptStart() {}

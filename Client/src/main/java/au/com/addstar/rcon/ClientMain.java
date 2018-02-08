@@ -8,6 +8,8 @@ import au.com.addstar.rcon.network.packets.main.PacketInTabComplete;
 import au.com.addstar.rcon.view.SingleConsoleView;
 import au.com.addstar.rcon.view.ViewManager;
 import org.apache.commons.cli.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -195,6 +197,7 @@ public class ClientMain
 	private boolean debug;
 	private CountDownLatch mTabCompleteLatch; 
 	private List<String> mTabCompleteResults;
+	private Logger logger;
 	
 	private LinkedBlockingQueue<Event> mEventQueue;
 	private CommandDispatcher mDispatcher;
@@ -202,6 +205,7 @@ public class ClientMain
 	public ClientMain(ConsoleScreen screen, String username, String password, boolean debug)
 	{
 		this.debug = debug;
+		logger = LoggerFactory.getLogger(this.getClass());
 		mManager = new ConnectionManager(username, password,this.debug);
 		mConsole = screen;
 		mEventQueue = new LinkedBlockingQueue<>();
@@ -209,6 +213,7 @@ public class ClientMain
 		mViewManager = new ViewManager();
 		mConnectionListeners = new ArrayList<>();
 		registerCommands();
+
 	}
 	
 	private void registerCommands()
