@@ -388,7 +388,7 @@ public class ConnectionManager
 			}
 			catch(ConnectException e)
 			{
-                e.printStackTrace();
+                if(debug)e.printStackTrace();
                 mConnectingConnections.remove(mConnection);
 				if(!mSilent)
 					ClientMain.getViewManager().addSystemMessage("Failed to connect to " + mConnection.toString());
@@ -399,7 +399,7 @@ public class ConnectionManager
 			}
 			catch(UnresolvedAddressException e)
 			{
-			    e.printStackTrace();
+			    if(debug)e.printStackTrace();
 				mConnectingConnections.remove(mConnection);
 				if(!mSilent)
 					ClientMain.getViewManager().addSystemMessage("Failed to connect to " + mConnection.toString() + " unknown host");
@@ -408,7 +408,7 @@ public class ConnectionManager
 			}
 			catch(SocketException e)
 			{
-                e.printStackTrace();
+                if(debug)e.printStackTrace();
                 mConnectingConnections.remove(mConnection);
 				if(!mSilent)
 					ClientMain.getViewManager().addSystemMessage("Failed to connect to " + mConnection.toString() + " " + e.getMessage());
@@ -416,7 +416,7 @@ public class ConnectionManager
 				mConnection.shutdown();
 			}
 			catch (Exception e){
-				e.printStackTrace();
+				if(debug)e.printStackTrace();
 			}
 		}
 	}
@@ -449,7 +449,7 @@ public class ConnectionManager
 			}
 			catch(InterruptedException e)
 			{
-                e.printStackTrace();
+				if(debug) e.printStackTrace();
             }
 		}
 	}
