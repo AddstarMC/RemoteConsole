@@ -22,7 +22,9 @@ public class PacketOutEncryptStart extends RconPacket
 		this.debug=debug;
 	}
 
-	public PacketOutEncryptStart(PublicKey key, byte[] randomBlob)
+	public
+
+	PacketOutEncryptStart(PublicKey key, byte[] randomBlob)
 	{
 		this(key,randomBlob,false);
 	}

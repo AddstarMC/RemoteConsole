@@ -2,9 +2,14 @@ package au.com.addstar.rcon.network;
 
 import au.com.addstar.rcon.NetHandler;
 import au.com.addstar.rcon.network.handlers.INetworkHandler;
+import au.com.addstar.rcon.network.packets.login.PacketOutEncryptStart;
+import au.com.addstar.rcon.util.CryptHelper;
 
 import java.net.SocketException;
+import java.security.KeyPair;
+import java.util.Random;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -61,5 +66,12 @@ public class ClientLoginHandlerTest {
             e.printStackTrace();
         }
 
+        byte[] mBlob = new byte[14];
+        Random mRand = new Random();
+        mRand.nextBytes(mBlob);
+        KeyPair serverkey = CryptHelper.generateKey();
+        assertNotNull(serverkey);
+        PacketOutEncryptStart packet = new PacketOutEncryptStart(serverkey.getPublic(),mBlob);
+        packet.handlePacket(handler);
     }
 }

@@ -41,7 +41,7 @@ public abstract class RconPacket
 			//System.out.println("Buffer before writing:" + Arrays.toString(readBlob(buffer)));
 			System.out.println("Blob before writing: Size:"+ blob.length+ " Content:" + Arrays.toString(blob));
 		}
-		buffer.writeByte(blob.length);
+		buffer.writeShort(blob.length);
 		buffer.writeBytes(blob);
 		if(debug){
 			//System.out.println("Buffer after Write: " + Arrays.toString(readBlob(buffer)));
@@ -55,7 +55,7 @@ public abstract class RconPacket
 			//System.out.println("Buffer before writing:" + Arrays.toString(readBlob(buffer)));
 			System.out.println("Buffer ready to read" );
 		}
-		int length = buffer.readUnsignedByte();
+		int length = buffer.readShort();
 		byte[] data = new byte[length];
 		buffer.readBytes(data);
 		if(debug) {

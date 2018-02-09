@@ -21,6 +21,7 @@
                     <server>survival</server>
                 </includes>
             </servers>
+            <layout format="String"/>
         </view>
         <view name="log">
         </view>
