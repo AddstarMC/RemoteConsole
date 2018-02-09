@@ -4,6 +4,7 @@ import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
 import static org.junit.Assert.*;
@@ -103,7 +104,8 @@ public class MessageTest {
     @Test
     public void getFormatted() {
         msg = new Message(message, PacketOutMessage.MessageType.Directed,time, Level.WARNING,thread,logger,ServerId,ServerName);
-        assertEquals("16:41:23 [TestServerID]: Test Message", msg.getFormatted("%d{HH:mm:ss} [%9sid]: %msg"));
+        String date = new SimpleDateFormat("HH:mm:ss").format(time);
+        assertEquals(date+" [TestServerID]: Test Message", msg.getFormatted("%d{HH:mm:ss} [%9sid]: %msg"));
     }
 
     @Test
