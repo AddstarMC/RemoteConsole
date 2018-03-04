@@ -52,7 +52,7 @@ public class MessageBuffer
 		for(int i = mLines.size()-1; i >= 0; i--)
 		{
 			Message other = mLines.get(i);
-			if(other.getTime() < message.getTime() - 500)
+			if(other.getTime() < message.getTime() - 1000)
 				break;
 			
 			if(message.isRoughDuplicate(other))
