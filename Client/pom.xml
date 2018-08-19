@@ -3,7 +3,7 @@
   <parent>
     <groupId>au.com.addstar</groupId>
     <artifactId>RemoteConsole</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>RemoteConsole-Client</artifactId>
