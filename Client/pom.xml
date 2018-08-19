@@ -45,7 +45,7 @@
           <scope>test</scope>
       </dependency>
       <dependency>
-          <groupId>au.com.addstar</groupId>
+          <groupId>net.md-5</groupId>
           <artifactId>bungeecord-api</artifactId>
           <version>${bungee.version}</version>
           <scope>test</scope>

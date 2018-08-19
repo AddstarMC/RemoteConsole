@@ -10,9 +10,10 @@
       <build.number />
       <plugin.version>${project.version}-${build.number}</plugin.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <netty.version>4.1.19.Final</netty.version>
-      <spigot.version>1.12.2-R0.1-SNAPSHOT</spigot.version>
-      <bungee.version>1.12-SNAPSHOT</bungee.version>
+      <netty.version>4.1.25.Final</netty.version>
+      <spigot.api.version>1.13</spigot.api.version>
+      <spigot.version>${spigot.api.version}-R0.1-SNAPSHOT</spigot.version>
+      <bungee.version>1.13-SNAPSHOT</bungee.version>
       <jansi.version>1.11</jansi.version>
       <yamler.version>2.4.0-SNAPSHOT</yamler.version>
   </properties>
@@ -84,12 +85,12 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>RELEASE</version>
+      <version>4.12</version>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
-      <version>RELEASE</version>
+      <version>1.10.19</version>
     </dependency>
   </dependencies>
 

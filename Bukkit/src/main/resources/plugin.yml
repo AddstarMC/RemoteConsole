@@ -2,6 +2,7 @@ name: RemoteConsole
 author: Schmoller
 description: An advanced remote console
 version: ${plugin.version}
+api-version: ${spigot.api.version}
 
 main: au.com.addstar.rcon.RemoteConsolePlugin
 
