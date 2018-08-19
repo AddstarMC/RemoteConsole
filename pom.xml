@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>au.com.addstar</groupId>
   <artifactId>RemoteConsole</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2</version>
   <name>RemoteConsole</name>
   <packaging>pom</packaging>
 
@@ -22,7 +22,7 @@
     <connection>scm:git:git@github.com:AddstarMC/RemoteConsole.git</connection>
     <developerConnection>scm:git:git@github.com:AddstarMC/RemoteConsole.git</developerConnection>
     <url>https://github.com/AddstarMC/RemoteConsole</url>
-    <tag>HEAD</tag>
+    <tag>RemoteConsole-1.0.2</tag>
   </scm>
   <developers>
     <developer>
