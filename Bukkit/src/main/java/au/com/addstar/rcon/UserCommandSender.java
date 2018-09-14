@@ -1,10 +1,10 @@
 package au.com.addstar.rcon;
 
-import java.util.Set;
-
+import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
+import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
+import au.com.addstar.rcon.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -14,11 +14,9 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
-
-import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
-import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
-import au.com.addstar.rcon.util.Message;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.Set;
 
 public class UserCommandSender implements ConsoleCommandSender
 {

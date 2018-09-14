@@ -1,14 +1,5 @@
 package au.com.addstar.rcon;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-
 import au.com.addstar.rcon.commands.RconCommand;
 import au.com.addstar.rcon.config.MainConfig;
 import au.com.addstar.rcon.network.HandlerCreator;
@@ -21,6 +12,10 @@ import au.com.addstar.rcon.server.auth.MySQLUserStore;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.*;
 
 public class RemoteConsolePlugin extends Plugin
 {
@@ -137,7 +132,13 @@ public class RemoteConsolePlugin extends Plugin
 		}
 		
 		mLogHandler = new RemoteConsoleLogHandler();
-		mLogHandler.setFormatter(mFormatter);
+		if(mFormatter != null){mLogHandler.setFormatter(mFormatter);}
+		else{
+			System.out.println("[RemoteConsole]Log formatter was null thus the console handler " +
+				"has no formatter set");
+			mFormatter = new SimpleFormatter();
+			mLogHandler.setFormatter(mFormatter);
+		}
 		bungeeCordLog.addHandler(mLogHandler);
 	}
 	

@@ -22,6 +22,10 @@
       <id>addstar-repo</id>
       <url>http://maven.addstar.com.au/artifactory/all-release</url>
     </repository>
+      <repository>
+          <id>addstar-repo-snapshot</id>
+          <url>http://maven.addstar.com.au/artifactory/all-snapshot</url>
+      </repository>
   </repositories>
 
   <dependencies>
@@ -30,7 +34,6 @@
       <artifactId>spigot</artifactId>
       <version>${spigot.version}</version>
       <scope>provided</scope>
-      <optional>true</optional>
     </dependency>
     <dependency>
     	<groupId>au.com.addstar</groupId>
