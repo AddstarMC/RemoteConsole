@@ -64,6 +64,14 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+      <id>bintray-mockito-maven</id>
+      <name>bintray</name>
+      <url>https://dl.bintray.com/mockito/maven</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
       <id>central</id>
       <name>all-release</name>
       <url>https://maven.addstar.com.au/artifactory/all-release</url>
@@ -89,7 +97,7 @@
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
+      <artifactId>mockito-core</artifactId>
       <version>2.15.0</version>
     </dependency>
   </dependencies>

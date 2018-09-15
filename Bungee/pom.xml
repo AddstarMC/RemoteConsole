@@ -26,6 +26,10 @@
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
     <repository>
+       <id>destroystokyo-snapshots</id>
+       <url>https://destroystokyo.com/repo/repository/maven-snapshots/</url>
+    </repository>
+    <repository>
       <id>Yamler</id>
       <url>http://nexus.cube-space.net/content/groups/public/</url>
     </repository>
@@ -35,7 +39,7 @@
     <dependency>
         <groupId>io.github.waterfallmc</groupId>
         <artifactId>waterfall-api</artifactId>
-        <version>${bungee.version}</version>
+        <version>1.13-SNAPSHOT</version>
         <scope>provided</scope>
         <optional>true</optional>
   	</dependency>
