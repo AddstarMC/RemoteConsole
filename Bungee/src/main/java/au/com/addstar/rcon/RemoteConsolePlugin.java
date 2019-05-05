@@ -16,6 +16,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -76,8 +77,14 @@ public class RemoteConsolePlugin extends Plugin
 		
 		IUserStore userstore = null;
 		
-		if(mConfig.store.equalsIgnoreCase("mysql"))
-			userstore = new MySQLUserStore(mConfig.databaseHost, mConfig.databaseName, mConfig.databaseUsername, mConfig.databaseUsername);
+		if(mConfig.store.equalsIgnoreCase("mysql")) {
+			Properties props = new Properties();
+			props.put("user",mConfig.databaseUsername);
+			props.put("password",mConfig.databasePassword);
+			props.put("useSSL",mConfig.databaseUseSSL);
+			userstore = new MySQLUserStore(mConfig.databaseHost, mConfig.databaseName,props);
+
+		}
 		else
 			userstore = new YamlUserStore(new File(getDataFolder(), "users.yml"));
 		

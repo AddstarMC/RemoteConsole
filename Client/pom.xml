@@ -18,13 +18,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi</artifactId>
-	  <version>${jansi.version}</version>
-	  <type>jar</type>
-	  <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>jline</groupId>
 	  <artifactId>jline</artifactId>
 	  <version>2.12</version>
@@ -45,8 +38,8 @@
           <scope>test</scope>
       </dependency>
       <dependency>
-          <groupId>net.md-5</groupId>
-          <artifactId>bungeecord-api</artifactId>
+          <groupId>au.com.addstar</groupId>
+          <artifactId>waterfall-api</artifactId>
           <version>${bungee.version}</version>
           <scope>test</scope>
       </dependency>

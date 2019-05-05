@@ -1,17 +1,5 @@
 package au.com.addstar.rcon;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.Logger;
-import org.apache.logging.log4j.core.config.DefaultConfiguration;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandMap;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import au.com.addstar.rcon.commands.RconCommand;
 import au.com.addstar.rcon.config.Config;
 import au.com.addstar.rcon.network.HandlerCreator;
@@ -21,6 +9,19 @@ import au.com.addstar.rcon.server.RconServer;
 import au.com.addstar.rcon.server.ServerLoginHandler;
 import au.com.addstar.rcon.server.auth.IUserStore;
 import au.com.addstar.rcon.server.auth.MySQLUserStore;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandMap;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Properties;
 
 public class RemoteConsolePlugin extends JavaPlugin
 {
@@ -65,14 +66,19 @@ public class RemoteConsolePlugin extends JavaPlugin
 		
 		IUserStore userstore = null;
 		
-		if(mConfig.store.equalsIgnoreCase("mysql"))
-			userstore = new MySQLUserStore(mConfig.databaseHost, mConfig.databaseName, mConfig.databaseUsername, mConfig.databaseUsername);
+		if(mConfig.store.equalsIgnoreCase("mysql")) {
+			Properties props = new Properties();
+			props.put("user",mConfig.databaseUsername);
+			props.put("password",mConfig.databasePassword);
+			props.put("useSSL",mConfig.databaseUseSSL);
+			userstore = new MySQLUserStore(mConfig.databaseHost, mConfig.databaseName,props);
+		}
 		else
 			userstore = new YamlUserStore(new File(getDataFolder(), "users.yml"));
 		
 		String serverName = mConfig.serverName;
 		if(serverName.isEmpty())
-			serverName = Bukkit.getServerName();
+			serverName = Bukkit.getServer().getName();
 		
 		loadLogAppender();
 		

@@ -21,7 +21,7 @@
             <exception/>
             <system/>
              </filters>
-            <filters
+            <filters>
                 <directed/>
                 <chat/>
                 <exception/>

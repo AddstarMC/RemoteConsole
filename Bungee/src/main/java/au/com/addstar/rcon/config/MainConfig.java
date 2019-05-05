@@ -27,7 +27,8 @@ public class MainConfig extends YamlConfig
 	public String databaseUsername = "user";
 	@Path("database.password")
 	public String databasePassword = "password";
-	
+	@Path("database.useSSL")
+	public String databaseUseSSL = "false";
 	
 	public void checkValid() throws InvalidConfigurationException
 	{

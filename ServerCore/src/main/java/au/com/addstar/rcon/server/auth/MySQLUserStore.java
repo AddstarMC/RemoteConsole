@@ -1,5 +1,7 @@
 package au.com.addstar.rcon.server.auth;
 
+import au.com.addstar.rcon.server.User;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,30 +9,37 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import au.com.addstar.rcon.server.User;
+import java.util.Properties;
 
 public class MySQLUserStore implements IUserStore
 {
 	private Connection mConnection;
 	private String mHost;
 	private String mDatabase;
-	private String mUsername;
-	private String mPassword;
+	private Properties properties;
 	
 	private PreparedStatement mLoadUser;
 	private PreparedStatement mSaveUser;
 	private PreparedStatement mAddUser;
 	private PreparedStatement mRemoveUser;
-	
+
+	@Deprecated
 	public MySQLUserStore(String host, String database, String username, String password)
+	{
+		Properties p = new Properties();
+		p.put("user",username);
+		p.put("pass",password);
+		properties = p;
+		mHost = host;
+		mDatabase = database;
+
+	}
+	public MySQLUserStore(String host, String database, Properties properties)
 	{
 		mHost = host;
 		mDatabase = database;
-		mUsername = username;
-		mPassword = password;
+		this.properties = properties;
 	}
-	
 	@Override
 	public void initialize() throws IOException
 	{
@@ -38,7 +47,7 @@ public class MySQLUserStore implements IUserStore
 		{
 			// Initiate the connection
 			Class.forName("com.mysql.jdbc.Driver");
-			mConnection = DriverManager.getConnection("jdbc:mysql://" + mHost + "/" + mDatabase, mUsername, mPassword);
+			mConnection = DriverManager.getConnection("jdbc:mysql://" + mHost + "/" + mDatabase, properties);
 			
 			// Make sure the needed table is setup
 			ensureTable();

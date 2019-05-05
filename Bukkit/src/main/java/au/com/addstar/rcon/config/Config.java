@@ -1,8 +1,8 @@
 package au.com.addstar.rcon.config;
 
-import java.io.File;
-
 import org.bukkit.configuration.InvalidConfigurationException;
+
+import java.io.File;
 
 public class Config extends AutoConfig
 {
@@ -31,7 +31,8 @@ public class Config extends AutoConfig
 	public String databaseUsername = "user";
 	@ConfigField(name="password", category="database")
 	public String databasePassword = "password";
-
+	@ConfigField(name="useSSL", category="database")
+	public String databaseUseSSL = "false";
 	
 	@Override
 	protected void onPostLoad() throws InvalidConfigurationException

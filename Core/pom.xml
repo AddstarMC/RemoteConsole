@@ -9,9 +9,6 @@
   <artifactId>RemoteConsole-Core</artifactId>
   <name>RemoteConsole-Core</name>
 
-  <repositories>
-  </repositories>
-
   <dependencies>
   	<dependency>
       <groupId>org.fusesource.jansi</groupId>
