@@ -45,7 +45,7 @@ public class ConfigLoaderTest {
         try {
             ConfigLoader.loadConfig(this.getClass().getResourceAsStream("/fault.xml"));
         }catch (IOException e){
-            assertEquals("org.xml.sax.SAXParseException; lineNumber: 25; columnNumber: 17; Element type \"filters\" must be followed by either attribute specifications, \">\" or \"/>\".",e.getMessage());
+            assertEquals("Errors occured during parsing",e.getMessage());
         }
     }
 }
