@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Properties;
+import java.util.Random;
 
 public class RemoteConsolePlugin extends JavaPlugin
 {
@@ -37,7 +38,10 @@ public class RemoteConsolePlugin extends JavaPlugin
 		instance = this;
 		
 		if(!getDataFolder().exists())
-			getDataFolder().mkdirs();
+			if(!getDataFolder().mkdirs()){
+        System.err.println("[RCON] Unable to create data folders. Error loading config.");
+        return;
+      };
 		
 		mConfig = new Config(new File(getDataFolder(), "config.yml"));
 		if(!mConfig.load())
@@ -64,9 +68,9 @@ public class RemoteConsolePlugin extends JavaPlugin
 			}
 		};
 		
-		IUserStore userstore = null;
-		
-		if(mConfig.store.equalsIgnoreCase("mysql")) {
+		IUserStore userstore;
+
+    if(mConfig.store.equalsIgnoreCase("mysql")) {
 			Properties props = new Properties();
 			props.put("user",mConfig.databaseUsername);
 			props.put("password",mConfig.databasePassword);
@@ -77,8 +81,13 @@ public class RemoteConsolePlugin extends JavaPlugin
 			userstore = new YamlUserStore(new File(getDataFolder(), "users.yml"));
 		
 		String serverName = mConfig.serverName;
-		if(serverName.isEmpty())
-			serverName = Bukkit.getServer().getName();
+		if(serverName.isEmpty()) {
+			getLogger().warning("No Server NAME Configured - you must have a server name since " +
+					"1.14 - a random name has been assigned");
+			serverName = Bukkit.getServer().getName()+new Random().nextInt();
+			mConfig.serverName = serverName;
+		}
+
 		
 		loadLogAppender();
 		
@@ -102,14 +111,7 @@ public class RemoteConsolePlugin extends JavaPlugin
 		
 		new RconCommand().registerAs(getCommand("rcon"));
 		
-		Bukkit.getScheduler().runTask(this, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				mServer.openServer();
-			}
-		});
+		Bukkit.getScheduler().runTask(this, () -> mServer.openServer());
 	}
 	
 	@Override
