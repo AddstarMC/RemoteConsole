@@ -10,7 +10,7 @@
       <build.number />
       <plugin.version>${project.version}-${build.number}</plugin.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <netty.version>4.1.25.Final</netty.version>
+      <netty.version>4.1.42.Final</netty.version>
       <spigot.api.version>1.13</spigot.api.version>
       <spigot.version>1.14-R0.1-SNAPSHOT</spigot.version>
       <bungee.version>1.14-SNAPSHOT</bungee.version>
