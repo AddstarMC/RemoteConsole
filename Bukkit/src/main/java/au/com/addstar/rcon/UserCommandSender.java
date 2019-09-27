@@ -3,6 +3,7 @@ package au.com.addstar.rcon;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
 import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 import au.com.addstar.rcon.util.Message;
+import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.ConsoleCommandSender;
@@ -14,7 +15,6 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Set;
 

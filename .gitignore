@@ -5,3 +5,4 @@ target
 /buildDeploy.sh
 /.idea/
 *.iml
+dependency-reduced-pom.xml
