@@ -3,8 +3,8 @@
   <parent>
     <groupId>au.com.addstar</groupId>
     <artifactId>RemoteConsole</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
-    <relativePath>..</relativePath>
+    <version>1.0.4-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>RemoteConsole-Client</artifactId>
   <name>RemoteConsole-Client</name>
@@ -38,7 +38,7 @@
           <scope>test</scope>
       </dependency>
       <dependency>
-          <groupId>au.com.addstar</groupId>
+          <groupId>io.github.waterfallmc</groupId>
           <artifactId>waterfall-api</artifactId>
           <version>${bungee.version}</version>
           <scope>test</scope>

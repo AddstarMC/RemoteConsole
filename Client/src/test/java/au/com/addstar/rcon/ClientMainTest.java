@@ -17,9 +17,10 @@ import static org.junit.Assert.*;
 public class ClientMainTest {
 
     private BungeeRconServer server;
+    private ConsoleScreen screen;
     @Before
     public void setUp() throws Exception {
-        ConsoleScreen screen = new TestConsole();
+        screen = new TestConsole();
         mInstance = new ClientMain(screen, "TestUser0", "password", true);
     }
 
@@ -39,7 +40,7 @@ public class ClientMainTest {
         }catch (InterruptedException e){
             e.printStackTrace();
         }
-
+        screen.printString("This is a test message");
        // mInstance.run();
         //connection = getConnectionManager().getConnection("TestServer");
         //assertTrue(connection.isLoggedIn());

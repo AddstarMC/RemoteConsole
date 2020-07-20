@@ -3,8 +3,8 @@
   <parent>
     <groupId>au.com.addstar</groupId>
     <artifactId>RemoteConsole</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
-    <relativePath>..</relativePath>
+    <version>1.0.4-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   
   <artifactId>RemoteConsole-ServerCore</artifactId>

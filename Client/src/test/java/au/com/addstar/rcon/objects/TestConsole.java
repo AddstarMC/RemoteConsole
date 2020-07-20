@@ -7,7 +7,7 @@ import org.fusesource.jansi.Ansi;
 import java.io.IOException;
 
 /**
- * Created for the Ark: Survival Evolved.
+ * Created for AddstarMC.
  * Created by Narimm on 5/02/2018.
  */
 public class TestConsole extends ConsoleScreen {
