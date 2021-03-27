@@ -45,6 +45,7 @@ public class ServerNetworkManager extends NetworkManager implements GenericFutur
 	{
 		if(mUser != null)
 			mUser.setManager(null);
-		RconServer.instance.connectionClose(this, getDisconnectReason());
+		if(this != null)
+			RconServer.instance.connectionClose(this, getDisconnectReason());
 	}
 }
