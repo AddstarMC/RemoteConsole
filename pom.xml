@@ -12,7 +12,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <netty.version>4.1.50.Final</netty.version>
       <spigot.api.version>1.13</spigot.api.version>
-      <spigot.version>1.16.1-R0.1-SNAPSHOT</spigot.version>
+      <spigot.version>1.16.4-R0.1-SNAPSHOT</spigot.version>
       <bungee.version>1.16-R0.3-SNAPSHOT</bungee.version>
       <jansi.version>1.18</jansi.version>
       <yamler.version>2.4.0-SNAPSHOT</yamler.version>
@@ -58,7 +58,7 @@
   <repositories>
     <repository>
       <id>maven-central</id>
-      <url>http://repo1.maven.org/maven2/</url>
+      <url>https://repo1.maven.org/maven2/</url>
     </repository>
     <repository>
       <snapshots>
