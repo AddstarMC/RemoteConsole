@@ -29,10 +29,6 @@
        <id>destroystokyo-snapshots</id>
        <url>https://destroystokyo.com/repo/repository/maven-snapshots/</url>
     </repository>
-    <repository>
-      <id>Yamler</id>
-      <url>http://nexus.cube-space.net/content/groups/public/</url>
-    </repository>
   </repositories>
 
   <dependencies>
