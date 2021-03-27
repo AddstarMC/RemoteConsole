@@ -17,6 +17,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Set;
+import java.util.UUID;
 
 public class UserCommandSender implements ConsoleCommandSender
 {
@@ -52,7 +53,13 @@ public class UserCommandSender implements ConsoleCommandSender
 	{
 		mUser.getManager().sendPacket(new PacketOutMessage(new Message(message, MessageType.Directed, RemoteConsolePlugin.instance.getLogger().getName())));
 	}
-	
+
+	@Override
+	public void sendRawMessage(UUID uuid, String s) {
+		// Ignoring UUID based message sending from console - We don't care about it.
+		sendRawMessage(s);
+	}
+
 	public void sendMessage( String message, MessageType type )
 	{
 		mUser.getManager().sendPacket(new PacketOutMessage(new Message(message, type, RemoteConsolePlugin.instance.getLogger().getName())));
@@ -69,6 +76,18 @@ public class UserCommandSender implements ConsoleCommandSender
 	{
 		for(String message : messages)
 			sendMessage(message);
+	}
+
+	@Override
+	public void sendMessage(UUID uuid, String s) {
+		// Ignoring UUID based message sending from console - We don't care about it.
+		sendMessage(s);
+	}
+
+	@Override
+	public void sendMessage(UUID uuid, String[] strings) {
+		// Ignoring UUID based message sending from console - We don't care about it.
+		sendMessage(strings);
 	}
 
 	@Override
