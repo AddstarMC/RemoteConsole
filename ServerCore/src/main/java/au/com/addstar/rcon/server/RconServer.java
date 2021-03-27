@@ -195,7 +195,7 @@ public abstract class RconServer
 	void connectionClose( ServerNetworkManager manager, String reason )
 	{
 		mManagers.remove(manager);
-		String username;
+		String username = "none";
 		
 		if(manager.getUser() != null)
 		{
@@ -203,7 +203,8 @@ public abstract class RconServer
 			mUsers.remove(manager.getUser().getName());
 		}
 		else
-			username = manager.getAddress().toString();
+			if (manager.getAddress() != null)
+				username = manager.getAddress().toString();
 		
 		if(reason != null)
 			System.out.println("[RCON] " + username + " Disconnected: " + reason);
