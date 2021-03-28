@@ -1,11 +1,5 @@
 package au.com.addstar.rcon.server;
 
-import java.io.IOException;
-import java.security.KeyPair;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import au.com.addstar.rcon.network.HandlerCreator;
 import au.com.addstar.rcon.network.NetworkInitializer;
 import au.com.addstar.rcon.network.packets.RconPacket;
@@ -17,6 +11,12 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+
+import java.io.IOException;
+import java.security.KeyPair;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class RconServer
 {
@@ -192,23 +192,17 @@ public abstract class RconServer
 		return mWhitelist;
 	}
 
-	void connectionClose( ServerNetworkManager manager, String reason )
-	{
-		mManagers.remove(manager);
-		String username = "none";
-		
-		if(manager.getUser() != null)
-		{
-			username = manager.getUser().getName();
-			mUsers.remove(manager.getUser().getName());
-		}
-		else
-			if (manager.getAddress() != null)
+	void connectionClose( ServerNetworkManager manager, String reason ) {
+		String username = "Unknown";
+		String message = (reason == null) ? "Connection lost": reason;
+		if (manager != null) {
+			mManagers.remove(manager);
+			if (manager.getUser() != null) {
+				username = manager.getUser().getName();
+				mUsers.remove(manager.getUser().getName());
+			} else if (manager.getAddress() != null)
 				username = manager.getAddress().toString();
-		
-		if(reason != null)
-			System.out.println("[RCON] " + username + " Disconnected: " + reason);
-		else
-			System.out.println("[RCON] " + username + " Disconnected: Connection lost");
+		}
+		System.out.println("[RCON] " + username + " Disconnected: " + message);
 	}
 }

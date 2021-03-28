@@ -38,7 +38,6 @@
         <version>1.16-R0.3-SNAPSHOT</version>
         <scope>provided</scope>
   	</dependency>
-  	
   	<dependency>
 	  <groupId>net.cubespace</groupId>
 	  <artifactId>Yamler-Core</artifactId>
@@ -69,6 +68,16 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <configuration>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/MANIFEST.MF</exclude>
+              </excludes>
+            </filter>
+          </filters>
+        </configuration>
         <executions>
           <execution>
             <phase>package</phase>
