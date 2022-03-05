@@ -42,8 +42,6 @@
 	  <groupId>net.cubespace</groupId>
 	  <artifactId>Yamler-Core</artifactId>
 	  <version>${yamler.version}</version>
-      <scope>provided</scope>
-	  <optional>true</optional>
 	</dependency>
   	<dependency>
   		<groupId>au.com.addstar</groupId>
@@ -68,7 +66,14 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.4</version>
         <configuration>
+          <artifactSet>
+            <includes>
+              <include>net.cubespace:Yamler-Core</include>
+              <include>au.com.addstar:*</include>
+            </includes>
+          </artifactSet>
           <filters>
             <filter>
               <artifact>*:*</artifact>
@@ -77,6 +82,13 @@
               </excludes>
             </filter>
           </filters>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+          <relocations>
+            <relocation>
+              <pattern>net.cubespace.Yamler</pattern>
+              <shadedPattern>au.com.addstar.rcon.Yamler</shadedPattern>
+            </relocation>
+          </relocations>
         </configuration>
         <executions>
           <execution>
