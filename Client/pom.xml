@@ -66,9 +66,9 @@
               <filters>
                   <filter>
                       <artifact>*:*</artifact>
-                      <excludes>
+                      <!--<excludes>
                           <exclude>META-INF/MANIFEST.MF</exclude>
-                      </excludes>
+                      </excludes>-->
                   </filter>
               </filters>
           </configuration>

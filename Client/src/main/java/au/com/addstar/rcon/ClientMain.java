@@ -68,7 +68,6 @@ public class ClientMain
 				.hasArg()
 				.withDescription("Sets the maximum number of lines to show. Default: 1000")
 				.withLongOpt("max-lines")
-				.withType(Integer.valueOf(1000))
 				.create('c'));
 		
 		BasicParser parser = new BasicParser();
