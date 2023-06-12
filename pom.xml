@@ -15,7 +15,7 @@
       <spigot.version>1.16.4-R0.1-SNAPSHOT</spigot.version>
       <bungee.version>1.16-R0.3-SNAPSHOT</bungee.version>
       <jansi.version>1.18</jansi.version>
-      <yamler.version>2.4.0-SNAPSHOT</yamler.version>
+      <yamler.version>2.5.0-SNAPSHOT</yamler.version>
   </properties>
 
   <scm>
