@@ -243,6 +243,9 @@ public class ClientMain
 	{
 		if(command.startsWith("."))
 			mInstance.mEventQueue.add(new Event(EventType.Command, command));
+		else if(command.startsWith("glist")|| command.startsWith("seen")
+				|| command.startsWith("send") || command.startsWith("unscramble"))
+			mInstance.mManager.getConnection("proxy").sendPacket(new PacketInCommand(command));
 		else if(mInstance.mManager.getActive() != null)
 			mInstance.mManager.getActive().sendPacket(new PacketInCommand(command));
 	}
