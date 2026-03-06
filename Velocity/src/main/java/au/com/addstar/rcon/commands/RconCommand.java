@@ -1,5 +1,6 @@
 package au.com.addstar.rcon.commands;
 
+import au.com.addstar.rcon.UserCommandSource;
 import au.com.addstar.rcon.commands.misc.KickCommand;
 import au.com.addstar.rcon.commands.misc.ReloadCommand;
 import au.com.addstar.rcon.commands.misc.WhoCommand;
@@ -25,9 +26,8 @@ public final class RconCommand implements SimpleCommand {
 
 	@Override
 	public void execute(final Invocation invocation) {
-		CommandSource source = invocation.source();
 		String[] args = invocation.arguments();
-		mDispatcher.dispatchCommand(source, "/", "brcon", args);
+		mDispatcher.dispatchCommand(invocation.source(), "/", "brcon", args);
 	}
 
 	/*@Override

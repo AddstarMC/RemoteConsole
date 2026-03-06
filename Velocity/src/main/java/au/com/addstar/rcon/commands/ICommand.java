@@ -1,5 +1,8 @@
 package au.com.addstar.rcon.commands;
 
+import au.com.addstar.rcon.UserCommandSource;
+import com.velocitypowered.api.command.CommandSource;
+
 import java.util.EnumSet;
 import java.util.List;
 

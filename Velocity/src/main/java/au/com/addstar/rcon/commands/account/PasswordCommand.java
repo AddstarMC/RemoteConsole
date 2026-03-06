@@ -11,11 +11,12 @@ import au.com.addstar.rcon.commands.CommandSourceType;
 import au.com.addstar.rcon.commands.ICommand;
 import au.com.addstar.rcon.server.RconServer;
 import au.com.addstar.rcon.server.auth.StoredPassword;
+import com.velocitypowered.api.command.CommandSource;
 
 public class PasswordCommand implements ICommand
 {
-	private WeakHashMap<CommandSender, VelocityUser> mLastUser = new WeakHashMap<>();
-	private WeakHashMap<CommandSender, String> mLastPasswords = new WeakHashMap<>();
+	private WeakHashMap<CommandSource, VelocityUser> mLastUser = new WeakHashMap<>();
+	private WeakHashMap<CommandSource, String> mLastPasswords = new WeakHashMap<>();
 	
 	@Override
 	public String getName()
@@ -38,7 +39,7 @@ public class PasswordCommand implements ICommand
 	@Override
 	public String getUsageString( String label, CommandSource sender )
 	{
-		return label + ChatColor.GOLD + " <account> <oldpassword> <newpassword>";
+		return label + "<gold> <account> <oldpassword> <newpassword>";
 	}
 
 	@Override
@@ -66,11 +67,11 @@ public class PasswordCommand implements ICommand
 				if(lastPassword.equals(newPassword))
 				{
 					user.setPassword(StoredPassword.generate(newPassword));
-					sender.sendMessage(user.getName() + "'s password has been changed");
-					RemoteConsolePlugin.instance.getLogger().warning(user.getName() + "'s RCon password was changed by " + sender.getName());
+					sender.sendRichMessage(user.getName() + "'s password has been changed");
+					RemoteConsolePlugin.logger.warning(user.getName() + "'s RCon password was changed by Admin");
 					
 					if(!RconServer.instance.saveUser(user))
-						sender.sendMessage(ChatColor.RED + "Unable to save changes, an internal error occured.");
+						sender.sendRichMessage("<red>Unable to save changes, an internal error occured.");
 				}
 				else
 					throw new BadArgumentException(1, "The entered password does not match.");
@@ -82,7 +83,7 @@ public class PasswordCommand implements ICommand
 		if(user.getPassword() == null)
 		{
 			if(oldPassword != null)
-				throw new IllegalArgumentException("No existing password exists, just use " + ChatColor.YELLOW + "/rcon account password " + user.getName() + " <password>");
+				throw new IllegalArgumentException("No existing password exists, just use <yellow>/rcon account password " + user.getName() + " <password>");
 			
 			mLastPasswords.put(sender, newPassword);
 			mLastUser.put(sender, user);
@@ -94,8 +95,8 @@ public class PasswordCommand implements ICommand
 
 			if(!user.getPassword().matches(oldPassword))
 			{
-				sender.sendMessage(ChatColor.RED + "The specified password does not match the existing password!");
-				RemoteConsolePlugin.instance.getLogger().warning(String.format("%s tried to change %s's RCon password", sender.getName(), user.getName()));
+				sender.sendRichMessage("<red>The specified password does not match the existing password!");
+				RemoteConsolePlugin.logger.warning(String.format("%s tried to change %s's RCon password", "Admin", user.getName()));
 				return true;
 			}
 			
@@ -103,7 +104,7 @@ public class PasswordCommand implements ICommand
 			mLastUser.put(sender, user);
 		}
 		
-		sender.sendMessage("Please confirm the new password with /rcon account password " + user.getName() + " <newpassword>");
+		sender.sendRichMessage("Please confirm the new password with /rcon account password " + user.getName() + " <newpassword>");
 		return true;
 	}
 	

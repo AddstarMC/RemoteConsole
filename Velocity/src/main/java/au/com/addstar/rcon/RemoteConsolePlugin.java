@@ -19,8 +19,26 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 
-import java.io.File;
-import java.io.IOException;
+/*import org.apache.logging.log4j.spi.LoggerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;*/
+
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.translation.GlobalTranslator;
+import net.kyori.adventure.translation.TranslationRegistry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+//import org.apache.logging.log4j.core.Logger;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.logging.Logger;
 import java.nio.file.Path;
 import java.util.Properties;
 import java.util.logging.FileHandler;
@@ -28,19 +46,18 @@ import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import java.util.stream.Stream;
 
-@Plugin(id = "RemoteConsole", version = "${plugin.version}", authors = {"Schmoller"})
+@Plugin(id = "remoteconsole", version = "${plugin.version}", authors = {"Schmoller"})
 public class RemoteConsolePlugin
 {
 	public static RemoteConsolePlugin instance;
 
-	public ProxyServer proxyServer;
-	public Logger logger;
-	private RconServer mServer;
-	private RemoteConsoleLogHandler mLogHandler;
-	private MainConfig mConfig;
+	public static ProxyServer proxyServer;
+	public static Logger logger;
+	private static RconServer mServer;
+	private static MainConfig mConfig;
 
 	private Formatter mFormatter;
 	private final Path pluginDir;
@@ -50,15 +67,13 @@ public class RemoteConsolePlugin
 		this.proxyServer = server;
 		this.logger = logger;
 		this.pluginDir = dataDirectory;
-
-		logger.info("Hello there, it's a test plugin I made!");
 	}
 
 	@Subscribe
 	public void onProxyInitialization(ProxyInitializeEvent event) {
 		instance = this;
 		mConfig = new MainConfig();
-		
+
 		try
 		{
 			mConfig.init(new File(pluginDir.toFile(), "config.yml"));
@@ -110,6 +125,22 @@ public class RemoteConsolePlugin
 		mServer = new VelocityRconServer(mConfig.port, serverName, userstore);
 		
 		loadWhitelist();
+
+		// Load translations from messages.properties
+		try (Stream<String> lines = loadResourceFile("com/velocitypowered/proxy/l10n/messages.properties")) {
+			Key key = Key.key("velocity");
+			TranslationRegistry registry = TranslationRegistry.create(key);
+
+			lines.forEach(line -> {
+				String[] parts = line.split("=", 2);
+				if (parts.length == 2) {
+					String translationKey = parts[0].trim();
+					String translationValue = parts[1].trim();
+					MessageFormat format = new MessageFormat(translationValue);
+					registry.register(translationKey, Locale.ENGLISH, format);
+				}
+			});
+		}
 		
 		try
 		{
@@ -130,25 +161,18 @@ public class RemoteConsolePlugin
 
 	private void installLogHandler()
 	{
-		mFormatter = null;
-		for(Handler handler : logger.getHandlers())
-		{
-			if(handler instanceof FileHandler && handler.getFormatter() != null)
-				mFormatter = handler.getFormatter();
-			
-			if(mFormatter != null)
-				break;
+		logger.info("installLogHandler called");
+
+		final org.apache.logging.log4j.core.Logger rootLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
+
+		Appender appender = new RemoteConsoleLogAppender("RemoteConsoleLogAppender", null, null, false, null);
+		appender.start();
+		if (appender.isStarted()) {
+			System.out.println("[RemoteConsole] Log4j appender started");
+			rootLogger.addAppender(appender);
+		} else {
+			System.out.println("[RemoteConsole] Log4j appender failed to start");
 		}
-		
-		mLogHandler = new RemoteConsoleLogHandler();
-		if(mFormatter != null){mLogHandler.setFormatter(mFormatter);}
-		else{
-			System.out.println("[RemoteConsole]Log formatter was null thus the console handler " +
-				"has no formatter set");
-			mFormatter = new SimpleFormatter();
-			mLogHandler.setFormatter(mFormatter);
-		}
-		logger.addHandler(mLogHandler);
 	}
 	
 	public static String formatMessage(String message)
@@ -177,5 +201,15 @@ public class RemoteConsolePlugin
 			}
 		}
 		return true;
+	}
+	public Stream<String> loadResourceFile(String filePath) {
+		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath);
+		if (inputStream == null) {
+			System.out.println("File not found: " + filePath);
+			return Stream.empty();
+		}
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		return reader.lines();
 	}
 }

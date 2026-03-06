@@ -9,6 +9,7 @@ import au.com.addstar.rcon.commands.BadArgumentException;
 import au.com.addstar.rcon.commands.CommandSourceType;
 import au.com.addstar.rcon.commands.ICommand;
 import au.com.addstar.rcon.server.RconServer;
+import com.velocitypowered.api.command.CommandSource;
 
 public class RemoveCommand implements ICommand
 {
@@ -65,9 +66,9 @@ public class RemoveCommand implements ICommand
 			user.getManager().getNetHandler().disconnect("Your account has been removed");
 		
 		if(server.removeUser(user))
-			sender.sendMessage(ChatColor.GREEN + "That user has been removed.");
+			sender.sendRichMessage("<green>That user has been removed.");
 		else
-			sender.sendMessage(ChatColor.RED + "An error occured while saving account data.");
+			sender.sendRichMessage("<red>An error occured while saving account data.");
 		
 		return true;
 	}

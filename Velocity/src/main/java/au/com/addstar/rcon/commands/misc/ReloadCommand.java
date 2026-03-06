@@ -7,6 +7,7 @@ import au.com.addstar.rcon.RemoteConsolePlugin;
 import au.com.addstar.rcon.commands.BadArgumentException;
 import au.com.addstar.rcon.commands.CommandSourceType;
 import au.com.addstar.rcon.commands.ICommand;
+import com.velocitypowered.api.command.CommandSource;
 
 public class ReloadCommand implements ICommand
 {
@@ -51,9 +52,9 @@ public class ReloadCommand implements ICommand
 	public boolean onCommand( CommandSource sender, String parent, String label, String[] args ) throws BadArgumentException
 	{
 		if (RemoteConsolePlugin.instance.loadWhitelist())
-			sender.sendMessage(ChatColor.GREEN + "Reloaded whitelist");
+			sender.sendRichMessage("<green>Reloaded whitelist");
 		else
-			sender.sendMessage(ChatColor.RED + "An error occured while reloading the whitelist");
+			sender.sendRichMessage("<red>An error occured while reloading the whitelist");
 		
 		return true;
 	}

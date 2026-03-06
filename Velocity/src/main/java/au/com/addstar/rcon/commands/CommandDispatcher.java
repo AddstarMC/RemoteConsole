@@ -109,29 +109,29 @@ public class CommandDispatcher
 			if(com == mDefaultCommand)
 				displayUsage(sender, parent, label, subCommand);
 			else
-				sender.sendMessage(ChatColor.RED + String.format("%s %s cannot be called from the %s", label, subCommand, CommandSourceType.from(sender)));
+				sender.sendRichMessage(String.format("<red>%s %s cannot be called from the %s</red>", label, subCommand, CommandSourceType.from(sender)));
 			return true;
 		}
 		
 		// Check that they have permission
 		if(com.getPermission() != null && !sender.hasPermission(com.getPermission()))
 		{
-			sender.sendMessage(ChatColor.RED + String.format("You do not have permission to use %s %s", label, subCommand));
+			sender.sendRichMessage(String.format("<red>You do not have permission to use %s %s</red>", label, subCommand));
 			return true;
 		}
 		
 		try
 		{
 			if(!com.onCommand(sender, parent, subCommand, subArgs))
-				sender.sendMessage(ChatColor.RED + "Usage: " + parent + com.getUsageString(subCommand, sender));
+				sender.sendRichMessage("<red>Usage: " + parent + com.getUsageString(subCommand, sender) + "</red>");
 		}
 		catch(BadArgumentException e)
 		{
-			String cmdString = ChatColor.GRAY + parent;
+			String cmdString = "<gray>" + parent;
 			for(int i = 0; i < args.length; ++i)
 			{
 				if(i == e.getArgument() + 1)
-					cmdString += ChatColor.RED + args[i] + ChatColor.GRAY;
+					cmdString += "<red>" + args[i] + "<gray>";
 				else
 					cmdString += args[i];
 				
@@ -139,17 +139,17 @@ public class CommandDispatcher
 			}
 			
 			if(e.getArgument() >= args.length - 1)
-				cmdString += ChatColor.RED + "?";
+				cmdString += "<red>?</red>";
 			
-			sender.sendMessage(ChatColor.RED + "Error in command: " + cmdString);
-			sender.sendMessage(ChatColor.RED + " " + e.getMessage());
+			sender.sendRichMessage("<red>Error in command: " + cmdString + "</red>");
+			sender.sendRichMessage("<red> " + e.getMessage() + "</red>");
 			
 			for(String line : e.getInfoLines())
-				sender.sendMessage(ChatColor.GRAY + " " + line);
+				sender.sendRichMessage("<gray> " + line + "</gray>");
 		}
 		catch(IllegalArgumentException | IllegalStateException e)
 		{
-			sender.sendMessage(ChatColor.RED + e.getMessage());
+			sender.sendRichMessage("<red>" + e.getMessage() + "</red>");
 		}
 
 		return true;
@@ -172,9 +172,9 @@ public class CommandDispatcher
 				continue;
 			
 			if(odd)
-				usage += ChatColor.WHITE;
+				usage += "<white>";
 			else
-				usage += ChatColor.GRAY;
+				usage += "<gray>";
 			odd = !odd;
 			
 			if(first)
@@ -186,17 +186,17 @@ public class CommandDispatcher
 		}
 		
 		if(subcommand != null)
-			sender.sendMessage(ChatColor.RED + "Unknown command: " + ChatColor.RESET + parent + ChatColor.GOLD + subcommand);
+			sender.sendRichMessage("<red>Unknown command: <reset>" + parent + "<gold>" + subcommand);
 		else
-			sender.sendMessage(ChatColor.RED + "No command specified: " + ChatColor.RESET + parent + ChatColor.GOLD + "<command>");
+			sender.sendRichMessage("<red>No command specified: <reset>" + parent + "<gold><command>");
 
 		if(!first)
 		{
-			sender.sendMessage("Valid commands are:");
-			sender.sendMessage(usage);
+			sender.sendRichMessage("Valid commands are:");
+			sender.sendRichMessage(usage);
 		}
 		else
-			sender.sendMessage("There are no commands available to you");
+			sender.sendRichMessage("There are no commands available to you");
 		
 		
 	}
@@ -285,11 +285,11 @@ public class CommandDispatcher
 		{
 			String str;
 			if(matcher.group(1) != null)
-				str = ChatColor.GREEN + matcher.group(1);
+				str = "<green>" + matcher.group(1);
 			else if(matcher.group(2) != null)
-				str = ChatColor.GREEN + matcher.group(2);
+				str = "<green>" + matcher.group(2);
 			else
-				str = ChatColor.GOLD + matcher.group(3);
+				str = "<gold>" + matcher.group(3);
 			
 			matcher.appendReplacement(buffer, str);
 		}
@@ -343,20 +343,20 @@ public class CommandDispatcher
 			if(args.length != 0)
 				return false;
 			
-			sender.sendMessage("");
-			sender.sendMessage(ChatColor.YELLOW + parent + ChatColor.GOLD + "<command>");
-			sender.sendMessage(ChatColor.GRAY + "\u25B7 " + mRootCommandDescription);
-			sender.sendMessage(ChatColor.YELLOW + "Available commands:");
+			sender.sendRichMessage("");
+			sender.sendRichMessage("<yellow>" + parent + "<gold><command>");
+			sender.sendRichMessage("<gray>\u25B7 " + mRootCommandDescription);
+			sender.sendRichMessage("<yellow>Available commands:");
 			
 			if(mDefaultCommand != null)
 			{
 				if(mDefaultCommand.getAllowedSenders().contains(CommandSourceType.from(sender)) && (mDefaultCommand.getPermission() == null || sender.hasPermission(mDefaultCommand.getPermission())))
 				{
-					sender.sendMessage(ChatColor.WHITE + parent + ChatColor.YELLOW + colorUsage(mDefaultCommand.getUsageString(mDefaultCommand.getName(), sender)));
+					sender.sendRichMessage("<white>" + parent + "<yellow>" + colorUsage(mDefaultCommand.getUsageString(mDefaultCommand.getName(), sender)));
 					
 					String[] descriptionLines = mDefaultCommand.getDescription().split("\n");
 					for(String line : descriptionLines)
-						sender.sendMessage(ChatColor.GRAY + " \u25B7 " + line);
+						sender.sendRichMessage("<gray> \u25B7 " + line);
 				}
 			}
 			
@@ -370,11 +370,11 @@ public class CommandDispatcher
 					continue;
 				
 				
-				sender.sendMessage(" " + ChatColor.WHITE + parent + ChatColor.YELLOW + colorUsage(command.getUsageString(command.getName(), sender)));
+				sender.sendRichMessage(" <white>" + parent + "<yellow>" + colorUsage(command.getUsageString(command.getName(), sender)));
 				
 				String[] descriptionLines = command.getDescription().split("\n");
 				for(String line : descriptionLines)
-					sender.sendMessage(ChatColor.GRAY + " \u25B7 " + line);
+					sender.sendRichMessage("<gray> \u25B7 " + line);
 			}
 			return true;
 		}

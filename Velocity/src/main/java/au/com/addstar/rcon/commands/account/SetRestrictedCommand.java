@@ -8,6 +8,7 @@ import au.com.addstar.rcon.commands.BadArgumentException;
 import au.com.addstar.rcon.commands.CommandSourceType;
 import au.com.addstar.rcon.commands.ICommand;
 import au.com.addstar.rcon.server.RconServer;
+import com.velocitypowered.api.command.CommandSource;
 
 public class SetRestrictedCommand implements ICommand
 {
@@ -64,12 +65,12 @@ public class SetRestrictedCommand implements ICommand
 		if (RconServer.instance.saveUser(user))
 		{
 			if (user.isRestricted())
-				sender.sendMessage(ChatColor.GOLD + user.getName() + " is now a restricted account");
+				sender.sendRichMessage("<gold>" + user.getName() + " is now a restricted account");
 			else
-				sender.sendMessage(ChatColor.GOLD + user.getName() + " is now an unrestricted account");
+				sender.sendRichMessage("<gold>" + user.getName() + " is now an unrestricted account");
 		}
 		else
-			sender.sendMessage(ChatColor.RED + "An error occurred while saving the user account");
+			sender.sendRichMessage("<red>An error occurred while saving the user account");
 		
 		return true;
 	}

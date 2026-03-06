@@ -241,6 +241,9 @@ public class ClientMain
 	
 	public static void handleCommand(ConsoleScreen screen, String command)
 	{
+		if (command == null || command.strip().isEmpty())
+			return;
+
 		if(command.startsWith("."))
 			mInstance.mEventQueue.add(new Event(EventType.Command, command));
 		else if(command.startsWith("glist")|| command.startsWith("seen")

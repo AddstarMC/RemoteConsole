@@ -8,6 +8,7 @@ import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
 import au.com.addstar.rcon.server.User;
 import au.com.addstar.rcon.util.Message;
 
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.command.CommandSource;
 
@@ -24,7 +25,7 @@ public class VelocityUser extends User
 	public void setManager( NetworkManager manager )
 	{
 		super.setManager(manager);
-		
+
 		if(manager == null)
 			mSender = null;
 		else
@@ -33,9 +34,18 @@ public class VelocityUser extends User
 	
 	public CommandSource asCommandSender()
 	{
+		return (CommandSource) mSender;
+	}
+
+	public UserCommandSource asUserCommandSender()
+	{
 		return mSender;
 	}
-	
+	public ConsoleCommandSource asConsoleCommandSender()
+	{
+		return (ConsoleCommandSource) mSender;
+	}
+
 	public void sendLog( LogRecord record )
 	{
 		MessageType type = MessageType.Log;
@@ -63,16 +73,14 @@ public class VelocityUser extends User
 				text = text.replace("{" + i + "}", String.valueOf(record.getParameters()[i]));
 		}
 
-		ProxyServer proxy = RemoteConsolePlugin.instance.proxyServer;
+		record.setLoggerName("RemoteConsole");
+
+		ProxyServer proxy = RemoteConsolePlugin.proxyServer;
 		final Message message = new Message(text, type, record.getMillis(), record.getLevel(), threadName, record.getLoggerName());
 
-		proxy.getScheduler().buildTask(RemoteConsolePlugin.instance, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				getManager().sendPacket(new PacketOutMessage(message));
-			}
-		}).schedule();
+		proxy.getScheduler().buildTask(RemoteConsolePlugin.instance, () -> {
+			System.out.println("[PacketOutMessage] " + getName() + ": " + message.getMessage());
+			getManager().sendPacket(new PacketOutMessage(message));
+        }).schedule();
 	}
 }

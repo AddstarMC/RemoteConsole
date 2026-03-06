@@ -67,9 +67,9 @@ public class WhoCommand implements ICommand
 			
 			list.append(manager.getUser().getName());
 		}
-		
-		sender.sendMessage(ChatColor.GOLD + "There are " + ChatColor.RED + RconServer.instance.getConnections().size() + " connections active.");
-		sender.sendMessage(list.toString());
+
+		sender.sendRichMessage("<gold>There are <red>" + RconServer.instance.getConnections().size() + "<gold> connections active.");
+		sender.sendRichMessage(list.toString());
 		return true;
 	}
 

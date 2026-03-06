@@ -1,13 +1,23 @@
 package au.com.addstar.rcon;
 
+import java.util.Locale;
 import java.util.logging.Logger;
 
-import com.velocitypowered.api.command.CommandSource;
+import au.com.addstar.rcon.network.packets.main.PacketOutMessage;
+import au.com.addstar.rcon.network.packets.main.PacketOutMessage.MessageType;
+import au.com.addstar.rcon.util.Message;
 import com.velocitypowered.api.permission.Tristate;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.translation.GlobalTranslator;
 import org.jetbrains.annotations.NotNull;
 
-public class UserCommandSource implements CommandSource
+public class UserCommandSource implements ConsoleCommandSource
 {
 	private VelocityUser mUser;
 	private ProxyServer proxyServer;
@@ -16,8 +26,8 @@ public class UserCommandSource implements CommandSource
 	public UserCommandSource(VelocityUser user)
 	{
 		mUser = user;
-		this.proxyServer = RemoteConsolePlugin.instance.proxyServer;
-		this.logger = RemoteConsolePlugin.instance.logger;
+		this.proxyServer = RemoteConsolePlugin.proxyServer;
+		this.logger = RemoteConsolePlugin.logger;
 	}
 	
 	public String getName()
@@ -25,67 +35,49 @@ public class UserCommandSource implements CommandSource
 		return mUser.getName();
 	}
 
-	/*
-        public void sendMessage( String message )
-        {
-            mUser.getManager().sendPacket(new PacketOutMessage(new Message(message, MessageType.Directed, logger.getName())));
-        }
-
-        public void sendMessage( String message, MessageType type )
-        {
-            mUser.getManager().sendPacket(new PacketOutMessage(new Message(message, type, logger.getName())));
-        }
-
-        public void sendMessages( String... messages )
-        {
-            for(String message : messages)
-                sendMessage(message);
-        }
-
-        @Override
-        public void sendMessage( BaseComponent... messages )
-        {
-            for(BaseComponent message : messages)
-                sendMessage(message.toLegacyText());
-        }
-
-        @Override
-        public void sendMessage( BaseComponent message )
-        {
-            sendMessage(message.toLegacyText());
-        }
-
-        @Override
-        public Collection<String> getGroups()
-        {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public void addGroups( String... groups )
-        {
-            throw new UnsupportedOperationException("Console may not have groups");
-        }
-
-        @Override
-        public void removeGroups( String... groups )
-        {
-            throw new UnsupportedOperationException("Console may not have groups");
-        }
-    */
-
-	public void sendMessage(String messages)
+	@Override
+	public void sendRichMessage(String message)
 	{
-		sendPlainMessage(messages);
+		if (message.contains("§")) {
+			// Convert legacy message to string (can also include MiniMessage format)
+			// Serialize method doesn't work if it contains legacy colour
+			Component component = LegacyComponentSerializer.legacySection().deserialize(message);
+			message = LegacyComponentSerializer.legacySection().serialize(component);
+		} else {
+			// Convert mini message format to string
+			Component component = MiniMessage.miniMessage().deserialize(message);
+			message = LegacyComponentSerializer.legacySection().serialize(component);
+		}
+		mUser.getManager().sendPacket(new PacketOutMessage(new Message(message, MessageType.Directed, logger.getName())));
 	}
 
 	@Override
 	public void sendPlainMessage(@NotNull String message) {
-		CommandSource.super.sendPlainMessage(message);
+		//logger.info("UCS/sendPlainMessage: " + mUser.getName() + " -> " + message);
+		mUser.getManager().sendPacket(new PacketOutMessage(new Message(message, MessageType.Directed, logger.getName())));
+	}
+
+	@Override
+	public void sendMessage(@NotNull ComponentLike message) {
+		sendMessage(message.asComponent());
+	}
+
+	@Override
+	public void sendMessage(@NotNull Component message) {
+		String msg;
+		if (message instanceof TranslatableComponent) {
+			String key = ((TranslatableComponent) message).key();
+			TranslatableComponent tc = Component.translatable(key);
+			Component c = GlobalTranslator.render(tc, Locale.getDefault());
+			msg = LegacyComponentSerializer.legacySection().serialize(c);
+		} else {
+			msg = LegacyComponentSerializer.legacySection().serialize(message);
+		}
+		mUser.getManager().sendPacket(new PacketOutMessage(new Message(msg, MessageType.Directed, logger.getName())));
 	}
 
 	@Override
 	public Tristate getPermissionValue(String s) {
-		return null;
+		return RemoteConsolePlugin.proxyServer.getConsoleCommandSource().getPermissionValue(s);
 	}
 }

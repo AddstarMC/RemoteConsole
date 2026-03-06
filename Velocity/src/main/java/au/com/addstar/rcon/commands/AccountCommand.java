@@ -7,6 +7,7 @@ import au.com.addstar.rcon.commands.account.AddCommand;
 import au.com.addstar.rcon.commands.account.PasswordCommand;
 import au.com.addstar.rcon.commands.account.RemoveCommand;
 import au.com.addstar.rcon.commands.account.SetRestrictedCommand;
+import com.velocitypowered.api.command.CommandSource;
 
 public class AccountCommand extends CommandDispatcher implements ICommand
 {

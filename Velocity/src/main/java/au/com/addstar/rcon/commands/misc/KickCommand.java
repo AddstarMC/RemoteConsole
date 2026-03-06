@@ -8,6 +8,7 @@ import au.com.addstar.rcon.commands.BadArgumentException;
 import au.com.addstar.rcon.commands.CommandSourceType;
 import au.com.addstar.rcon.commands.ICommand;
 import au.com.addstar.rcon.server.RconServer;
+import com.velocitypowered.api.command.CommandSource;
 
 public class KickCommand implements ICommand
 {

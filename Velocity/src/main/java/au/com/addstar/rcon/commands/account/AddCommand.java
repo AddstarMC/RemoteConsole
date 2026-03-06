@@ -10,6 +10,7 @@ import au.com.addstar.rcon.commands.CommandSourceType;
 import au.com.addstar.rcon.commands.ICommand;
 import au.com.addstar.rcon.server.RconServer;
 import au.com.addstar.rcon.server.auth.StoredPassword;
+import com.velocitypowered.api.command.CommandSource;
 
 public class AddCommand implements ICommand
 {
@@ -75,9 +76,9 @@ public class AddCommand implements ICommand
 		}
 		
 		if(server.createUser(args[0], StoredPassword.generate(password), restricted))
-			sender.sendMessage(ChatColor.GREEN + "Account " + args[0] + " was successfully created.");
+			sender.sendRichMessage("<green>Account " + args[0] + " was successfully created.");
 		else
-			sender.sendMessage(ChatColor.RED + "An error occured while saving the new account.");
+			sender.sendRichMessage("<red>An error occured while saving the new account.");
 		
 		return true;
 	}
