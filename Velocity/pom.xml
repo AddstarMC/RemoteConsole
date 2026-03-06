@@ -22,12 +22,12 @@
 	    
     <!-- Other repositories -->
     <repository>
-      <id>md_5</id>
+      <id>sonatype-central</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
     <repository>
-       <id>destroystokyo-snapshots</id>
-       <url>https://destroystokyo.com/repo/repository/maven-snapshots/</url>
+      <id>papermc</id>
+      <url>https://repo.papermc.io/repository/maven-public/</url>
     </repository>
   </repositories>
 
