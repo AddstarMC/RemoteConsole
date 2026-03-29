@@ -54,7 +54,7 @@ public class NetHandler extends AbstractNetworkHandler implements INetworkMainHa
 				if(command == null || command.trim().isEmpty())
 					return;
 				
-				Bukkit.dispatchCommand(user.asCommandSender(), command);
+				RemoteConsolePlugin.getCommandMap().dispatch(user.asCommandSender(), command);
 			}
 		});
 	}

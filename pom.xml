@@ -14,6 +14,7 @@
       <spigot.api.version>1.13</spigot.api.version>
       <spigot.version>1.16.4-R0.1-SNAPSHOT</spigot.version>
       <bungee.version>1.16-R0.3-SNAPSHOT</bungee.version>
+      <velocity.version>3.3.0-SNAPSHOT</velocity.version>
       <jansi.version>1.18</jansi.version>
       <yamler.version>2.5.0-SNAPSHOT</yamler.version>
   </properties>
@@ -53,6 +54,7 @@
       <module>ServerCore</module>
       <module>Bukkit</module>
       <module>Bungee</module>
+      <module>Velocity</module>
       <module>Client</module>
   </modules>
   <repositories>
@@ -67,6 +69,10 @@
       <id>bintray-mockito-maven</id>
       <name>bintray</name>
       <url>https://dl.bintray.com/mockito/maven</url>
+    </repository>
+    <repository>
+      <id>papermc</id>
+      <url>https://repo.papermc.io/repository/maven-public/</url>
     </repository>
     <repository>
       <snapshots>
@@ -90,18 +96,6 @@
       <version>${netty.version}</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13</version>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>3.3.12</version>
-        <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -112,8 +106,16 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.1</version>
           <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
+            <source>17</source>
+            <target>17</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.2.5</version>
+          <configuration>
+            <skipTests>true</skipTests>
           </configuration>
         </plugin>
       </plugins>
@@ -127,7 +129,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.4</version>
+        <version>3.5.1</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
