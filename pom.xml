@@ -16,7 +16,7 @@
       <bungee.version>1.16-R0.3-SNAPSHOT</bungee.version>
       <velocity.version>3.3.0-SNAPSHOT</velocity.version>
       <jansi.version>1.18</jansi.version>
-      <yamler.version>2.4.0-SNAPSHOT</yamler.version>
+      <yamler.version>2.5.0-SNAPSHOT</yamler.version>
   </properties>
 
   <scm>
